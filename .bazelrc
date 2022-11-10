@@ -1,0 +1,1 @@
+build --copt=-g0 --copt=-O3 --copt=-DNDEBUG
