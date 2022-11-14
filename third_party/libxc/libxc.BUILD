@@ -25,7 +25,6 @@ cc_library(
         "src/xc_funcs.h",
         "src/xc_funcs_removed.h",
     ],
-    include_prefix = "libxc",
     includes = [
         ".",
         "src",

@@ -1,4 +1,4 @@
-#include "libxc/src/xc.h"
+#include "xc.h"
 #include "visit_struct.hpp"
 #include <array>
 #include <iostream>
