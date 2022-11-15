@@ -2,14 +2,16 @@
 import os
 import re
 from collections import defaultdict
-from absl import flags, app
+from absl import flags, app, logging
 from jinja2 import Template
 
 FLAGS = flags.FLAGS
+flags.DEFINE_string("template", None, "template file")
 flags.DEFINE_string("path", None, "source path")
+flags.DEFINE_string("out", None, "out path")
 
 
-def wrap_file(filename):
+def wrap_file(filename, out):
   with open(filename, "r") as f:
     content = f.read()
     # find all init function and the corresponding param struct name
@@ -18,8 +20,6 @@ def wrap_file(filename):
       content,
       re.MULTILINE,
     )
-    if len(results) == 0:
-      return
     struct_to_init = defaultdict(list)
     for init, struct in results:
       struct_to_init[struct].append(init)
@@ -59,16 +59,17 @@ def wrap_file(filename):
         fields.extend(members)
       register_info.append((s, fields, struct_to_init[s]))
 
-    with open("wrap.cc.jinja", "r") as f:
+    with open(FLAGS.template, "r") as f:
       t = Template(f.read(), trim_blocks=True, lstrip_blocks=True)
       content = t.render(
         filename=os.path.basename(filename), register_info=register_info
       )
-      print(content)
+      with open(FLAGS.out, "wt") as fout:
+        fout.write(content)
 
 
 def main(_):
-  wrap_file(FLAGS.path)
+  wrap_file(FLAGS.path, FLAGS.out)
 
 
 if __name__ == "__main__":

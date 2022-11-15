@@ -4,7 +4,6 @@ py_binary(
     name = "tmp",
     srcs = ["tmp.py"],
     deps = [
-        "//jax_xc",
-        "@pylibxc",
+        "@libxc//pylibxc",
     ],
 )

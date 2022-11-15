@@ -1,6 +1,7 @@
 extern "C" {
-#include "src_c/{{ filename }}"
+#include "src/{{ filename }}"
 }
+{% if register_info|length > 0 %}
 #include "src_cc/register.h"
 {% for struct, fields, inits in register_info %}
 REGISTER_PARAMS({{ struct }}, {{ fields|join(', ') }});
@@ -8,3 +9,4 @@ REGISTER_PARAMS({{ struct }}, {{ fields|join(', ') }});
 REGISTER_INIT({{ init }}, {{ struct }});
 {% endfor %}
 {% endfor %}
+{% endif %}
