@@ -1,21 +1,5 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-http_archive(
-    name = "rules_foreign_cc",
-    # TODO: Get the latest sha256 value from a bazel debug message or the latest
-    #       release on the releases page: https://github.com/bazelbuild/rules_foreign_cc/releases
-    #
-    # sha256 = "...",
-    strip_prefix = "rules_foreign_cc-2c6262f8f487cd3481db27e2c509d9e6d30bfe53",
-    url = "https://github.com/bazelbuild/rules_foreign_cc/archive/2c6262f8f487cd3481db27e2c509d9e6d30bfe53.tar.gz",
-)
-
-load("@rules_foreign_cc//foreign_cc:repositories.bzl", "rules_foreign_cc_dependencies")
-
-rules_foreign_cc_dependencies()
-
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
 rules_python_version = "740825b7f74930c62f44af95c9a4c1bd428d2c53"  # Latest @ 2021-06-23
 
 http_archive(
@@ -23,26 +7,6 @@ http_archive(
     sha256 = "3474c5815da4cb003ff22811a36a11894927eda1c2e64bf2dac63e914bfdf30f",
     strip_prefix = "rules_python-{}".format(rules_python_version),
     url = "https://github.com/bazelbuild/rules_python/archive/{}.zip".format(rules_python_version),
-)
-
-http_archive(
-    name = "libxc",
-    build_file = "//third_party/libxc:libxc.BUILD",
-    sha256 = "0c774e8e195dd92800b9adf3df5f5721e29acfe9af4b191a9937c7de4f9aa9f6",
-    strip_prefix = "libxc-6.0.0",
-    urls = [
-        "https://gitlab.com/libxc/libxc/-/archive/6.0.0/libxc-6.0.0.tar.gz",
-    ],
-)
-
-http_archive(
-    name = "pylibxc",
-    build_file = "//third_party/libxc:pylibxc.BUILD",
-    sha256 = "0c774e8e195dd92800b9adf3df5f5721e29acfe9af4b191a9937c7de4f9aa9f6",
-    strip_prefix = "libxc-6.0.0/pylibxc",
-    urls = [
-        "https://gitlab.com/libxc/libxc/-/archive/6.0.0/libxc-6.0.0.tar.gz",
-    ],
 )
 
 http_archive(
@@ -77,3 +41,7 @@ python_configure(
     name = "local_config_python",
     python_version = "3",
 )
+
+load("//jax_xc:libxc.bzl", "libxc_repo")
+
+libxc_repo(name = "libxc")

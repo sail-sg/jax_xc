@@ -1,0 +1,10 @@
+extern "C" {
+#include "src_c/{{ filename }}"
+}
+#include "src_cc/register.h"
+{% for struct, fields, inits in register_info %}
+REGISTER_PARAMS({{ struct }}, {{ fields|join(', ') }});
+{% for init in inits %}
+REGISTER_INIT({{ init }}, {{ struct }});
+{% endfor %}
+{% endfor %}

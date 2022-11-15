@@ -1,17 +1,10 @@
 load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
 load("@rules_python//python:defs.bzl", "py_library")
 
-pybind_extension(
-    name = "libxc_params",
-    srcs = [
-        "libxc_params.cc",
-    ],
-    copts = ["-std=c++14"],
-    deps = [
-        "@libxc//:xc_inc",
-        "@visit_struct",
-    ],
-)
+exports_files([
+    "wrap.py",
+    "wrap.cc.jinja",
+])
 
 py_library(
     name = "jax_xc",
