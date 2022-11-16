@@ -24,6 +24,7 @@ def _impl(rctx):
     rctx.delete("src/xc-threshold.c")
     rctx.delete("src/test.c")
     rctx.delete("src/genwiki.c")
+    rctx.patch(Label("//libxc:so_naming.patch"))
     rctx.symlink(Label("//libxc:wrap.py"), "wrap.py")
     rctx.symlink(Label("//libxc:wrap.cc.jinja"), "wrap.cc.jinja")
     rctx.symlink(Label("//libxc:register.cc"), "src_cc/register.cc")
