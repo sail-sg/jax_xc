@@ -78,6 +78,7 @@ genrule(
 py_library(
   name = "impl",
   srcs = [
+      "__init__.py",
       "_helper.py",
 {% for name, _ in names_and_maple_files %}
       ":{{ name }}_gen_py",

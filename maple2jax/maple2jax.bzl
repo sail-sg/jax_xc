@@ -44,6 +44,7 @@ def _impl(rctx):
     # setup build rules for impl
     rctx.execute(["mkdir", "-p", "jax_xc/impl"])
     rctx.execute(["mv", "maple", "jax_xc/impl"])
+    rctx.symlink(Label("//maple2jax/impl:__init__.py"), "jax_xc/impl/__init__.py")
     rctx.symlink(Label("//maple2jax/impl:gen_build.py"), "jax_xc/impl/gen_build.py")
     rctx.symlink(Label("//maple2jax/impl:gen_maple.py"), "jax_xc/impl/gen_maple.py")
     rctx.symlink(Label("//maple2jax/impl:maple_template.jinja"), "jax_xc/impl/maple_template.jinja")
