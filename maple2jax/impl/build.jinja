@@ -22,7 +22,7 @@ py_binary(
 genrule(
     name = "{{ name }}_maple_pol",
     outs = ["maple_pol/{{ name }}.mpl"],
-    cmd = "$(execpath :gen_maple) --pol --input {{ maple_file }} --output $@ --template $(execpath :maple_template.jinja)",
+    cmd = "$(execpath :gen_maple) --pol --include {{ maple_file }} --output $@ --template $(execpath :maple_template.jinja)",
     tools = [
         ":gen_maple",
         ":maple_template.jinja",
@@ -32,7 +32,7 @@ genrule(
 genrule(
     name = "{{ name }}_maple_unpol",
     outs = ["maple_unpol/{{ name }}.mpl"],
-    cmd = "$(execpath :gen_maple) --input {{ maple_file }} --output $@ --template $(execpath :maple_template.jinja)",
+    cmd = "$(execpath :gen_maple) --include {{ maple_file }} --output $@ --template $(execpath :maple_template.jinja)",
     tools = [
         ":gen_maple",
         ":maple_template.jinja",

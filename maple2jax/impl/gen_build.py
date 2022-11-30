@@ -18,7 +18,7 @@ def main(_):
   ]:
     for mpl in glob.glob(FLAGS.maple + "/" + folder + "/*.mpl"):
       name = os.path.basename(mpl).split(".")[0]
-      maple_file = f"maple/{folder}/{name}.mpl"
+      maple_file = f"{folder}/{name}.mpl"
       names_and_maple_files.append((name, maple_file))
 
   with open(FLAGS.template, "r") as f:
