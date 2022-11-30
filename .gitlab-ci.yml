@@ -1,0 +1,26 @@
+# base
+default:
+  image: registry.git.insea.io/sail/sail-engineering/golden-images/python_bazel_golden:latest
+  before_script:
+    - pip config unset global.index-url
+    - pip config unset global.trusted-host
+  tags:
+    - sail
+
+stages:
+  - lint
+
+flake8:
+  stage: lint
+  script:
+    - flake8 maple2jax --count --show-source --statistics
+
+yapf:
+  stage: lint
+  script:
+    - yapf -r -d maple2jax/
+
+clang:
+  stage: lint
+  script:
+    - clang-format-11 --style=file -i maple2jax/libxc/*.cc maple2jax/libxc/*.h -n --Werror

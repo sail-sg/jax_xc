@@ -1,0 +1,87 @@
+load("@rules_python//python:defs.bzl", "py_library", "py_binary")
+
+filegroup(
+    name = "maple_files",
+    srcs = ["maple"],
+    visibility = ["//visibility:public"],
+)
+
+py_binary(
+    name = "gen_maple",
+    srcs = ["gen_maple.py"],
+    visibility = ["//visibility:public"],
+)
+
+py_binary(
+    name = "gen_py",
+    srcs = ["gen_py.py"],
+    visibility = ["//visibility:public"],
+)
+
+{% for name, maple_file in names_and_maple_files %}
+genrule(
+    name = "{{ name }}_maple_pol",
+    outs = ["maple_pol/{{ name }}.mpl"],
+    cmd = "$(execpath :gen_maple) --pol --input {{ maple_file }} --output $@ --template $(execpath :maple_template.jinja)",
+    tools = [
+        ":gen_maple",
+        ":maple_template.jinja",
+    ],
+)
+
+genrule(
+    name = "{{ name }}_maple_unpol",
+    outs = ["maple_unpol/{{ name }}.mpl"],
+    cmd = "$(execpath :gen_maple) --input {{ maple_file }} --output $@ --template $(execpath :maple_template.jinja)",
+    tools = [
+        ":gen_maple",
+        ":maple_template.jinja",
+    ],
+)
+
+genrule(
+    name = "{{ name }}_pol",
+    srcs = ["maple_pol/{{ name }}.mpl"],
+    outs = ["pol/{{ name }}.py"],
+    cmd = "maple -I$(execpath :maple_files) -I$(execpath :maple_files)/gga_exc -I$(execpath :maple_files)/lda_exc -I$(execpath :maple_files)/mgga_exc -q -u $< > $@",
+    tools = [
+        ":maple_files",
+    ],
+)
+
+genrule(
+    name = "{{ name }}_unpol",
+    srcs = ["maple_unpol/{{ name }}.mpl"],
+    outs = ["unpol/{{ name }}.py"],
+    cmd = "maple -I$(execpath :maple_files) -I$(execpath :maple_files)/gga_exc -I$(execpath :maple_files)/lda_exc -I$(execpath :maple_files)/mgga_exc -q -u $< > $@",
+    tools = [
+        ":maple_files",
+    ],
+)
+
+genrule(
+    name = "{{ name }}_gen_py",
+    srcs = [
+        "pol/{{ name }}.py",
+        "unpol/{{ name }}.py",
+    ],
+    outs = ["{{ name }}.py"],
+    cmd = "$(execpath :gen_py) --pol $(execpath :pol/{{ name }}.py) --unpol $(execpath :unpol/{{ name }}.py) --output $@ --template $(execpath :python_template.jinja)",
+    tools = [
+        ":gen_py",
+        ":python_template.jinja",
+    ],
+)
+
+{% endfor %}
+
+py_library(
+  name = "impl",
+  srcs = [
+      "_helper.py",
+{% for name, _ in names_and_maple_files %}
+      ":{{ name }}_gen_py",
+{% endfor %}
+  ],
+  visibility = ["//visibility:public"],
+)

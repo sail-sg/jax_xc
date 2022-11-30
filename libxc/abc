@@ -1,3 +1,0 @@
-extern "C" {
-#include "src/gga_xc_edf1.c"
-}

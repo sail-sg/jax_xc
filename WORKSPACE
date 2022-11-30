@@ -1,12 +1,10 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-rules_python_version = "740825b7f74930c62f44af95c9a4c1bd428d2c53"  # Latest @ 2021-06-23
-
 http_archive(
     name = "rules_python",
-    sha256 = "09a3c4791c61b62c2cbc5b2cbea4ccc32487b38c7a2cc8f87a794d7a659cc742",
-    strip_prefix = "rules_python-{}".format(rules_python_version),
-    url = "https://github.com/bazelbuild/rules_python/archive/{}.zip".format(rules_python_version),
+    sha256 = "8c8fe44ef0a9afc256d1e75ad5f448bb59b81aba149b8958f02f7b3a98f5d9b4",
+    strip_prefix = "rules_python-0.13.0",
+    url = "https://github.com/bazelbuild/rules_python/archive/refs/tags/0.13.0.tar.gz",
 )
 
 http_archive(
@@ -20,10 +18,10 @@ http_archive(
 
 http_archive(
     name = "pybind11_bazel",
-    sha256 = "fec6281e4109115c5157ca720b8fe20c8f655f773172290b03f57353c11869c2",
-    strip_prefix = "pybind11_bazel-72cbbf1fbc830e487e3012862b7b720001b70672",
+    sha256 = "a185aa68c93b9f62c80fcb3aadc3c83c763854750dc3f38be1dadcb7be223837",
+    strip_prefix = "pybind11_bazel-faf56fb3df11287f26dbc66fdedf60a2fc2c6631",
     urls = [
-        "https://github.com/pybind/pybind11_bazel/archive/72cbbf1fbc830e487e3012862b7b720001b70672.zip",
+        "https://github.com/pybind/pybind11_bazel/archive/faf56fb3df11287f26dbc66fdedf60a2fc2c6631.zip",
     ],
 )
 
@@ -42,6 +40,6 @@ python_configure(
     python_version = "3",
 )
 
-load("//libxc:libxc.bzl", "libxc_repo")
+load("//maple2jax:maple2jax.bzl", "maple2jax_repo")
 
-libxc_repo(name = "libxc")
+maple2jax_repo(name = "maple2jax")

@@ -1,0 +1,8 @@
+# bazel
+bazel-bin
+bazel-jax_xc
+bazel-out
+bazel-testlogs
+
+# python
+__pycache__
