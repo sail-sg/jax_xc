@@ -45,9 +45,8 @@ def {{ name }}(
           impl.{{ maple_name }}.unpol)
 
   def _{{ name }}(r):
-    return func(*rho_to_arguments(rho, r, polarized, {{ type }}, mo),
-                params=p.params, p=p)
-
+    return func(*rho_to_arguments(rho, r, polarized, "{{ type }}", {{ mo if type == "mgga" else "" }}),
+                params=p.params, p=p)  
   return _{{ name }}
 
 {% endfor %}
