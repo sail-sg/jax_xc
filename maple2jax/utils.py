@@ -3,13 +3,14 @@
 import jax
 import jax.numpy as jnp
 from jax import lax
+from . import libxc as pylibxc
 from .libxc import libxc
 import ctypes
 from collections import namedtuple
 
 
 def get_p(name, polarized, *ext_params):
-  func = libxc.LibXCFunctional(name, int(polarized) + 1)
+  func = pylibxc.LibXCFunctional(name, int(polarized) + 1)
   if ext_params:
     func.set_ext_params(ext_params)
   x = ctypes.cast(func.xc_func, ctypes.c_void_p)

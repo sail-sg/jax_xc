@@ -26,7 +26,11 @@ genrule(
 py_library(
     name = "functionals",
     srcs = [":gen_functionals"],
-    deps = [":utils"],
+    deps = [
+        ":utils",
+        "@maple2jax//jax_xc/libxc",
+        "@maple2jax//jax_xc/impl",
+    ],
     visibility = ["//visibility:public"],
 )
 
