@@ -24,3 +24,8 @@ clang:
   stage: lint
   script:
     - clang-format-11 --style=file -i maple2jax/libxc/*.cc maple2jax/libxc/*.h -n --Werror
+
+buildifier:
+  stage: lint
+  script:
+    - buildifier -r -lint=warn $(find . -type f -name "*BUILD" -o -name "*.bzl")

@@ -1,3 +1,5 @@
+"""Repository rule to automatically generate targets from libxc."""
+
 def _impl(rctx):
     rctx.report_progress("Download and extract libxc-6.0.0.tar.gz")
     rctx.download_and_extract(
