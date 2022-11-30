@@ -1,0 +1,10 @@
+exports_files([
+    "wrap.py",
+    "wrap.cc.jinja",
+    "so_naming.patch",
+    "register.cc",
+    "register.h",
+    "libxc.cc",
+    "build.jinja",
+    "gen_build.py",
+])

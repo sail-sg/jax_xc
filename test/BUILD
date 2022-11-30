@@ -7,3 +7,13 @@ py_binary(
         "@libxc//pylibxc",
     ],
 )
+
+py_binary(
+    name = "test_jax_xc",
+    testonly = 1,
+    srcs = ["test_jax_xc.py"],
+    deps = [
+        "@libxc//pylibxc",
+        "@maple2jax//jax_xc",
+    ],
+)

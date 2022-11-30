@@ -1,0 +1,53 @@
+Digits := 20:             (* constants will have 20 digits *)
+interface(warnlevel=0):   (* supress all warnings          *)
+
+with(CodeGeneration):
+
+$include <{{ input }}>
+$include <util.mpl>
+
+dens := (r0, r1) -> r0 + r1:
+zeta := (r0, r1) -> (r0 - r1)/(r0 + r1):
+xs0  := (r0, r1, sigma0, sigma2) -> sqrt(sigma0)/r0^(1 + 1/DIMENSIONS):
+xs1  := (r0, r1, sigma0, sigma2) -> sqrt(sigma2)/r1^(1 + 1/DIMENSIONS):
+xt   := (r0, r1, sigma0, sigma1, sigma2) -> sqrt(sigma0 + 2*sigma1 + sigma2)/(r0 + r1)^(1 + 1/DIMENSIONS):
+u0   := (r0, r1, l0, l1) -> l0/(r0^(1 + 2/DIMENSIONS)):
+u1   := (r0, r1, l0, l1) -> l1/(r1^(1 + 2/DIMENSIONS)):
+tt0   := (r0, r1, tau0, tau1) -> tau0/(r0^(1 + 2/DIMENSIONS)):
+tt1   := (r0, r1, tau0, tau1) -> tau1/(r1^(1 + 2/DIMENSIONS)):
+
+{% if type == "mgga" %}
+
+mzk_pol := (r0, r1, s0, s1, s2, l0, l1, tau0, tau1) ->
+  f(r_ws(dens(r0, r1)), zeta(r0, r1), xt(r0, r1, s0, s1, s2), xs0(r0, r1, s0, s2),
+  xs1(r0, r1, s0, s2), u0(r0, r1, l0, l1), u1(r0, r1, l0, l1), tt0(r0, r1, tau0, tau1), tt1(r0, r1, tau0, tau1)):
+mzk_unpol := (r0, s0, l0, tau0) -> mzk_pol(r0/2, r0/2, s0/4, s0/4, s0/4, l0/2, l0/2, tau0/2, tau0/2):
+{% if polarized %}
+Python([res = mzk_pol(r0, r1, s0, s1, s2, l0, l1, tau0, tau1)], optimize, deducetypes=false):
+{% else %}
+Python([res = mzk_unpol(r0, s0, l0, tau0)], optimize, deducetypes=false):
+{% endif %}
+{% elif type == "gga" %}
+
+mzk_pol := (r0, r1, s0, s1, s2) ->
+  f(r_ws(dens(r0, r1)), zeta(r0, r1), xt(r0, r1, s0, s1, s2),
+  xs0(r0, r1, s0, s2), xs1(r0, r1, s0, s2)):
+mzk_unpol := (r0, s0) ->
+  mzk_pol(r0/2, r0/2, s0/4, s0/4, s0/4):
+{% if polarized %}
+Python([res = mzk_pol(r0, r1, s0, s1, s2)], optimize, deducetypes=false):
+{% else %}
+Python([res = mzk_unpol(r0, s0)], optimize, deducetypes=false):
+{% endif %}
+
+{% elif type == "lda" %}
+
+mzk_pol := (r0, r1) -> f(r_ws(dens(r0, r1)), zeta(r0, r1)):
+mzk_unpol := (r0) -> mzk_pol(r0/2, r0/2):
+{% if polarized %}
+Python([res = mzk_pol(r0, r1)], optimize, deducetypes=false):
+{% else %}
+Python([res = mzk_unpol(r0)], optimize, deducetypes=false):
+{% endif %}
+
+{% endif %}

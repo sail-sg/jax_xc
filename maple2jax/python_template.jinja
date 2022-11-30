@@ -1,0 +1,53 @@
+import jax
+import jax.numpy as jnp
+import ctypes
+from collections import namedtuple
+from typing import Callable
+from . import impl
+from .utils import get_p, rho_to_arguments
+
+{% for name, type, ext_params, maple_name in functionals %}
+
+def {{ name }}(
+  rho: Callable,
+{% if type == "mgga" %}
+  mo: Callable,
+{% endif %}
+  polarized: bool,
+{% for param_name in ext_params.keys() %}
+  {{ param_name }}=None,
+{% endfor %}
+) -> Callable:
+  """{{ name }} functional
+
+  Parameters
+  ----------
+  rho : Callable
+      if polarized, Density function R^3 -> R^2
+      if unpolarized, Density function R^3 -> R
+{% if type == "mgga" %}
+  mo : Callable
+      Molecular orbital function R^3 -> R^(2 x N)
+      N is the number of orbitals
+{% endif %}
+  polarized : bool
+      Whether the calculation is polarized
+{% for param_name in ext_params.keys() %}
+  {{ param_name }} : float
+      {{ param_name }} parameter
+{% endfor %}
+  """
+{% for param_name, value in ext_params.items() %}
+  {{ param_name }} = ({{ param_name }} or {{ value }})
+{% endfor %}
+  p = get_p("{{ name }}", polarized, {{ ext_params.keys()|join(', ') }})
+  func = (impl.{{ maple_name }}.pol if polarized else
+          impl.{{ maple_name }}.unpol)
+
+  def _{{ name }}(r):
+    return func(*rho_to_arguments(rho, r, polarized, {{ type }}, mo),
+                params=p.params, p=p)
+
+  return _{{ name }}
+
+{% endfor %}

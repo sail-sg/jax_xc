@@ -1,0 +1,38 @@
+load("@rules_python//python:defs.bzl", "py_library", "py_binary")
+
+py_binary(
+    name = "gen_py",
+    srcs = ["gen_py.py"],
+    visibility = ["//visibility:public"],
+    deps = ["@maple2jax//jax_xc/libxc"],
+)
+
+py_library(
+    name = "utils",
+    srcs = ["utils.py"],
+    visibility = ["//visibility:public"],
+)
+
+genrule(
+    name = "gen_functionals",
+    outs = ["functionals.py"],
+    cmd = "$(execpath :gen_py) --output $@ --template $(execpath :python_template.jinja)",
+    tools = [
+        ":gen_py",
+        ":python_template.jinja",
+    ],
+)
+
+py_library(
+    name = "functionals",
+    srcs = [":gen_functionals"],
+    deps = [":utils"],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "jax_xc",
+    srcs = ["__init__.py"],
+    deps = [":functionals"],
+    visibility = ["//visibility:public"],
+)

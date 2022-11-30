@@ -1,0 +1,17 @@
+extern "C" {
+#include "src/{{ filename }}"
+}
+{% if register_struct|length > 0 or register_maple %}
+#include "src_cc/register.h"
+{% endif %}
+{% if register_struct|length > 0 %}
+{% for struct, fields, inits in register_struct %}
+REGISTER_PARAMS({{ struct }}, {{ fields|join(', ') }});
+{% for init in inits %}
+REGISTER_INIT({{ init }}, {{ struct }});
+{% endfor %}
+{% endfor %}
+{% endif %}
+{% if register_maple %}
+REGISTER_MAPLE({{ register_maple[0] }}, "{{ register_maple[1] }}");
+{% endif %}
