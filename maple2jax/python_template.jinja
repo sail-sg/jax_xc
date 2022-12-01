@@ -6,7 +6,7 @@ from typing import Callable
 from . import impl
 from .utils import get_p, rho_to_arguments
 
-{% for name, type, ext_params, maple_name in functionals %}
+{% for name, type, ext_params, maple_name, is_hyb in functionals %}
 
 def {{ name }}(
   rho: Callable,
@@ -41,12 +41,57 @@ def {{ name }}(
   {{ param_name }} = ({{ param_name }} or {{ value }})
 {% endfor %}
   p = get_p("{{ name }}", polarized, {{ ext_params.keys()|join(', ') }})
+
+{% if is_hyb %}
+  def _{{ name }}(r):
+
+    def _impl_elem(fn_p):
+      impl_fn = getattr(impl, fn_p.maple_name)
+      func = impl_fn.pol if polarized else impl_fn.unpol
+
+      return func(
+        *rho_to_arguments(rho, r, polarized, "{{ type }}", {{ "mo" if type == "mgga" else "" }}),
+        params=fn_p.params,
+        p=fn_p
+      )
+
+    def _recursive_impl(fn_p):
+      if fn_p.maple_name == "":
+        return sum(
+          [
+            _recursive_impl(fn_aux_p) * mix_coef
+            for fn_aux_p, mix_coef in zip(fn_p.func_aux, fn_p.mix_coef)
+          ]
+        )
+      if fn_p.maple_name == "DEORBITALIZE":
+        res = _impl_elem(fn_p.func_aux[1])
+        fn_aux_p = fn_p.func_aux[0]
+        impl_fn = getattr(impl, fn_aux_p.maple_name)
+        func = impl_fn.pol if polarized else impl_fn.unpol
+
+        args = rho_to_arguments(rho, r, polarized, "{{ type }}", {{ "mo" if type == "mgga" else "" }})
+
+        # Modify tau of args
+        if polarized:
+          args[-1] = args[1] * res
+          args[-2] = args[0] * res
+        else:
+          args[-1] = args[0] * res
+        
+        return func(*args, params=fn_p.params, p=fn_p)
+
+      return _impl_elem(fn_p)
+
+    return _recursive_impl(p)
+{% else %}
   func = (impl.{{ maple_name }}.pol if polarized else
           impl.{{ maple_name }}.unpol)
 
   def _{{ name }}(r):
-    return func(*rho_to_arguments(rho, r, polarized, "{{ type }}", {{ mo if type == "mgga" else "" }}),
-                params=p.params, p=p)  
+    return func(*rho_to_arguments(rho, r, polarized, "{{ type }}", {{ "mo" if type == "mgga" else "" }}),
+                params=p.params, p=p)
+
+{% endif %}
   return _{{ name }}
 
 {% endfor %}
