@@ -3,10 +3,12 @@
 import jax
 import jax.numpy as jnp
 from jax import lax
+from . import impl
 from . import libxc as pylibxc
 from .libxc import libxc
 import ctypes
 from collections import namedtuple
+from typing import NamedTuple
 
 
 def dict_to_namedtuple(d: dict, name: str):
@@ -125,3 +127,43 @@ def rho_to_arguments(rho, r, polarized, functional_type, mo=None):
     ret.append(tau)
 
   return ret
+
+
+def impl_elem(p: NamedTuple, rho, r, polarized: bool, type: str, mo=None):
+  impl_fn = getattr(impl, p.maple_name)
+  func = impl_fn.pol if polarized else impl_fn.unpol
+
+  return func(
+    *rho_to_arguments(rho, r, polarized, type, mo), params=p.params, p=p
+  )
+
+
+def recursive_impl(p: NamedTuple, rho, r, polarized: bool, type: str, mo=None):
+  # If it's hybrid functional
+  if p.maple_name == "":
+    return sum(
+      [
+        recursive_impl(fn_aux_p) * mix_coef
+        for fn_aux_p, mix_coef in zip(p.func_aux, p.mix_coef)
+      ]
+    )
+  # If it's deorbitalized functional
+  if p.maple_name == "DEORBITALIZE":
+    res = _impl_elem(p.func_aux[1])
+    fn_aux_p = p.func_aux[0]
+    impl_fn = getattr(impl, fn_aux_p.maple_name)
+    func = impl_fn.pol if polarized else impl_fn.unpol
+
+    args = rho_to_arguments(rho, r, polarized, type, mo)
+
+    # Modify tau of args
+    if polarized:
+      args[-1] = args[1] * res
+      args[-2] = args[0] * res
+    else:
+      args[-1] = args[0] * res
+
+    return func(*args, params=p.params, p=p)
+
+  # If it's a normal functional
+  return impl_elem(p, rho, r, polarized, type, mo)

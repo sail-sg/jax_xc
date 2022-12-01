@@ -10,6 +10,7 @@ py_binary(
 py_library(
     name = "utils",
     srcs = ["utils.py"],
+    deps = ["@maple2jax//jax_xc/impl"],
     visibility = ["//visibility:public"],
 )
 
