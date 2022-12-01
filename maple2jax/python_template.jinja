@@ -4,7 +4,7 @@ import ctypes
 from collections import namedtuple
 from typing import Callable
 from . import impl
-from .utils import get_p, rho_to_arguments, recursive_impl
+from .utils import get_p, rho_to_arguments, recursive_fn_call
 
 {% for name, type, ext_params, maple_name in functionals %}
 
@@ -43,7 +43,7 @@ def {{ name }}(
   p = get_p("{{ name }}", polarized, {{ ext_params.keys()|join(', ') }})
 
   def _{{ name }}(r):
-    return recursive_impl(p, rho, r, polarized, "{{ type }}", {{ "mo" if type == "mgga" else "" }})
+    return recursive_fn_call(p, rho, r, polarized, "{{ type }}", {{ "mo" if type == "mgga" else "" }})
   return _{{ name }}
 
 {% endfor %}

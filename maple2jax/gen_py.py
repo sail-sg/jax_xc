@@ -49,11 +49,11 @@ def main(_):
     if name == 'hyb_mgga_xc_b98':
       maple_name = 'mgga_xc_b98'
 
-    if maple_name.startswith("lda") or maple_name.startswith("hyb_lda"):
+    if name.startswith("lda") or name.startswith("hyb_lda"):
       type = "lda"
-    elif maple_name.startswith("gga") or maple_name.startswith("hyb_gga"):
+    elif name.startswith("gga") or name.startswith("hyb_gga"):
       type = "gga"
-    elif maple_name.startswith("mgga") or maple_name.startswith("hyb_mgga"):
+    elif name.startswith("mgga") or name.startswith("hyb_mgga"):
       type = "mgga"
 
     functionals.append((name, type, ext_params, maple_name))

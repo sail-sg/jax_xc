@@ -11,6 +11,29 @@ from collections import namedtuple
 from typing import NamedTuple
 
 
+def fn_name_to_type(fn_name: str) -> str:
+  """Converts a functional name to the type of functional it is.
+
+  Parameters:
+  ----------
+  fn_name : str
+      The name of the functional
+
+  Returns:
+  -------
+  str
+      The type of functional, one of "lda", "gga", "mgga"
+  """
+  if fn_name.startswith("lda") or fn_name.startswith("hyb_lda"):
+    return "lda"
+  elif fn_name.startswith("gga") or fn_name.startswith("hyb_gga"):
+    return "gga"
+  elif fn_name.startswith("mgga") or fn_name.startswith("hyb_mgga"):
+    return "mgga"
+  else:
+    raise ValueError("Unknown functional type")
+
+
 def dict_to_namedtuple(d: dict, name: str):
   """Recursively convert a dict to a namedtuple
 
@@ -129,7 +152,7 @@ def rho_to_arguments(rho, r, polarized, functional_type, mo=None):
   return ret
 
 
-def impl_elem(p: NamedTuple, rho, r, polarized: bool, type: str, mo=None):
+def _single_fn_call(p: NamedTuple, rho, r, polarized: bool, type: str, mo=None):
   impl_fn = getattr(impl, p.maple_name)
   func = impl_fn.pol if polarized else impl_fn.unpol
 
@@ -138,23 +161,30 @@ def impl_elem(p: NamedTuple, rho, r, polarized: bool, type: str, mo=None):
   )
 
 
-def recursive_impl(p: NamedTuple, rho, r, polarized: bool, type: str, mo=None):
+def recursive_fn_call(
+  p: NamedTuple, rho, r, polarized: bool, type: str, mo=None
+):
   # If it's hybrid functional
   if p.maple_name == "":
     return sum(
       [
-        recursive_impl(fn_aux_p) * mix_coef
-        for fn_aux_p, mix_coef in zip(p.func_aux, p.mix_coef)
+        recursive_fn_call(
+          fn_aux_p, rho, r, polarized, fn_name_to_type(fn_aux_p.name), mo
+        ) * mix_coef for fn_aux_p, mix_coef in zip(p.func_aux, p.mix_coef)
       ]
     )
   # If it's deorbitalized functional
   if p.maple_name == "DEORBITALIZE":
-    res = impl_elem(p.func_aux[1])
+    res = _single_fn_call(
+      p.func_aux[1], rho, r, polarized, fn_name_to_type(p.func_aux[1].name), mo
+    )
     fn_aux_p = p.func_aux[0]
     impl_fn = getattr(impl, fn_aux_p.maple_name)
-    func = impl_fn.pol if polarized else impl_fn.unpol
+    fn_aux = impl_fn.pol if polarized else impl_fn.unpol
 
-    args = rho_to_arguments(rho, r, polarized, type, mo)
+    args = rho_to_arguments(
+      rho, r, polarized, fn_name_to_type(fn_aux_p.name), mo
+    )
 
     # Modify tau of args
     if polarized:
@@ -163,7 +193,7 @@ def recursive_impl(p: NamedTuple, rho, r, polarized: bool, type: str, mo=None):
     else:
       args[-1] = args[0] * res
 
-    return func(*args, params=p.params, p=p)
+    return fn_aux(*args, params=fn_aux_p.params, p=fn_aux_p)
 
   # If it's a normal functional
-  return impl_elem(p, rho, r, polarized, type, mo)
+  return _single_fn_call(p, rho, r, polarized, type, mo)
