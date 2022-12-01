@@ -55,8 +55,11 @@ def main(_):
       type = "gga"
     elif maple_name.startswith("mgga") or maple_name.startswith("hyb_mgga"):
       type = "mgga"
+    elif maple_name == "DEORBITALIZE":
+      logging.warn("DEORBITALIZE is not handled")
     else:
       logging.warn("hyb is not handled")
+      continue
 
     functionals.append((name, type, ext_params, maple_name))
 

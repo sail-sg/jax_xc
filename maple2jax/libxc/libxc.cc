@@ -8,6 +8,10 @@
 #include "pybind11/stl.h"
 #include "register.h"
 
+#include "util.h"
+
+REGISTER_MAPLE(xc_deorbitalize_func, std::string("DEORBITALIZE"));
+
 std::map<std::string, py::array> get_params(uint64_t xc_func) {
   xc_func_type* func = reinterpret_cast<xc_func_type*>(xc_func);
   if (registry.count(func->info->init) == 0) {
@@ -18,23 +22,24 @@ std::map<std::string, py::array> get_params(uint64_t xc_func) {
 
 std::string get_maple_name(uint64_t xc_func) {
   xc_func_type* func = reinterpret_cast<xc_func_type*>(xc_func);
-  // if func->info->lda is not NULL
+  void* key = NULL;
   if (func->info->lda != NULL) {
-    return work_to_maple_name[const_cast<void*>(
-        reinterpret_cast<const void*>(func->info->lda))];
+    key = const_cast<void*>(reinterpret_cast<const void*>(func->info->lda));
+  } else if (func->info->gga != NULL) {
+    key = const_cast<void*>(reinterpret_cast<const void*>(func->info->gga));
+  } else if (func->info->mgga != NULL) {
+    key = const_cast<void*>(reinterpret_cast<const void*>(func->info->mgga));
   }
-  // if func->info->gga is not NULL
-  if (func->info->gga != NULL) {
-    return work_to_maple_name[const_cast<void*>(
-        reinterpret_cast<const void*>(func->info->gga))];
-  }
-  // if func->info->mgga is not NULL
-  if (func->info->mgga != NULL) {
-    return work_to_maple_name[const_cast<void*>(
-        reinterpret_cast<const void*>(func->info->mgga))];
-  }
-  // if hybrid functional, return empty string
-  if (func->func_aux != NULL) {
+
+  if (key != NULL) {
+    if (work_to_maple_name.count(key) == 0) {
+      std::string error_msg_name = func->info->name;
+      std::string error_msg_number = std::to_string(func->info->number);
+      throw std::runtime_error(error_msg_name + " " + error_msg_number);
+    } else {
+      return work_to_maple_name.at(key);
+    }
+  } else if (func->func_aux != NULL) {
     return "";
   }
   // if neither hybrid nor in lda/gga/mgga
