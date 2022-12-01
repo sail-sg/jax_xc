@@ -7,7 +7,6 @@
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
 #include "register.h"
-
 #include "util.h"
 
 REGISTER_MAPLE(xc_deorbitalize_func, std::string("DEORBITALIZE"));
