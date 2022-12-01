@@ -149,7 +149,7 @@ def recursive_impl(p: NamedTuple, rho, r, polarized: bool, type: str, mo=None):
     )
   # If it's deorbitalized functional
   if p.maple_name == "DEORBITALIZE":
-    res = _impl_elem(p.func_aux[1])
+    res = impl_elem(p.func_aux[1])
     fn_aux_p = p.func_aux[0]
     impl_fn = getattr(impl, fn_aux_p.maple_name)
     func = impl_fn.pol if polarized else impl_fn.unpol
