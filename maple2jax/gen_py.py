@@ -1,6 +1,6 @@
 import re
 import ctypes
-from absl import flags, app, logging
+from absl import flags, app
 from jinja2 import Template
 
 import jax_xc.libxc as pylibxc
