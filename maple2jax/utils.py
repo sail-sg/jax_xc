@@ -168,7 +168,7 @@ def call_functional(
     mo: Optional[Callable] = None
   ):
     # raise error if p.maple_name is not in impl
-    if p.maple_name not in impl.__dict__:
+    if not hasattr(impl, p.maple_name):
       raise ValueError(f"Functional {p.maple_name} not implemented")
     impl_fn = getattr(impl, p.maple_name)
     func = impl_fn.pol if polarized else impl_fn.unpol
@@ -197,7 +197,7 @@ def call_functional(
     res = _invoke_single_functional(p.func_aux[1], rho, r, polarized, mo)
     fn_aux_p = p.func_aux[0]
     # raise error if fn_aux_p.maple_name is not in impl
-    if fn_aux_p.maple_name not in impl.__dict__:
+    if not hasattr(impl, fn_aux_p.maple_name):
       raise ValueError(f"Functional {fn_aux_p.maple_name} not implemented")
     impl_fn = getattr(impl, fn_aux_p.maple_name)
     fn_aux = impl_fn.pol if polarized else impl_fn.unpol
