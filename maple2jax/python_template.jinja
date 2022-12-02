@@ -16,18 +16,19 @@ def {{ name }}(
   {{ param_name }}: Optional[float] = None,
 {% endfor %}
 ) -> Callable:
-  """{{ name }} functional
+  r"""{{ name }} functional
 
   Parameters
   ----------
   rho : Callable
-      If polarized, Density function R^3 -> R^2.
-      If unpolarized, Density function R^3 -> R.
+      The electron density function, mapping 3D coordinate to a density value.
+      If polarized returns one value for each spin, :math:`\rho\in R^3 \rightarrow R^2`,
+      otherwise, :math:`\rho\in R^3 \rightarrow R`.
   polarized : bool
       Whether the calculation is polarized.
   mo : Optional[Callable]
-      Molecular orbital function R^3 -> R^(2 x N)
-      N is the number of orbitals. Only needed for
+      Molecular orbital function :math:`R^3 \rightarrow R^{2 \times N}`.
+      :math:`N` is the number of orbitals. It is only needed for
       mgga functionals.
 {% for param_name, param_descrip in zip(ext_params.keys(), ext_params_descriptions) %}
   {{ param_name }} : Optional[float]
