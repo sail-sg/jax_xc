@@ -6,7 +6,7 @@ from typing import Callable, Optional
 from . import impl
 from .utils import get_p, rho_to_arguments, call_functional
 
-{% for name, ext_params, maple_name in functionals %}
+{% for name, ext_params, maple_name, ext_params_descriptions in functionals %}
 
 def {{ name }}(
   rho: Callable,
@@ -29,9 +29,9 @@ def {{ name }}(
       Molecular orbital function R^3 -> R^(2 x N)
       N is the number of orbitals. Only needed for
       mgga functionals.
-{% for param_name in ext_params.keys() %}
+{% for param_name, param_descrip in zip(ext_params.keys(), ext_params_descriptions) %}
   {{ param_name }} : Optional[float]
-      {{ param_name }} parameter
+      {{ param_descrip }}
 {% endfor %}
   """
 {% for param_name, value in ext_params.items() %}

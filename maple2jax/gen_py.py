@@ -39,6 +39,7 @@ def main(_):
   for number in functional_numbers:
     func = pylibxc.LibXCFunctional(number, 1)
     ext_params = get_ext_params(func)
+    ext_params_descriptions = func.get_ext_param_descriptions()
     x = ctypes.cast(func.xc_func, ctypes.c_void_p)
     p = libxc.get_p(x.value)
     name = p["name"]
@@ -49,11 +50,11 @@ def main(_):
     if name == 'hyb_mgga_xc_b98':
       maple_name = 'mgga_xc_b98'
 
-    functionals.append((name, ext_params, maple_name))
+    functionals.append((name, ext_params, maple_name, ext_params_descriptions))
 
   with open(FLAGS.template, "r") as f:
     py_template = Template(f.read(), trim_blocks=True, lstrip_blocks=True)
-    py_code = py_template.render(functionals=functionals)
+    py_code = py_template.render(functionals=functionals, zip=zip)
     with open(FLAGS.output, "w") as out:
       out.write(py_code)
 
