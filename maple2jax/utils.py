@@ -8,15 +8,15 @@ from . import libxc as pylibxc
 from .libxc import libxc
 import ctypes
 from collections import namedtuple
-from typing import NamedTuple
+from typing import NamedTuple, Callable, Optional
 
 
-def fn_name_to_type(fn_name: str) -> str:
+def functional_name_to_type(fnl_name: str) -> str:
   """Converts a functional name to the type of functional it is.
 
   Parameters:
   ----------
-  fn_name : str
+  fnl_name : str
       The name of the functional
 
   Returns:
@@ -24,11 +24,11 @@ def fn_name_to_type(fn_name: str) -> str:
   str
       The type of functional, one of "lda", "gga", "mgga"
   """
-  if fn_name.startswith("lda") or fn_name.startswith("hyb_lda"):
+  if fnl_name.startswith("lda") or fnl_name.startswith("hyb_lda"):
     return "lda"
-  elif fn_name.startswith("gga") or fn_name.startswith("hyb_gga"):
+  elif fnl_name.startswith("gga") or fnl_name.startswith("hyb_gga"):
     return "gga"
-  elif fn_name.startswith("mgga") or fn_name.startswith("hyb_mgga"):
+  elif fnl_name.startswith("mgga") or fnl_name.startswith("hyb_mgga"):
     return "mgga"
   else:
     raise ValueError("Unknown functional type")
@@ -152,39 +152,57 @@ def rho_to_arguments(rho, r, polarized, functional_type, mo=None):
   return ret
 
 
-def _single_fn_call(p: NamedTuple, rho, r, polarized: bool, type: str, mo=None):
-  impl_fn = getattr(impl, p.maple_name)
-  func = impl_fn.pol if polarized else impl_fn.unpol
-
-  return func(
-    *rho_to_arguments(rho, r, polarized, type, mo), params=p.params, p=p
-  )
-
-
-def recursive_fn_call(
-  p: NamedTuple, rho, r, polarized: bool, type: str, mo=None
+def call_functional(
+  p: NamedTuple,
+  rho: Callable,
+  r: jnp.ndarray,
+  polarized: bool,
+  mo: Optional[Callable] = None
 ):
+
+  def _invoke_single_functional(
+    p: NamedTuple,
+    rho: Callable,
+    r: jnp.ndarray,
+    polarized: bool,
+    mo: Optional[Callable] = None
+  ):
+    # raise error if p.maple_name is not in impl
+    if p.maple_name not in impl.__dict__:
+      raise ValueError(f"Functional {p.maple_name} not implemented")
+    impl_fn = getattr(impl, p.maple_name)
+    func = impl_fn.pol if polarized else impl_fn.unpol
+    return func(
+      *rho_to_arguments(rho, r, polarized, functional_name_to_type(p.name), mo),
+      params=p.params,
+      p=p
+    )
+
   # If it's hybrid functional
   if p.maple_name == "":
     return sum(
       [
-        recursive_fn_call(
-          fn_aux_p, rho, r, polarized, fn_name_to_type(fn_aux_p.name), mo
-        ) * mix_coef for fn_aux_p, mix_coef in zip(p.func_aux, p.mix_coef)
+        call_functional(fn_aux_p, rho, r, polarized, mo) * mix_coef
+        for fn_aux_p, mix_coef in zip(p.func_aux, p.mix_coef)
       ]
     )
   # If it's deorbitalized functional
   if p.maple_name == "DEORBITALIZE":
-    res = _single_fn_call(
-      p.func_aux[1], rho, r, polarized, fn_name_to_type(p.func_aux[1].name), mo
-    )
+    if len(p.func_aux) != 2:
+      raise ValueError("DEORBITALIZE must have two auxiliary functionals")
+    for fn_aux in p.func_aux:
+      if functional_name_to_type(fn_aux.name) != "mgga":
+        raise ValueError("deorbitalized functional must be mgga functional")
+
+    res = _invoke_single_functional(p.func_aux[1], rho, r, polarized, mo)
     fn_aux_p = p.func_aux[0]
+    # raise error if fn_aux_p.maple_name is not in impl
+    if fn_aux_p.maple_name not in impl.__dict__:
+      raise ValueError(f"Functional {fn_aux_p.maple_name} not implemented")
     impl_fn = getattr(impl, fn_aux_p.maple_name)
     fn_aux = impl_fn.pol if polarized else impl_fn.unpol
 
-    args = rho_to_arguments(
-      rho, r, polarized, fn_name_to_type(fn_aux_p.name), mo
-    )
+    args = rho_to_arguments(rho, r, polarized, "mgga", mo)
 
     # Modify tau of args
     if polarized:
@@ -195,5 +213,5 @@ def recursive_fn_call(
 
     return fn_aux(*args, params=fn_aux_p.params, p=fn_aux_p)
 
-  # If it's a normal functional
-  return _single_fn_call(p, rho, r, polarized, type, mo)
+  # If it's normal functional
+  return _invoke_single_functional(p, rho, r, polarized, mo)

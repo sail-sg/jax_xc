@@ -49,14 +49,7 @@ def main(_):
     if name == 'hyb_mgga_xc_b98':
       maple_name = 'mgga_xc_b98'
 
-    if name.startswith("lda") or name.startswith("hyb_lda"):
-      type = "lda"
-    elif name.startswith("gga") or name.startswith("hyb_gga"):
-      type = "gga"
-    elif name.startswith("mgga") or name.startswith("hyb_mgga"):
-      type = "mgga"
-
-    functionals.append((name, type, ext_params, maple_name))
+    functionals.append((name, ext_params, maple_name))
 
   with open(FLAGS.template, "r") as f:
     py_template = Template(f.read(), trim_blocks=True, lstrip_blocks=True)

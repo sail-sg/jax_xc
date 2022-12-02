@@ -2,20 +2,18 @@ import jax
 import jax.numpy as jnp
 import ctypes
 from collections import namedtuple
-from typing import Callable
+from typing import Callable, Optional
 from . import impl
-from .utils import get_p, rho_to_arguments, recursive_fn_call
+from .utils import get_p, rho_to_arguments, call_functional
 
-{% for name, type, ext_params, maple_name in functionals %}
+{% for name, ext_params, maple_name in functionals %}
 
 def {{ name }}(
   rho: Callable,
-{% if type == "mgga" %}
-  mo: Callable,
-{% endif %}
-  polarized: bool,
+  polarized: bool = True,
+  mo: Optional[Callable] = None,
 {% for param_name in ext_params.keys() %}
-  {{ param_name }}=None,
+  {{ param_name }}: Optional[float] = None,
 {% endfor %}
 ) -> Callable:
   """{{ name }} functional
@@ -23,17 +21,16 @@ def {{ name }}(
   Parameters
   ----------
   rho : Callable
-      if polarized, Density function R^3 -> R^2
-      if unpolarized, Density function R^3 -> R
-{% if type == "mgga" %}
-  mo : Callable
-      Molecular orbital function R^3 -> R^(2 x N)
-      N is the number of orbitals
-{% endif %}
+      If polarized, Density function R^3 -> R^2.
+      If unpolarized, Density function R^3 -> R.
   polarized : bool
-      Whether the calculation is polarized
+      Whether the calculation is polarized.
+  mo : Optional[Callable]
+      Molecular orbital function R^3 -> R^(2 x N)
+      N is the number of orbitals. Only needed for
+      mgga functionals.
 {% for param_name in ext_params.keys() %}
-  {{ param_name }} : float
+  {{ param_name }} : Optional[float]
       {{ param_name }} parameter
 {% endfor %}
   """
@@ -43,7 +40,7 @@ def {{ name }}(
   p = get_p("{{ name }}", polarized, {{ ext_params.keys()|join(', ') }})
 
   def _{{ name }}(r):
-    return recursive_fn_call(p, rho, r, polarized, "{{ type }}", {{ "mo" if type == "mgga" else "" }})
+    return call_functional(p, rho, r, polarized, mo)
   return _{{ name }}
 
 {% endfor %}
