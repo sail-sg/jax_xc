@@ -37,6 +37,11 @@ def post_process(py_code):
     # (r"e0", r""),
     # (r"e00", r""),
     (r"_(\d+)_", r"[\1]"),
+    # replace `or` with `jnp.logical_or`, we assume that it's wrapped in
+    # a function call and limited by ( and ,
+    (
+      r"my_piecewise3\((.*) or (.*?),", r"my_piecewise3(jnp.logical_or(\1, \2),"
+    ),
     # convert numerical value of pi to constant
     (r"0.31415926535897932385e1", r"jnp.pi"),
     (r"math.erf", r"jax.lax.erf"),
