@@ -13,12 +13,12 @@ stages:
 flake8:
   stage: lint
   script:
-    - flake8 maple2jax --count --show-source --statistics
+    - flake8 maple2jax tests --count --show-source --statistics
 
 yapf:
   stage: lint
   script:
-    - yapf -r -d maple2jax/
+    - yapf -r -d maple2jax/ tests/
 
 clang:
   stage: lint

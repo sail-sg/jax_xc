@@ -1,13 +1,10 @@
-import re
-import jax
+"""Test functionals."""
+
 import jax.numpy as jnp
 import pkgutil
-import ctypes
 from importlib import import_module
 
 import jax_xc
-import pylibxc
-from pylibxc import libxc
 
 names = [name for _, name, _ in pkgutil.iter_modules(jax_xc.__path__)]
 for name in names:
