@@ -6,8 +6,7 @@ from typing import Callable, Optional
 from . import impl
 from .utils import get_p, rho_to_arguments, call_functional
 
-{% for name, ext_params, maple_name, ext_params_descriptions in functionals %}
-
+{% for name, ext_params, maple_name, ext_params_descriptions, info, aux_info in functionals %}
 def {{ name }}(
   rho: Callable,
   polarized: bool = True,
@@ -16,8 +15,28 @@ def {{ name }}(
   {{ param_name }}: Optional[float] = None,
 {% endfor %}
 ) -> Callable:
-  r"""{{ name }} functional
+  r"""
+  {% for url, doi, ref in info %}
+  {{ ref }}
+  {% if url != "" %}
+  `{{ doi }} <{{ url }}>`_
+  {% else %}
+  {{ doi }}
+  {% endif %}
 
+  {% endfor %}
+  {% if aux_info != [] %}
+  Hybrid Functionals:
+
+  {% for fn_aux_name, mix_coef in aux_info %}
+    {% if maple_name == "DEORBITALIZE" %}
+    {{ fn_aux_name }} (Mixing Coefficient is meaningless for DEORBITALIZE functional)
+    {% else %}
+    {{ fn_aux_name }} (Mixing Coefficient: {{ mix_coef }})
+    {% endif %}
+
+  {% endfor %}
+  {% endif %}
   Parameters
   ----------
   rho : Callable
@@ -30,8 +49,8 @@ def {{ name }}(
       Molecular orbital function :math:`R^3 \rightarrow R^{2 \times N}`.
       :math:`N` is the number of orbitals. It is only needed for
       mgga functionals.
-{% for param_name, param_descrip in zip(ext_params.keys(), ext_params_descriptions) %}
-  {{ param_name }} : Optional[float]
+{% for (param_name, param_val), param_descrip in zip(ext_params.items(), ext_params_descriptions) %}
+  {{ param_name }} : Optional[float], default: {{ param_val }}
       {{ param_descrip }}
 {% endfor %}
   """

@@ -6,3 +6,6 @@ bazel-testlogs
 
 # python
 __pycache__
+
+# doc
+_build

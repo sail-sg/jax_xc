@@ -40,6 +40,22 @@ def main(_):
     func = pylibxc.LibXCFunctional(number, 1)
     ext_params = get_ext_params(func)
     ext_params_descriptions = func.get_ext_param_descriptions()
+
+    bibtexes = func.get_bibtex()
+    # find url = \{(.*?)\} in bibtex, adding |$ to set default to ""
+    urls = [re.findall(r"url = \{(.*?)\}|$", bibtex)[0] for bibtex in bibtexes]
+    # undo libxc escaping
+    urls = [re.sub(r"\\(.)", r"\1", url) for url in urls]
+    # escape < and > for rst url format
+    urls = [url.replace("<", r"\<").replace(">", r"\>") for url in urls]
+    dois = func.get_doi()
+    refs = func.get_references()
+    # merge urls, dois, refs into a list of tuples
+    info = [
+      (url.strip(), doi.strip(), ref.strip())
+      for url, doi, ref in zip(urls, dois, refs)
+    ]
+
     x = ctypes.cast(func.xc_func, ctypes.c_void_p)
     p = libxc.get_p(x.value)
     name = p["name"]
@@ -50,7 +66,12 @@ def main(_):
     if name == 'hyb_mgga_xc_b98':
       maple_name = 'mgga_xc_b98'
 
-    functionals.append((name, ext_params, maple_name, ext_params_descriptions))
+    aux_info = zip([fn_aux['name'] for fn_aux in p['func_aux']],
+                   p['mix_coef']) if 'func_aux' in p else []
+
+    functionals.append(
+      (name, ext_params, maple_name, ext_params_descriptions, info, aux_info)
+    )
 
   with open(FLAGS.template, "r") as f:
     py_template = Template(f.read(), trim_blocks=True, lstrip_blocks=True)
