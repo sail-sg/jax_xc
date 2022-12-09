@@ -13,19 +13,24 @@ stages:
 flake8:
   stage: lint
   script:
-    - flake8 maple2jax tests --count --show-source --statistics
+    - make flake8
 
 yapf:
   stage: lint
   script:
-    - yapf -r -d maple2jax/ tests/
+    - make py-format
 
 clang:
   stage: lint
   script:
-    - clang-format-11 --style=file -i maple2jax/libxc/*.cc maple2jax/libxc/*.h -n --Werror
+    - make clang-format
+
+cpplint:
+  stage: lint
+  script:
+    - make cpplint
 
 buildifier:
   stage: lint
   script:
-    - buildifier -r -lint=warn $(find . -type f -name "*BUILD" -o -name "*.bzl")
+    - make buildifier

@@ -1,5 +1,21 @@
-#ifndef REGISTER_H_
-#define REGISTER_H_
+/*
+ * Copyright 2022 Garena Online Private Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef MAPLE2JAX_LIBXC_REGISTER_H_
+#define MAPLE2JAX_LIBXC_REGISTER_H_
 
 #include <array>
 #include <iostream>
@@ -10,8 +26,8 @@
 #include "pybind11/numpy.h"
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
-#include "visit_struct.hpp"
-#include "xc.h"
+#include "visit_struct.hpp"  // NOLINT
+#include "xc.h"              // NOLINT
 
 namespace py = pybind11;
 
@@ -68,4 +84,4 @@ decltype(auto) ToNumpy(const T (&a)[N][M]) {
   static bool WORK##_registered = RegisterMaple( \
       const_cast<void*>(reinterpret_cast<const void*>(&WORK)), MAPLENAME);
 
-#endif  // REGISTER_H_
+#endif  // MAPLE2JAX_LIBXC_REGISTER_H_

@@ -36,7 +36,7 @@ extensions = [
   'sphinx.ext.mathjax',
 ]
 
-import jax_xc
+import jax_xc  # noqa: E402, F401
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
