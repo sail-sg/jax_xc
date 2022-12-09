@@ -1,6 +1,6 @@
 # base
 default:
-  image: registry.git.insea.io/sail/sail-engineering/golden-images/python_bazel_golden:latest
+  image: registry.git.insea.io/sail/aisci/image_registry/zhengkh/jax_xc:0.0.1
   before_script:
     - pip config unset global.index-url
     - pip config unset global.trusted-host
@@ -9,6 +9,7 @@ default:
 
 stages:
   - lint
+  - test
 
 flake8:
   stage: lint
@@ -34,3 +35,8 @@ buildifier:
   stage: lint
   script:
     - make buildifier
+
+test:
+  stage: test
+  script:
+    - bazel test --test_output=all --action_env=PATH=$PATH:$MAPLE_PATH --remote_cache=http://bazel-cache-http.ai.seacloud.garenanow.com //tests/...

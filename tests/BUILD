@@ -12,22 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("@rules_python//python:defs.bzl", "py_binary")
+load("@rules_python//python:defs.bzl", "py_test")
 
-py_binary(
-    name = "tmp",
-    srcs = ["tmp.py"],
+py_test(
+    name = "test_get_param",
+    srcs = ["test_get_param.py"],
     deps = [
-        "@libxc//pylibxc",
+        "@maple2jax//jax_xc",
     ],
 )
 
-py_binary(
-    name = "test_jax_xc",
-    testonly = 1,
-    srcs = ["test_jax_xc.py"],
+py_test(
+    name = "test_impl",
+    srcs = ["test_impl.py"],
     deps = [
-        "@libxc//pylibxc",
         "@maple2jax//jax_xc",
     ],
 )

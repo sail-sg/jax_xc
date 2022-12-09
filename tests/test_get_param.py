@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pylibxc
-from pylibxc import libxc
+from jax_xc import libxc as pylibxc
+from jax_xc.libxc import libxc
 from absl.testing import absltest, parameterized
 from absl import logging
 import numpy as np
