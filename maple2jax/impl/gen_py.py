@@ -27,10 +27,6 @@ flags.DEFINE_string("template", None, "template file")
 
 def get_additional_import(py_code):
   additional = []
-  if 'my_piecewise3' in py_code:
-    additional.append("my_piecewise3")
-  if 'my_piecewise5' in py_code:
-    additional.append("my_piecewise5")
   if 'Heaviside' in py_code:
     additional.append("Heaviside")
   if 'xc_E1_scaled' in py_code:
@@ -51,11 +47,6 @@ def post_process(py_code):
     # (r"e0", r""),
     # (r"e00", r""),
     (r"_(\d+)_", r"[\1]"),
-    # replace `or` with `jnp.logical_or`, we assume that it's wrapped in
-    # a function call and limited by ( and ,
-    (
-      r"my_piecewise3\((.*) or (.*?),", r"my_piecewise3(jnp.logical_or(\1, \2),"
-    ),
     # convert numerical value of pi to constant
     (r"0.31415926535897932385e1", r"jnp.pi"),
     (r"math.erf", r"jax.lax.erf"),
@@ -64,7 +55,7 @@ def post_process(py_code):
     ("math", "jnp"),
     ("atan", "arctan"),
     ("asinh", "arcsinh"),
-    ("DBL_EPSILON", f"{jnp.finfo(jnp.float64).eps}"),
+    ("DBL_EPSILON", f"{jnp.finfo(float).eps}"),
     # for Python
     ("lambda", "lambda_"),
   )

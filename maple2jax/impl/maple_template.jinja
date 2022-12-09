@@ -1,5 +1,9 @@
 Digits := 20:             (* constants will have 20 digits *)
 interface(warnlevel=0):   (* supress all warnings          *)
+local `or`:
+`or` := proc(a,b) :-`jnp.logical_or`(a, b) end proc:
+`my_piecewise3` := proc(a, b, c) :-`jnp.where`(a, b, c) end proc:
+`my_piecewise5` := proc(c1, x1, c2, x2, x3) :-`jnp.where`(c1, x1, `jnp.where`(c2, x2, x3)) end proc:
 
 with(CodeGeneration):
 
