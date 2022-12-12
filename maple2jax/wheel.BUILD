@@ -1,9 +1,23 @@
 load("@rules_python//python:packaging.bzl", "py_wheel")
+load("@python_abi//:abi.bzl", "abi_tag", "python_tag")
 
 py_wheel(
     name = "jax_xc_wheel",
+    abi = abi_tag(),
+    author = "Kunhao Zheng, Min Lin",
+    author_email = "zhengkh@sea.com, linmin@sea.com",
+    classifiers = [
+        "Topic :: Scientific/Engineering :: Chemistry",
+        "Programming Language :: Python :: 3",
+    ],
     distribution = "jax_xc",
-    python_tag = "py3",
+    platform = "manylinux_2_31_x86_64",
+    python_requires = ">=3.8",
+    python_tag = python_tag(),
+    requires = [
+        "jax",
+        "numpy",
+    ],
     version = "0.0.1",
     deps = [
         "@maple2jax//jax_xc",

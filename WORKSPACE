@@ -40,6 +40,13 @@ python_configure(
     python_version = "3",
 )
 
+load("//maple2jax:python.bzl", "declare_python_abi")
+
+declare_python_abi(
+    name = "python_abi",
+    python_version = "3",
+)
+
 load("//maple2jax:maple2jax.bzl", "maple2jax_repo")
 
 maple2jax_repo(name = "maple2jax")
