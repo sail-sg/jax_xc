@@ -100,7 +100,7 @@ bazel-clean: bazel-install
 # documentation
 
 addlicense: addlicense-install
-	addlicense -c $(COPYRIGHT) -l apache -y 2022 -check $(PROJECT_FOLDER)
+	addlicense -c $(COPYRIGHT) -l apache -y 2022 -ignore maple2jax/python.bzl -check $(PROJECT_FOLDER)
 
 docstyle: doc-install
 	pydocstyle $(PROJECT_NAME) && doc8 docs && cd docs && make html SPHINXOPTS="-W"
@@ -121,7 +121,7 @@ format: py-format-install clang-format-install buildifier-install addlicense-ins
 	yapf -ir $(PYTHON_FILES)
 	clang-format-11 -style=file -i $(CPP_FILES)
 	buildifier -r -lint=fix $(BAZEL_FILES)
-	addlicense -c $(COPYRIGHT) -l apache -y 2022 $(PROJECT_FOLDER)
+	addlicense -c $(COPYRIGHT) -l apache -y 2022 -ignore maple2jax/python.bzl $(PROJECT_FOLDER)
 
 # Build docker images
 
