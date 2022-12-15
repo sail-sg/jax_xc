@@ -24,6 +24,46 @@ from collections import namedtuple
 from typing import NamedTuple, Callable, Optional
 
 
+class HybridFunctional(Callable):
+  cam_alpha: float
+  cam_beta: float
+  cam_omega: float
+  nlc_b: float
+  nlc_C: float
+
+
+def add_hyb_params(p: NamedTuple) -> Callable[[Callable], HybridFunctional]:
+  """A decorator that adds the hybrid params to the function.
+
+  Parameters:
+  ----------
+  p : NamedTuple
+      The namedtuple containing the hybrid parameters
+
+  Returns:
+  -------
+  Callable
+      The decorated function
+  """
+
+  def decorator(func: Callable) -> HybridFunctional:
+    # fraction of full Hartree-Fock exchange, used both for
+    # usual hybrids as well as range-separated ones
+    func.cam_alpha = p.cam_alpha
+    # fraction of short-range only(!) exchange in
+    # range-separated hybrids
+    func.cam_beta = p.cam_beta
+    # the range separation constant
+    func.cam_omega = p.cam_omega
+    # Non-local correlation, b parameter
+    func.nlc_b = p.nlc_b
+    # Non-local correlation, C parameter
+    func.nlc_C = p.nlc_C
+    return func
+
+  return decorator
+
+
 def functional_name_to_type(fnl_name: str) -> str:
   """Converts a functional name to the type of functional it is.
 

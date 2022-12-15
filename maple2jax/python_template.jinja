@@ -4,7 +4,7 @@ import ctypes
 from collections import namedtuple
 from typing import Callable, Optional
 from . import impl
-from .utils import get_p, rho_to_arguments, call_functional
+from .utils import get_p, rho_to_arguments, call_functional, add_hyb_params
 
 {% for name, ext_params, maple_name, ext_params_descriptions, info, aux_info in functionals %}
 def {{ name }}(
@@ -58,7 +58,10 @@ def {{ name }}(
   {{ param_name }} = ({{ param_name }} or {{ value }})
 {% endfor %}
   p = get_p("{{ name }}", polarized, {{ ext_params.keys()|join(', ') }})
-
+  
+  {% if aux_info != [] %}
+  @add_hyb_params(p)
+  {% endif %}
   def _{{ name }}(r):
     return call_functional(p, rho, r, polarized, mo)
   return _{{ name }}

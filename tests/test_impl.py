@@ -23,7 +23,7 @@ import time
 
 from jax_xc import libxc as pylibxc
 from jax_xc.libxc import libxc
-from jax_xc import utils, impl
+from jax_xc import utils, impl, functionals
 
 config.update("jax_enable_x64", True)
 config.update("jax_debug_nans", True)
@@ -142,6 +142,33 @@ class _TestGetParams(parameterized.TestCase):
     )
     # absolute(res2_zk - res1_zk) <= (atol + rtol * absolute(res1_zk)
     np.testing.assert_allclose(res2_zk, res1_zk, rtol=THRESHOLD, atol=THRESHOLD)
+
+  @parameterized.parameters(
+    *pylibxc.util.xc_available_functional_numbers(),
+  )
+  def test_get_hyb_params(self, name):
+    func = pylibxc.LibXCFunctional(name, 1)
+    x = ctypes.cast(func.xc_func, ctypes.c_void_p)
+    p = libxc.get_p(x.value)
+    name = p['name']
+    if name in SKIP_LIST:
+      logging.info(f"Skipping {name} due to existing in SKIP_LIST")
+      return
+    if 'func_aux' not in p:
+      logging.info(f"Skipping {name} due to not hybrid functional")
+      return
+    impl_fn = getattr(functionals, name)
+    functional = impl_fn(lambda x: 1, False)
+    alpha = functional.cam_alpha
+    beta = functional.cam_beta
+    omega = functional.cam_omega
+    nlc_b = functional.nlc_b
+    nlc_C = functional.nlc_C
+    self.assertTrue(alpha is not None)
+    self.assertTrue(beta is not None)
+    self.assertTrue(omega is not None)
+    self.assertTrue(nlc_b is not None)
+    self.assertTrue(nlc_C is not None)
 
 
 if __name__ == "__main__":
