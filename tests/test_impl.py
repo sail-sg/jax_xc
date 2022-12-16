@@ -130,8 +130,7 @@ class _TestGetParams(parameterized.TestCase):
       # sigma should have: s0 + s2 - 2 * s1 >= 0
       # update slice of inputs[2 : 5, :] to 1 if
       # inputs[2] + inputs[4] - 2 * inputs[3] < 0
-      inputs = jax.ops.index_update(
-        inputs, jax.ops.index[2:5, :],
+      inputs = inputs.at[2:5, :].set(
         jnp.where(inputs[2] + inputs[4] - 2 * inputs[3] < 0, 1, inputs[2:5])
       )
 
