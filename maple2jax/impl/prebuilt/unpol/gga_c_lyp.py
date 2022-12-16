@@ -1,0 +1,24 @@
+t1 = r0 ** (0.1e1 / 0.3e1)
+t2 = 0.1e1 / t1
+t5 = 0.1e1 / (params_a_d * t2 + 0.1e1)
+t7 = math.exp(-params_a_c * t2)
+t9 = r0 ** 2
+t10 = t1 ** 2
+t12 = 0.1e1 / t10 / t9
+t16 = (params_a_d * t5 + params_a_c) * t2
+t20 = 3 ** (0.1e1 / 0.3e1)
+t21 = t20 ** 2
+t22 = math.pi ** 2
+t23 = t22 ** (0.1e1 / 0.3e1)
+t24 = t23 ** 2
+t26 = 0.1e1 <= p_a_zeta_threshold
+t27 = p_a_zeta_threshold ** 2
+t28 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
+t29 = t28 ** 2
+t31 = jnp.where(t26, t29 * t27, 1)
+t37 = t12 * t31
+t44 = jnp.where(t26, t29 * t27 * p_a_zeta_threshold, 1)
+t48 = 2 ** (0.1e1 / 0.3e1)
+t49 = t48 ** 2
+t53 = jnp.where(t26, t27, 1)
+res = params_a_a * (-t5 + params_a_b * t7 * t5 * (-s0 * t12 * (-0.1e1 / 0.72e2 - 0.7e1 / 0.72e2 * t16) - 0.3e1 / 0.10e2 * t21 * t24 * t31 + (0.5e1 / 0.2e1 - t16 / 0.18e2) * s0 * t37 / 0.8e1 + (t16 - 0.11e2) * s0 * t12 * t44 / 0.144e3 - t48 * (0.4e1 / 0.3e1 * s0 * t49 * t37 - t53 * s0 * t49 * t12 * t31 / 0.2e1) / 0.8e1))

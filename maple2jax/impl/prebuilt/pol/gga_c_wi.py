@@ -1,0 +1,17 @@
+t2 = s0 + 0.2e1 * s1 + s2
+t4 = r0 + r1
+t5 = t4 ** 2
+t6 = t4 ** (0.1e1 / 0.3e1)
+t7 = t6 ** 2
+t9 = 0.1e1 / t7 / t5
+t12 = math.exp(-params_a_k * t2 * t9)
+t16 = 3 ** (0.1e1 / 0.3e1)
+t18 = (0.1e1 / math.pi) ** (0.1e1 / 0.3e1)
+t20 = 4 ** (0.1e1 / 0.3e1)
+t21 = t20 ** 2
+t25 = t16 ** 2
+t26 = math.pi ** (0.1e1 / 0.3e1)
+t28 = math.sqrt(t2)
+t30 = t5 ** 2
+t36 = math.sqrt(t28 / t6 / t4)
+res = (params_a_b * t2 * t9 * t12 + params_a_a) / (params_a_c + t16 * t18 * t21 / t6 * (0.1e1 + params_a_d * t20 * t25 * t26 * t36 * t28 * t2 / t30 / 0.3e1) / 0.4e1)

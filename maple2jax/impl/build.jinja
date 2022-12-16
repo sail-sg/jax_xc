@@ -19,6 +19,7 @@ py_binary(
 )
 
 {% for name, maple_file in names_and_maple_files %}
+{% if not prebuilt %}
 genrule(
     name = "{{ name }}_maple_pol",
     outs = ["maple_pol/{{ name }}.mpl"],
@@ -58,6 +59,23 @@ genrule(
         ":maple_files",
     ],
 )
+{% else %}
+
+genrule(
+    name = "{{ name }}_pol",
+    srcs = ["@jax_xc//maple2jax/impl/prebuilt/pol:{{ name }}.py"],
+    outs = ["pol/{{ name }}.py"],
+    cmd = "cp $< $@",
+)
+
+genrule(
+    name = "{{ name }}_unpol",
+    srcs = ["@jax_xc//maple2jax/impl/prebuilt/unpol:{{ name }}.py"],
+    outs = ["unpol/{{ name }}.py"],
+    cmd = "cp $< $@",
+)
+
+{% endif %}
 
 genrule(
     name = "{{ name }}_gen_py",

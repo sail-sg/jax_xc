@@ -1,0 +1,74 @@
+t2 = 3 ** (0.1e1 / 0.3e1)
+t3 = t2 ** 2
+t4 = math.pi ** (0.1e1 / 0.3e1)
+t6 = t3 * t4 * math.pi
+t7 = r0 + r1
+t8 = 0.1e1 / t7
+t11 = 0.2e1 * r0 * t8 <= p_a_zeta_threshold
+t12 = p_a_zeta_threshold - 0.1e1
+t15 = 0.2e1 * r1 * t8 <= p_a_zeta_threshold
+t16 = -t12
+t18 = (r0 - r1) * t8
+t19 = jnp.where(t15, t16, t18)
+t20 = jnp.where(t11, t12, t19)
+t21 = 0.1e1 + t20
+t23 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
+t24 = t23 ** 2
+t25 = t24 * p_a_zeta_threshold
+t26 = t21 ** (0.1e1 / 0.3e1)
+t27 = t26 ** 2
+t29 = jnp.where(t21 <= p_a_zeta_threshold, t25, t27 * t21)
+t30 = t7 ** (0.1e1 / 0.3e1)
+t31 = t30 ** 2
+t33 = 6 ** (0.1e1 / 0.3e1)
+t34 = math.pi ** 2
+t35 = t34 ** (0.1e1 / 0.3e1)
+t36 = t35 ** 2
+t37 = 0.1e1 / t36
+t38 = t33 * t37
+t39 = r0 ** 2
+t40 = r0 ** (0.1e1 / 0.3e1)
+t41 = t40 ** 2
+t43 = 0.1e1 / t41 / t39
+t46 = 0.5e1 / 0.72e2 * t38 * s0 * t43
+t47 = params_a_csk_cp * t33
+t52 = params_a_csk_cq * t33
+t59 = t47 * t37 * s0 * t43 / 0.24e2 + t52 * t37 * l0 / t41 / r0 / 0.24e2 - t46
+t61 = math.log(0.1e1 - DBL_EPSILON)
+t62 = 0.1e1 / params_a_csk_a
+t63 = (-t61) ** (-t62)
+t65 = math.log(DBL_EPSILON)
+t66 = (-t65) ** (-t62)
+t67 = -t66 < t59
+t68 = jnp.where(t67, -t66, t59)
+t70 = jnp.where(-t63 < t68, t68, -t63)
+t71 = abs(t70)
+t72 = t71 ** params_a_csk_a
+t74 = math.exp(-0.1e1 / t72)
+t76 = (0.1e1 - t74) ** t62
+t77 = jnp.where(t67, 1, t76)
+t78 = jnp.where(t59 < -t63, 0, t77)
+t84 = jnp.where(r0 <= p_a_dens_threshold, 0, 0.3e1 / 0.20e2 * t6 * t29 * t31 * (t59 * t78 + t46 + 0.1e1))
+t86 = jnp.where(t11, t16, -t18)
+t87 = jnp.where(t15, t12, t86)
+t88 = 0.1e1 + t87
+t90 = t88 ** (0.1e1 / 0.3e1)
+t91 = t90 ** 2
+t93 = jnp.where(t88 <= p_a_zeta_threshold, t25, t91 * t88)
+t95 = r1 ** 2
+t96 = r1 ** (0.1e1 / 0.3e1)
+t97 = t96 ** 2
+t99 = 0.1e1 / t97 / t95
+t102 = 0.5e1 / 0.72e2 * t38 * s2 * t99
+t113 = t47 * t37 * s2 * t99 / 0.24e2 + t52 * t37 * l1 / t97 / r1 / 0.24e2 - t102
+t115 = -t66 < t113
+t116 = jnp.where(t115, -t66, t113)
+t118 = jnp.where(-t63 < t116, t116, -t63)
+t119 = abs(t118)
+t120 = t119 ** params_a_csk_a
+t122 = math.exp(-0.1e1 / t120)
+t124 = (0.1e1 - t122) ** t62
+t125 = jnp.where(t115, 1, t124)
+t126 = jnp.where(t113 < -t63, 0, t125)
+t132 = jnp.where(r1 <= p_a_dens_threshold, 0, 0.3e1 / 0.20e2 * t6 * t93 * t31 * (t113 * t126 + t102 + 0.1e1))
+res = t84 + t132

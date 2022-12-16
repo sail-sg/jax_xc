@@ -1,0 +1,10 @@
+t1 = r0 + r1
+t2 = t1 ** (0.1e1 / 0.3e1)
+t8 = 2 ** (0.1e1 / 0.3e1)
+t9 = 6 ** (0.1e1 / 0.3e1)
+t10 = t9 ** 2
+t12 = math.pi ** 2
+t13 = t12 ** (0.1e1 / 0.3e1)
+t17 = math.sqrt(s0 + 0.2e1 * s1 + s2)
+t26 = math.exp(-params_a_c4 * (t8 * t10 / t13 * t17 / t2 / t1 / 0.12e2 - params_a_c5))
+res = params_a_c1 / (0.1e1 + params_a_c2 / t2) * (0.1e1 - params_a_c3 / (0.1e1 + t26))

@@ -1,0 +1,21 @@
+t1 = params_a_a[0]
+t3 = 3 ** (0.1e1 / 0.3e1)
+t6 = (0.1e1 / math.pi) ** (0.1e1 / 0.3e1)
+t7 = 4 ** (0.1e1 / 0.3e1)
+t8 = t7 ** 2
+t10 = r0 ** (0.1e1 / 0.3e1)
+t11 = 0.1e1 / t10
+t12 = t6 * t8 * t11
+t21 = t3 * t6 * t8 * t11
+t22 = math.sqrt(t21)
+t30 = t21 ** 0.15e1
+t34 = t21 / 0.4e1
+t37 = t34 ** (params_a_pp[0] + 0.1e1)
+t44 = math.log(0.1e1 + 0.1e1 / t1 / (params_a_beta1[0] * t22 / 0.2e1 + params_a_beta2[0] * t3 * t12 / 0.4e1 + 0.12500000000000000000e0 * params_a_beta3[0] * t30 + params_a_beta4[0] * t37) / 0.2e1)
+t47 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
+t49 = jnp.where(0.1e1 <= p_a_zeta_threshold, t47 * p_a_zeta_threshold, 1)
+t52 = 2 ** (0.1e1 / 0.3e1)
+t57 = params_a_a[2]
+t78 = t34 ** (params_a_pp[2] + 0.1e1)
+t85 = math.log(0.1e1 + 0.1e1 / t57 / (params_a_beta1[2] * t22 / 0.2e1 + params_a_beta2[2] * t3 * t12 / 0.4e1 + 0.12500000000000000000e0 * params_a_beta3[2] * t30 + params_a_beta4[2] * t78) / 0.2e1)
+res = -0.2e1 * t1 * (0.1e1 + params_a_alpha1[0] * t3 * t12 / 0.4e1) * t44 + 0.2e1 * (0.2e1 * t49 - 0.2e1) / (0.2e1 * t52 - 0.2e1) * t57 * (0.1e1 + params_a_alpha1[2] * t3 * t12 / 0.4e1) * t85 / params_a_fz20

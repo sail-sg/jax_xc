@@ -1,0 +1,26 @@
+t2 = 2 ** (0.1e1 / 0.6e1)
+t3 = t2 ** 2
+t4 = t3 ** 2
+t7 = r0 ** (0.1e1 / 0.6e1)
+t8 = t7 * r0
+t12 = 2 ** (0.1e1 / 0.3e1)
+t13 = t12 ** 2
+t15 = r0 ** (0.1e1 / 0.3e1)
+t20 = math.sqrt(0.2e1)
+t22 = math.sqrt(r0)
+t23 = t22 * r0
+t28 = t15 ** 2
+t29 = t28 * r0
+t34 = math.sqrt(s0)
+t36 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
+t38 = jnp.where(0.1e1 <= p_a_zeta_threshold, t36 * p_a_zeta_threshold, 1)
+t64 = t38 ** 2
+t70 = 0.1e1 / r0
+t77 = t7 ** 2
+t78 = t77 ** 2
+t79 = t78 * t7
+t93 = r0 ** 2
+t96 = s0 / t28 / t93
+t98 = t96 * t64 - t96
+t119 = params_a_omega[0] * t4 * t2 * t8 / 0.2e1 + params_a_omega[1] * t13 * t15 * r0 / 0.2e1 + params_a_omega[2] * t20 * t23 / 0.2e1 + params_a_omega[3] * t12 * t29 / 0.2e1 + params_a_omega[4] * t13 * t34 * t38 / 0.4e1 + params_a_omega[5] * t20 * t7 * t34 * t38 / 0.4e1 + params_a_omega[6] * t12 * t15 * t34 * t38 / 0.4e1 + params_a_omega[7] * t2 * t22 * t34 * t38 / 0.4e1 + params_a_omega[8] * t20 / t8 * s0 * t64 / 0.8e1 + params_a_omega[9] * t12 * t70 * s0 * t64 / 0.8e1 + params_a_omega[10] * t2 / t79 * s0 * t64 / 0.8e1 + params_a_omega[11] / t28 * s0 * t64 / 0.8e1 + params_a_omega[12] * t20 * t23 * t98 / 0.2e1 + params_a_omega[13] * t12 * t29 * t98 / 0.2e1 + params_a_omega[14] * t2 * t79 * r0 * t98 / 0.2e1 + params_a_omega[15] * t93 * t98 / 0.2e1 + params_a_omega[20] * r0
+res = t119 * t70

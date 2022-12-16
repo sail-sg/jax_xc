@@ -1,0 +1,51 @@
+t3 = 3 ** (0.1e1 / 0.3e1)
+t4 = math.pi ** (0.1e1 / 0.3e1)
+t7 = 0.1e1 <= p_a_zeta_threshold
+t8 = p_a_zeta_threshold - 0.1e1
+t10 = jnp.where(t7, -t8, 0)
+t11 = jnp.where(t7, t8, t10)
+t12 = 0.1e1 + t11
+t14 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
+t16 = t12 ** (0.1e1 / 0.3e1)
+t18 = jnp.where(t12 <= p_a_zeta_threshold, t14 * p_a_zeta_threshold, t16 * t12)
+t20 = r0 ** (0.1e1 / 0.3e1)
+t21 = 6 ** (0.1e1 / 0.3e1)
+t22 = math.pi ** 2
+t23 = t22 ** (0.1e1 / 0.3e1)
+t24 = t23 ** 2
+t25 = 0.1e1 / t24
+t27 = 2 ** (0.1e1 / 0.3e1)
+t28 = t27 ** 2
+t30 = r0 ** 2
+t31 = t20 ** 2
+t34 = s0 * t28 / t31 / t30
+t39 = 0.100e3 / 0.6561e4 / params_a_k1 - 0.73e2 / 0.648e3
+t40 = t21 ** 2
+t45 = s0 ** 2
+t47 = t30 ** 2
+t55 = math.exp(-0.27e2 / 0.80e2 * t39 * t21 * t25 * t34)
+t60 = math.sqrt(0.146e3)
+t73 = 0.5e1 / 0.9e1 * (tau0 * t28 / t31 / r0 - t34 / 0.8e1) * t21 * t25
+t74 = 0.1e1 - t73
+t76 = t74 ** 2
+t78 = math.exp(-t76 / 0.2e1)
+t82 = (0.7e1 / 0.12960e5 * t60 * t21 * t25 * t34 + t60 * t74 * t78 / 0.100e3) ** 2
+t90 = math.log(DBL_EPSILON)
+t93 = t90 / (-t90 + params_a_c1)
+t96 = jnp.where(t73 < -t93, t73, -t93)
+t101 = math.exp(-params_a_c1 * t96 / (0.1e1 - t96))
+t102 = jnp.where(-t93 < t73, 0, t101)
+t103 = abs(params_a_d)
+t106 = math.log(DBL_EPSILON / t103)
+t109 = (-t106 + params_a_c2) / t106
+t110 = t73 < -t109
+t111 = jnp.where(t110, -t109, t73)
+t115 = math.exp(params_a_c2 / (0.1e1 - t111))
+t117 = jnp.where(t110, 0, -params_a_d * t115)
+t118 = jnp.where(t73 <= 0.1e1, t102, t117)
+t124 = math.sqrt(0.3e1)
+t127 = math.sqrt(s0)
+t133 = math.sqrt(t40 / t23 * t127 * t27 / t20 / r0)
+t137 = math.exp(-0.98958000000000000000e1 * t124 / t133)
+t142 = jnp.where(r0 / 0.2e1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t3 / t4 * t18 * t20 * ((0.1e1 + params_a_k1 * (0.1e1 - params_a_k1 / (params_a_k1 + 0.5e1 / 0.972e3 * t21 * t25 * t34 + t39 * t40 / t23 / t22 * t45 * t27 / t20 / t47 / r0 * t55 / 0.288e3 + t82))) * (0.1e1 - t118) + 0.1174e1 * t118) * (0.1e1 - t137))
+res = 0.2e1 * t142

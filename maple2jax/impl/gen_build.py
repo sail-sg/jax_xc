@@ -34,9 +34,12 @@ def main(_):
       maple_file = f"{folder}/{name}.mpl"
       names_and_maple_files.append((name, maple_file))
 
+  prebuilt = (os.environ.get("GITHUB_ACTIONS") is not None)
   with open(FLAGS.template, "r") as f:
     template = Template(f.read(), trim_blocks=True, lstrip_blocks=True)
-    build = template.render(names_and_maple_files=names_and_maple_files)
+    build = template.render(
+      names_and_maple_files=names_and_maple_files, prebuilt=prebuilt
+    )
     with open(FLAGS.build, "w") as out:
       out.write(build)
 

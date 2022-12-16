@@ -1,0 +1,75 @@
+t2 = 3 ** (0.1e1 / 0.3e1)
+t3 = math.pi ** (0.1e1 / 0.3e1)
+t5 = t2 / t3
+t6 = r0 + r1
+t7 = 0.1e1 / t6
+t10 = 0.2e1 * r0 * t7 <= p_a_zeta_threshold
+t11 = p_a_zeta_threshold - 0.1e1
+t14 = 0.2e1 * r1 * t7 <= p_a_zeta_threshold
+t15 = -t11
+t17 = (r0 - r1) * t7
+t18 = jnp.where(t14, t15, t17)
+t19 = jnp.where(t10, t11, t18)
+t20 = 0.1e1 + t19
+t22 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
+t23 = t22 * p_a_zeta_threshold
+t24 = t20 ** (0.1e1 / 0.3e1)
+t26 = jnp.where(t20 <= p_a_zeta_threshold, t23, t24 * t20)
+t27 = t6 ** (0.1e1 / 0.3e1)
+t29 = 6 ** (0.1e1 / 0.3e1)
+t30 = params_a_alpha * t29
+t31 = math.pi ** 2
+t32 = t31 ** (0.1e1 / 0.3e1)
+t33 = t32 ** 2
+t34 = 0.1e1 / t33
+t35 = t30 * t34
+t36 = r0 ** 2
+t37 = r0 ** (0.1e1 / 0.3e1)
+t38 = t37 ** 2
+t40 = 0.1e1 / t38 / t36
+t42 = t34 * s0
+t43 = t42 * t40
+t47 = 0.1e1 / (0.1e1 + t30 * t43 / 0.24e2)
+t53 = params_a_c * t29
+t57 = t29 ** 2
+t58 = params_a_c * t57
+t59 = 0.1e1 / t32
+t60 = math.sqrt(s0)
+t63 = 0.1e1 / t37 / r0
+t67 = t2 ** 2
+t68 = 0.1e1 / math.pi * t67
+t69 = 2 ** (0.1e1 / 0.3e1)
+t70 = math.sqrt(0.12e2)
+t71 = t57 * t59
+t73 = t71 * t60 * t63
+t74 = math.sqrt(t73)
+t77 = math.sqrt(0.6e1)
+t80 = scipy.special.lambertw(t70 * t74 * t73 * t77 / 0.1728e4)
+t81 = t80 ** (0.1e1 / 0.3e1)
+t82 = t81 ** 2
+t84 = t69 ** 2
+t85 = t2 * t84
+t90 = (0.2823705740248932030511071641312341561894e2 + 0.3e1 / 0.4e1 * t85 * t81 * t80) ** (0.1e1 / 0.4e1)
+t105 = jnp.where(r0 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t26 * t27 * (0.1e1 - t35 * s0 * t40 * t47 / 0.24e2 + t30 * t42 * t40 * t47 * (0.1e1 + t53 * t43 / 0.24e2) / (0.1e1 + t58 * t59 * t60 * t63 * t68 * t69 * t82 * t90 / 0.8e1) / 0.24e2))
+t107 = jnp.where(t10, t15, -t17)
+t108 = jnp.where(t14, t11, t107)
+t109 = 0.1e1 + t108
+t111 = t109 ** (0.1e1 / 0.3e1)
+t113 = jnp.where(t109 <= p_a_zeta_threshold, t23, t111 * t109)
+t115 = r1 ** 2
+t116 = r1 ** (0.1e1 / 0.3e1)
+t117 = t116 ** 2
+t119 = 0.1e1 / t117 / t115
+t121 = t34 * s2
+t122 = t121 * t119
+t126 = 0.1e1 / (0.1e1 + t30 * t122 / 0.24e2)
+t135 = math.sqrt(s2)
+t138 = 0.1e1 / t116 / r1
+t142 = t71 * t135 * t138
+t143 = math.sqrt(t142)
+t148 = scipy.special.lambertw(t70 * t143 * t142 * t77 / 0.1728e4)
+t149 = t148 ** (0.1e1 / 0.3e1)
+t150 = t149 ** 2
+t156 = (0.2823705740248932030511071641312341561894e2 + 0.3e1 / 0.4e1 * t85 * t149 * t148) ** (0.1e1 / 0.4e1)
+t171 = jnp.where(r1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t113 * t27 * (0.1e1 - t35 * s2 * t119 * t126 / 0.24e2 + t30 * t121 * t119 * t126 * (0.1e1 + t53 * t122 / 0.24e2) / (0.1e1 + t58 * t59 * t135 * t138 * t68 * t69 * t150 * t156 / 0.8e1) / 0.24e2))
+res = t105 + t171

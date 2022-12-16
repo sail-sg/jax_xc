@@ -1,0 +1,15 @@
+t1 = 3 ** (0.1e1 / 0.3e1)
+t4 = (0.1e1 / math.pi) ** (0.1e1 / 0.3e1)
+t5 = 4 ** (0.1e1 / 0.3e1)
+t6 = t5 ** 2
+t10 = math.sqrt(s0)
+t11 = r0 ** (0.1e1 / 0.3e1)
+t13 = 0.1e1 / t11 / r0
+t14 = t10 * t13
+t17 = r0 ** 2
+t18 = t11 ** 2
+t23 = params_a_gamma * t10 * t13
+t24 = math.asinh(t23)
+t33 = math.log(0.2e1 * t23)
+t37 = jnp.where(t14 < 0.300e3, params_a_beta * s0 / t18 / t17 / (0.3e1 * params_a_beta * t10 * t13 * t24 + 0.1e1), t14 / t33 / 0.3e1)
+res = (-params_a_alpha * t1 * t4 * t6 / 0.2e1 - t37) * t11

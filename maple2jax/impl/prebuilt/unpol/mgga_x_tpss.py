@@ -1,0 +1,47 @@
+t3 = 3 ** (0.1e1 / 0.3e1)
+t4 = math.pi ** (0.1e1 / 0.3e1)
+t7 = 0.1e1 <= p_a_zeta_threshold
+t8 = p_a_zeta_threshold - 0.1e1
+t10 = jnp.where(t7, -t8, 0)
+t11 = jnp.where(t7, t8, t10)
+t12 = 0.1e1 + t11
+t14 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
+t16 = t12 ** (0.1e1 / 0.3e1)
+t18 = jnp.where(t12 <= p_a_zeta_threshold, t14 * p_a_zeta_threshold, t16 * t12)
+t19 = r0 ** (0.1e1 / 0.3e1)
+t21 = 0.1e1 / r0
+t23 = 0.1e1 / tau0
+t31 = (s0 * t21 * t23 / 0.8e1) ** (params_a_BLOC_a + params_a_BLOC_b * s0 * t21 * t23 / 0.8e1)
+t33 = s0 ** 2
+t34 = r0 ** 2
+t35 = 0.1e1 / t34
+t37 = tau0 ** 2
+t38 = 0.1e1 / t37
+t39 = t33 * t35 * t38
+t42 = (0.1e1 + t39 / 0.64e2) ** 2
+t46 = 6 ** (0.1e1 / 0.3e1)
+t48 = math.pi ** 2
+t49 = t48 ** (0.1e1 / 0.3e1)
+t50 = t49 ** 2
+t51 = 0.1e1 / t50
+t53 = 2 ** (0.1e1 / 0.3e1)
+t54 = t53 ** 2
+t56 = t19 ** 2
+t59 = s0 * t54 / t56 / t34
+t67 = tau0 * t54 / t56 / r0 - t59 / 0.8e1
+t71 = 0.5e1 / 0.9e1 * t67 * t46 * t51 - 0.1e1
+t73 = t46 * t51
+t78 = math.sqrt(0.5e1 * params_a_b * t67 * t73 * t71 + 0.9e1)
+t84 = 0.27e2 / 0.20e2 * t71 / t78 + t73 * t59 / 0.36e2
+t85 = t84 ** 2
+t88 = t46 ** 2
+t90 = 0.1e1 / t49 / t48
+t93 = t34 ** 2
+t97 = t33 * t53 / t19 / t93 / r0
+t101 = math.sqrt(0.100e3 * t88 * t90 * t97 + 0.162e3 * t39)
+t109 = math.sqrt(params_a_e)
+t115 = t48 ** 2
+t119 = t93 ** 2
+t130 = (0.1e1 + t109 * t46 * t51 * t59 / 0.24e2) ** 2
+t142 = jnp.where(r0 / 0.2e1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t3 / t4 * t18 * t19 * (0.1e1 + params_a_kappa * (0.1e1 - params_a_kappa / (params_a_kappa + ((0.10e2 / 0.81e2 + params_a_c * t31 / t42) * t46 * t51 * t59 / 0.24e2 + 0.146e3 / 0.2025e4 * t85 - 0.73e2 / 0.97200e5 * t84 * t101 + 0.25e2 / 0.472392e6 / params_a_kappa * t88 * t90 * t97 + t109 * t33 * t35 * t38 / 0.720e3 + params_a_e * params_a_mu / t115 * t33 * s0 / t119 / 0.576e3) / t130))))
+res = 0.2e1 * t142

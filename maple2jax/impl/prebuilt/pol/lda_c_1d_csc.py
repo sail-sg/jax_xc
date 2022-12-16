@@ -1,0 +1,16 @@
+t1 = r0 + r1
+t2 = 0.1e1 / t1
+t3 = t2 / 0.2e1
+t5 = t1 ** 2
+t6 = 0.1e1 / t5
+t15 = t3 ** params_a_para[9]
+t18 = math.log(0.1e1 + params_a_para[7] * t2 / 0.2e1 + params_a_para[8] * t15)
+t26 = t3 ** params_a_para[5]
+t31 = t3 ** params_a_para[6]
+t36 = (t3 + params_a_para[4] * t6 / 0.4e1) * t18 / (params_a_para[1] * t2 + 0.2e1 * params_a_para[2] * t26 + 0.2e1 * params_a_para[3] * t31 + 0.2e1 * params_a_para[0])
+t46 = t3 ** params_a_ferro[9]
+t49 = math.log(0.1e1 + params_a_ferro[7] * t2 / 0.2e1 + params_a_ferro[8] * t46)
+t57 = t3 ** params_a_ferro[5]
+t62 = t3 ** params_a_ferro[6]
+t70 = (r0 - r1) ** 2
+res = -t36 + (-(t3 + params_a_ferro[4] * t6 / 0.4e1) * t49 / (params_a_ferro[1] * t2 + 0.2e1 * params_a_ferro[2] * t57 + 0.2e1 * params_a_ferro[3] * t62 + 0.2e1 * params_a_ferro[0]) + t36) * t70 * t6

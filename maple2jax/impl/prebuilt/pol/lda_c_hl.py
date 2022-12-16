@@ -1,0 +1,36 @@
+t2 = 0.1e1 / math.pi
+t3 = r0 + r1
+t4 = 0.1e1 / t3
+t5 = t2 * t4
+t6 = params_a_hl_r[0]
+t7 = t6 ** 2
+t13 = 3 ** (0.1e1 / 0.3e1)
+t14 = t13 ** 2
+t15 = t2 ** (0.1e1 / 0.3e1)
+t17 = t14 / t15
+t18 = 4 ** (0.1e1 / 0.3e1)
+t19 = t3 ** (0.1e1 / 0.3e1)
+t20 = t18 * t19
+t25 = math.log(0.1e1 + t17 * t20 * t6 / 0.3e1)
+t27 = t15 ** 2
+t28 = t14 * t27
+t29 = t19 ** 2
+t31 = t18 / t29
+t36 = t13 * t15
+t37 = t18 ** 2
+t39 = t37 / t19
+t45 = params_a_hl_c[0] * ((0.1e1 + 0.3e1 / 0.4e1 * t5 / t7 / t6) * t25 - t28 * t31 / t7 / 0.4e1 + t36 * t39 / t6 / 0.8e1 - 0.1e1 / 0.3e1)
+t47 = (r0 - r1) * t4
+t48 = 0.1e1 + t47
+t50 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
+t51 = t50 * p_a_zeta_threshold
+t52 = t48 ** (0.1e1 / 0.3e1)
+t54 = jnp.where(t48 <= p_a_zeta_threshold, t51, t52 * t48)
+t55 = 0.1e1 - t47
+t57 = t55 ** (0.1e1 / 0.3e1)
+t59 = jnp.where(t55 <= p_a_zeta_threshold, t51, t57 * t55)
+t61 = 2 ** (0.1e1 / 0.3e1)
+t67 = params_a_hl_r[1]
+t68 = t67 ** 2
+t78 = math.log(0.1e1 + t17 * t20 * t67 / 0.3e1)
+res = -t45 + (t54 + t59 - 0.2e1) / (0.2e1 * t61 - 0.2e1) * (-params_a_hl_c[1] * ((0.1e1 + 0.3e1 / 0.4e1 * t5 / t68 / t67) * t78 - t28 * t31 / t68 / 0.4e1 + t36 * t39 / t67 / 0.8e1 - 0.1e1 / 0.3e1) + t45)

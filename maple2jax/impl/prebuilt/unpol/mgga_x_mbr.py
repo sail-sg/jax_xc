@@ -1,0 +1,39 @@
+t3 = 0.1e1 <= p_a_zeta_threshold
+t4 = p_a_zeta_threshold - 0.1e1
+t6 = jnp.where(t3, -t4, 0)
+t7 = jnp.where(t3, t4, t6)
+t8 = 0.1e1 + t7
+t10 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
+t12 = t8 ** (0.1e1 / 0.3e1)
+t14 = jnp.where(t8 <= p_a_zeta_threshold, t10 * p_a_zeta_threshold, t12 * t8)
+t15 = r0 ** (0.1e1 / 0.3e1)
+t18 = (0.1e1 / math.pi) ** (0.1e1 / 0.3e1)
+t21 = 4 ** (0.1e1 / 0.3e1)
+t22 = params_a_lambda ** 2
+t24 = 2 ** (0.1e1 / 0.3e1)
+t25 = t24 ** 2
+t27 = t15 ** 2
+t31 = 0.2e1 * tau0 * t25 / t27 / r0
+t32 = 6 ** (0.1e1 / 0.3e1)
+t33 = t32 ** 2
+t34 = math.pi ** 2
+t35 = t34 ** (0.1e1 / 0.3e1)
+t36 = t35 ** 2
+t37 = t33 * t36
+t40 = r0 ** 2
+t42 = 0.1e1 / t27 / t40
+t43 = s0 * t25 * t42
+t49 = (0.2e1 * params_a_lambda - 0.1e1) ** 2
+t55 = t49 ** 2
+t60 = s0 ** 2
+t62 = t40 ** 2
+t71 = (0.1e1 + 0.175e3 / 0.162e3 * t49 * t32 / t36 * t43 + params_a_beta * t55 * t33 / t35 / t34 * t60 * t24 / t15 / t62 / r0 / 0.288e3) ** (0.1e1 / 0.5e1)
+t82 = (t22 - params_a_lambda + 0.1e1 / 0.2e1) * (t31 - 0.3e1 / 0.5e1 * t37 - t43 / 0.36e2) + t37 * (t71 - 0.1e1) / 0.5e1 - params_a_gamma * (t31 - t49 * s0 * t25 * t42 / 0.4e1) / 0.3e1
+t83 = abs(t82)
+t86 = jnp.where(0.0e0 < t82, 0.50e-12, -0.50e-12)
+t87 = jnp.where(t83 < 0.50e-12, t86, t82)
+t88 = br89_x(t87)
+t90 = math.exp(t88 / 0.3e1)
+t92 = math.exp(-t88)
+t102 = jnp.where(r0 / 0.2e1 <= p_a_dens_threshold, 0, -t14 * t15 / t18 * t21 * t90 * (0.1e1 - t92 * (0.1e1 + t88 / 0.2e1)) / t88 / 0.4e1)
+res = 0.2e1 * t102
