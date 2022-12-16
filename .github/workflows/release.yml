@@ -23,7 +23,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Setup Python-${{ matrix.python-version }} and Build
       run: |
-        eval "$(pyenv init -)" && pyenv global ${{ matrix.python-version }}-dev && bazel build @maple2jax//:jax_xc_wheel
+        eval "$(pyenv init -)" && pyenv global ${{ matrix.python-version }}-dev && bazel build --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @maple2jax//:jax_xc_wheel
     - name: Upload artifact
       uses: actions/upload-artifact@main
       with:
