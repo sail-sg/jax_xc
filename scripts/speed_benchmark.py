@@ -7,8 +7,6 @@ import ctypes
 import time
 import jax.numpy as jnp
 from jax.config import config
-import absl
-from absl.testing import absltest, parameterized
 from absl import logging
 import numpy as np
 import pandas as pd
@@ -130,14 +128,14 @@ def test_speed(batch):
       impl_fn = jax.jit(impl_fn)
 
       start_time = time.time()
-      res2_zk = impl_fn(*input_args)
+      res2_zk = impl_fn(*input_args)  # noqa: F841
       end_time = time.time()
       logging.debug(
         f"jax_xc {name} took {end_time - start_time} compilation seconds"
       )
       jaxxc_compile_time.append(end_time - start_time)
 
-      res2_zk = impl_fn(*input_args)
+      res2_zk = impl_fn(*input_args)  # noqa: F841
       snd_end_time = time.time()
       logging.debug(
         f"jax_xc {name} took {snd_end_time - end_time} execution seconds"
@@ -145,7 +143,7 @@ def test_speed(batch):
       jaxxc_time.append(snd_end_time - end_time)
 
       start_time = time.time()
-      res1 = func.compute(libxc_input_args)
+      res1 = func.compute(libxc_input_args)  # noqa: F841
       end_time = time.time()
       logging.debug(f"pylibxc {name} took {end_time - start_time} seconds")
       libxc_time.append(end_time - start_time)
@@ -159,7 +157,7 @@ def test_speed(batch):
     )
     logging.info(f"jax_xc took {np.mean(jaxxc_time)} execution seconds")
     logging.info(
-      f"jax_xc is {np.mean(libxc_time) / np.mean(jaxxc_time)} times faster than pylibxc"
+      f"jax_xc is {np.mean(libxc_time) / np.mean(jaxxc_time)} times faster"
     )
     df = pd.DataFrame(
       {
