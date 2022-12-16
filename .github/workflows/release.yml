@@ -1,0 +1,31 @@
+# Action name
+name: Release Wheel
+
+on:
+  push
+
+jobs:
+  release:
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8', '3.9', '3.10']
+    container:
+      image: ghcr.io/mavenlin/release:latest
+      credentials:
+        username: mavenlin
+        password: ${{ secrets.DOCKER }}
+    steps:
+    - name: Cancel previous run
+      uses: styfle/cancel-workflow-action@0.9.1
+      with:
+        access_token: ${{ github.token }}
+    - uses: actions/checkout@v2
+    - name: Setup Python-${{ matrix.python-version }} and Build
+      run: |
+        eval "$(pyenv init -)" && pyenv global ${{ matrix.python-version }}-dev && bazel build @maple2jax//:jax_xc_wheel
+    - name: Upload artifact
+      uses: actions/upload-artifact@main
+      with:
+        name: wheel
+        path: bazel-bin/external/maple2jax/
