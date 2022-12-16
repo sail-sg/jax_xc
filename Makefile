@@ -1,7 +1,7 @@
 SHELL          = /bin/bash
 PROJECT_NAME   = jax_xc
 PROJECT_FOLDER = maple2jax tests third_party
-PYTHON_FILES   = $(shell find . -type f -name "*.py")
+PYTHON_FILES   = $(shell find . -type f -name "*.py" -not -path "./maple2jax/impl/prebuilt/**/*")
 CPP_FILES      = $(shell find maple2jax -type f -name "*.h" -o -name "*.cc")
 BAZEL_FILES    = $(shell find . -type f -name "*BUILD" -o -name "*.bzl")
 COMMIT_HASH    = $(shell git log -1 --format=%h)
