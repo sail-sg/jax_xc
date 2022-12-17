@@ -2,7 +2,9 @@
 name: Release Wheel
 
 on:
-  push
+  push:
+    branches:
+      - main
 
 jobs:
   release:
