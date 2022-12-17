@@ -61,7 +61,7 @@ SKIP_LIST = [
 ]
 
 
-class _TestGetParams(parameterized.TestCase):
+class _TestImpl(parameterized.TestCase):
 
   @parameterized.parameters(
     *(pylibxc.util.xc_available_functional_names()),
@@ -140,24 +140,9 @@ class _TestGetParams(parameterized.TestCase):
         inputs, impl_fn, fn_type, p, polarized
       )
       impl_fn = jax.jit(impl_fn)
-
-      start_time = time.time()
       res2_zk = impl_fn(*input_args)
-      end_time = time.time()
-      logging.info(
-        f"jax_xc {name} took {end_time - start_time} compilation seconds"
-      )
-      end_time = time.time()
-      res2_zk = impl_fn(*input_args)
-      snd_end_time = time.time()
-      logging.info(
-        f"jax_xc {name} took {snd_end_time - end_time} execution seconds"
-      )
 
-      start_time = time.time()
       res1 = func.compute(libxc_input_args)
-      end_time = time.time()
-      logging.info(f"pylibxc {name} took {end_time - start_time} seconds")
       res1_zk = res1["zk"].squeeze()
 
       # absolute(res2_zk - res1_zk) <= (atol + rtol * absolute(res1_zk)

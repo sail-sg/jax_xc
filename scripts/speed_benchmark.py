@@ -135,12 +135,13 @@ def test_speed(batch):
       )
       jaxxc_compile_time.append(end_time - start_time)
 
+      start_time = time.time()
       res2_zk = impl_fn(*input_args)  # noqa: F841
-      snd_end_time = time.time()
+      end_time = time.time()
       logging.debug(
-        f"jax_xc {name} took {snd_end_time - end_time} execution seconds"
+        f"jax_xc {name} took {end_time - start_time} execution seconds"
       )
-      jaxxc_time.append(snd_end_time - end_time)
+      jaxxc_time.append(end_time - start_time)
 
       start_time = time.time()
       res1 = func.compute(libxc_input_args)  # noqa: F841
