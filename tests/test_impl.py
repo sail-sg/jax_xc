@@ -147,6 +147,7 @@ class _TestGetParams(parameterized.TestCase):
       logging.info(
         f"jax_xc {name} took {end_time - start_time} compilation seconds"
       )
+      end_time = time.time()
       res2_zk = impl_fn(*input_args)
       snd_end_time = time.time()
       logging.info(
