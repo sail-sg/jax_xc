@@ -11,8 +11,8 @@ py_wheel(
         "Programming Language :: Python :: 3",
     ],
     distribution = "jax_xc",
-    platform = "manylinux_2_31_x86_64",
-    python_requires = ">=3.8",
+    platform = "manylinux_2_17_x86_64",
+    python_requires = ">=3.7",
     python_tag = python_tag(),
     requires = [
         "jax",
