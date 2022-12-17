@@ -10,6 +10,7 @@ py_wheel(
         "Topic :: Scientific/Engineering :: Chemistry",
         "Programming Language :: Python :: 3",
     ],
+    description_file = "//:README.md",
     distribution = "jax_xc",
     platform = "manylinux_2_17_x86_64",
     python_requires = ">=3.7",
@@ -17,6 +18,7 @@ py_wheel(
     requires = [
         "jax",
         "numpy",
+        "tensorflow-probability",
     ],
     version = "0.0.1",
     deps = [
