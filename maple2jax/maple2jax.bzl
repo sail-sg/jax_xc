@@ -88,4 +88,4 @@ def _impl(rctx):
     rctx.symlink(Label("//maple2jax:python_template.jinja"), "jax_xc/python_template.jinja")
     rctx.symlink(Label("//maple2jax:wheel.BUILD"), "BUILD")
 
-maple2jax_repo = repository_rule(_impl)
+maple2jax_repo = repository_rule(_impl, environ = ["GITHUB_ACTIONS"])
