@@ -82,7 +82,7 @@ def _impl(rctx):
 
     # setup build rules for jax_xc
     rctx.symlink(Label("//maple2jax:build.jinja"), "jax_xc/BUILD")
-    rctx.file("jax_xc/__init__.py", "")
+    rctx.symlink(Label("//maple2jax:__init__.py"), "jax_xc/__init__.py")
     rctx.symlink(Label("//maple2jax:gen_py.py"), "jax_xc/gen_py.py")
     rctx.symlink(Label("//maple2jax:utils.py"), "jax_xc/utils.py")
     rctx.symlink(Label("//maple2jax:python_template.jinja"), "jax_xc/python_template.jinja")
