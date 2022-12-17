@@ -8,7 +8,7 @@ COMMIT_HASH    = $(shell git log -1 --format=%h)
 COPYRIGHT      = "Garena Online Private Limited"
 BAZELOPT       =
 PATH           := $(HOME)/go/bin:$(PATH)
-ADDLICENSE_IGNORE = -ignore maple2jax/impl/prebuilt -ignore maple2jax/python.bzl
+ADDLICENSE_IGNORE = -ignore "maple2jax/impl/prebuilt/**/*" -ignore maple2jax/python.bzl
 
 # installation
 
