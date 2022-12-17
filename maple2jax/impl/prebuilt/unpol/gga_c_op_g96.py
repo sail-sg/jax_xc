@@ -1,36 +1,38 @@
 t1 = 0.1e1 <= p_a_zeta_threshold
-t4 = jnp.logical_or(t1, r0 / 0.2e1 <= p_a_dens_threshold)
-t5 = p_a_zeta_threshold - 0.1e1
-t6 = -t5
-t7 = jnp.where(t1, t6, 0)
-t8 = jnp.where(t1, t5, t7)
-t9 = t8 ** 2
-t12 = 0.1e1 + t8
-t16 = 3 ** (0.1e1 / 0.3e1)
-t17 = t16 ** 2
-t19 = (0.1e1 / math.pi) ** (0.1e1 / 0.3e1)
-t21 = t17 / t19
-t22 = 4 ** (0.1e1 / 0.3e1)
-t23 = t21 * t22
-t24 = 2 ** (0.1e1 / 0.3e1)
-t25 = t12 <= p_a_zeta_threshold
-t26 = 0.1e1 - t8
-t27 = t26 <= p_a_zeta_threshold
-t28 = jnp.where(t27, t6, t8)
-t29 = jnp.where(t25, t5, t28)
-t32 = ((0.1e1 + t29) * r0) ** (0.1e1 / 0.3e1)
-t35 = math.sqrt(s0)
-t37 = r0 ** (0.1e1 / 0.3e1)
-t40 = t35 * t24 / t37 / r0
-t41 = math.sqrt(t40)
-t47 = 0.1e1 / (0.1e1 + 0.2e1 / 0.1233e4 * t21 * t22 * t41 * t40)
-t51 = jnp.where(t12 * r0 / 0.2e1 <= p_a_dens_threshold, 0, t23 * t24 / t32 * t47 / 0.9e1)
-t56 = jnp.where(t25, t6, -t8)
-t57 = jnp.where(t27, t5, t56)
-t60 = ((0.1e1 + t57) * r0) ** (0.1e1 / 0.3e1)
-t66 = jnp.where(t26 * r0 / 0.2e1 <= p_a_dens_threshold, 0, t23 * t24 / t60 * t47 / 0.9e1)
-t67 = t51 + t66
-t69 = jnp.where(t67 == 0.0e0, DBL_EPSILON, t67)
-t73 = t69 ** 2
-t74 = t73 ** 2
-res = jnp.where(t4, 0, -0.25000000000000000000e0 * (0.1e1 - t9) * r0 * (0.359628532e1 / t69 + 0.5764e0) / (0.312207199195441936e2 / t74 + 0.149037398922132448e2 / t73 / t69 + 0.1778517305052e1 / t73))
+t3 = r0 / 0.2e1 <= p_a_dens_threshold
+t4 = jnp.logical_and(t3, t3)
+t5 = jnp.logical_or(t1, t4)
+t6 = p_a_zeta_threshold - 0.1e1
+t7 = -t6
+t8 = jnp.where(t1, t7, 0)
+t9 = jnp.where(t1, t6, t8)
+t10 = t9 ** 2
+t13 = 0.1e1 + t9
+t17 = 3 ** (0.1e1 / 0.3e1)
+t18 = t17 ** 2
+t20 = (0.1e1 / math.pi) ** (0.1e1 / 0.3e1)
+t22 = t18 / t20
+t23 = 4 ** (0.1e1 / 0.3e1)
+t24 = t22 * t23
+t25 = 2 ** (0.1e1 / 0.3e1)
+t26 = t13 <= p_a_zeta_threshold
+t27 = 0.1e1 - t9
+t28 = t27 <= p_a_zeta_threshold
+t29 = jnp.where(t28, t7, t9)
+t30 = jnp.where(t26, t6, t29)
+t33 = ((0.1e1 + t30) * r0) ** (0.1e1 / 0.3e1)
+t36 = math.sqrt(s0)
+t38 = r0 ** (0.1e1 / 0.3e1)
+t41 = t36 * t25 / t38 / r0
+t42 = math.sqrt(t41)
+t48 = 0.1e1 / (0.1e1 + 0.2e1 / 0.1233e4 * t22 * t23 * t42 * t41)
+t52 = jnp.where(t13 * r0 / 0.2e1 <= p_a_dens_threshold, 0, t24 * t25 / t33 * t48 / 0.9e1)
+t57 = jnp.where(t26, t7, -t9)
+t58 = jnp.where(t28, t6, t57)
+t61 = ((0.1e1 + t58) * r0) ** (0.1e1 / 0.3e1)
+t67 = jnp.where(t27 * r0 / 0.2e1 <= p_a_dens_threshold, 0, t24 * t25 / t61 * t48 / 0.9e1)
+t68 = t52 + t67
+t70 = jnp.where(t68 == 0.0e0, DBL_EPSILON, t68)
+t74 = t70 ** 2
+t75 = t74 ** 2
+res = jnp.where(t5, 0, -0.25000000000000000000e0 * (0.1e1 - t10) * r0 * (0.359628532e1 / t70 + 0.5764e0) / (0.312207199195441936e2 / t75 + 0.149037398922132448e2 / t74 / t70 + 0.1778517305052e1 / t74))

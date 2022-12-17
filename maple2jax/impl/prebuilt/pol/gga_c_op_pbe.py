@@ -2,7 +2,8 @@ t2 = r0 + r1
 t3 = 0.1e1 / t2
 t4 = (r0 - r1) * t3
 t5 = abs(t4)
-t11 = jnp.logical_or(0.1e1 - t5 <= p_a_zeta_threshold, r0 <= p_a_dens_threshold and r1 <= p_a_dens_threshold)
+t10 = jnp.logical_and(r0 <= p_a_dens_threshold, r1 <= p_a_dens_threshold)
+t11 = jnp.logical_or(0.1e1 - t5 <= p_a_zeta_threshold, t10)
 t14 = p_a_zeta_threshold - 0.1e1
 t17 = -t14
 t18 = jnp.where(0.1e1 - t4 <= p_a_zeta_threshold, t17, t4)
