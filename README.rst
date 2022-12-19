@@ -21,8 +21,8 @@ Installation
 Invoking the Functionals
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Our API is functional: it receives $\rho$ a function of ``Callable``
-type, and returns the $\varepsilon_{xc}$ as a function of ``Callable``
+Our API is functional: it receives :math:`\\rho` a function of ``Callable``
+type, and returns the :math:`\\varepsilon_{xc}` as a function of ``Callable``
 type.
 
 .. code:: math
