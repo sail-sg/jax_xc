@@ -231,6 +231,3 @@ How to build.
 .. code:: sh
 
    bazel --output_user_root=$OUTPUT_USER_ROOT build --action_env=PATH=$PATH:$MAPLE_PATH @maple2jax//:jax_xc_wheel
-
-.. |Alt text| image:: ./figures/jax_xc_speed.svg
-.. |Alt text| image:: ./figures/jax_xc_ratio.svg
