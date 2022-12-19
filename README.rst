@@ -21,7 +21,7 @@ Installation
 Invoking the Functionals
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-``jax_xc``'s API is functional: it receives :math:`\rho` a function of ``Callable``
+jax_xc's API is functional: it receives :math:`\rho` a function of ``Callable``
 type, and returns the :math:`\varepsilon_{xc}` as a function of ``Callable``
 type.
 
@@ -163,12 +163,12 @@ We visualize the mean value (reduced for both polarized and unpolarized)
 of the runtime of ``jax_xc`` and ``libxc`` in the following figure. The
 y-axis is log-scale.
 
-|Alt text|
+.. image:: figures/jax_xc_speed.svg
 
 We visualize the distribution of the runtime ratio of ``jax_xc`` and
 ``libxc`` in the following figure.
 
-|Alt text|
+.. image:: figures/jax_xc_ratio.svg
 
 Note that, we exclude one datapoint ``mgga_x_2d_prhg07`` from the
 runtime ratio visualization because it is an outlier due to Jax's lack
