@@ -21,7 +21,7 @@ Installation
 Invoking the Functionals
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Jax_xc's API is functional: it receives :math:`\rho` a function of ``Callable``
+``jax_xc``'s API is functional: it receives :math:`\rho` a function of ``Callable``
 type, and returns the :math:`\varepsilon_{xc}` as a function of ``Callable``
 type.
 
