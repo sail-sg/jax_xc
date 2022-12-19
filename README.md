@@ -15,7 +15,7 @@ pip install jax-xc
 
 ### Invoking the Functionals
 
-Our API is functional: it receives $`\rho`$ a function of `Callable` type, and returns the $`\varepsilon_{xc}`$ as a function 
+Our API is functional: it receives $\rho$ a function of `Callable` type, and returns the $\varepsilon_{xc}$ as a function 
 of `Callable` type.
 
 ```math
@@ -135,13 +135,14 @@ they are within a certain tolerance, namely `atol=2e-10` and `rtol=2e-10`.
 
 ## Performance Benchmark
 
-We report the performance benchmark of `jax_xc` against `libxc` on Intel(R) Xeon(R) Silver 4216 CPU @ 2.10GHz.
+We report the performance benchmark of `jax_xc` against `libxc` on a 64-core machine with 
+Intel(R) Xeon(R) Silver 4216 CPU @ 2.10GHz.
 
-We sample the points to evaluate the functionals by varying the number of points from 1 to $`10^7`$.
+We sample the points to evaluate the functionals by varying the number of points from 1 to $10^7$.
 The benchmark is performed by evaluating the runtime of the functional. Note that the runtime of `jax_xc` is
 measured by excluding the time of just-in-time compilation.
 
-We visualize the mean value of the runtime of `jax_xc` and `libxc` in the following figure. The y-axis is log-scale.
+We visualize the mean value (reduced for both polarized and unpolarized) of the runtime of `jax_xc` and `libxc` in the following figure. The y-axis is log-scale.
 
 ![Alt text](./figures/jax_xc_speed.svg)
 
