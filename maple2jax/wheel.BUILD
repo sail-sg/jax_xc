@@ -10,7 +10,7 @@ py_wheel(
         "Topic :: Scientific/Engineering :: Chemistry",
         "Programming Language :: Python :: 3",
     ],
-    description_file = "//:README.md",
+    description_file = "@jax_xc//:README.rst",
     distribution = "jax_xc",
     platform = "manylinux_2_17_x86_64",
     python_requires = ">=3.7",
@@ -20,7 +20,7 @@ py_wheel(
         "numpy",
         "tensorflow-probability",
     ],
-    version = "0.0.1",
+    version = "0.0.2",
     deps = [
         "@maple2jax//jax_xc",
         "@maple2jax//jax_xc:functionals",
