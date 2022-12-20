@@ -8,4 +8,5 @@ build:
     - pip install -r docs/requirements.txt
     - pip install jax-xc
     - cd docs && make html
-    - ln -s docs/_build/html _readthedocs/html/
+    - mkdir -p _readthedocs
+    - ln -s docs/_build/html _readthedocs/html
