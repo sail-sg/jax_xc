@@ -1,13 +1,11 @@
 version: 2
-python:
-  install:
-    - requirements: docs/requirements.txt
-    - requirements: requirements.txt
 build:
   os: "ubuntu-22.04"
   tools:
     python: "3.8"
   commands:
+    - pip install -r requirements.txt
+    - pip install -r docs/requirements.txt
     - pip install jax-xc
     - cd docs && make html
     - ln -s docs/_build/html _readthedocs/html/
