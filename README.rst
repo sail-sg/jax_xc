@@ -184,7 +184,8 @@ more significant for larger batch sizes.
 
 We hypothesize that the reason
 for the speed up is that Jax's JIT compiler is able to optimize the
-functionals (e.g. vectorization, instruction fusion, etc.) better than
+functionals (e.g. vectorization, parallel execution, instruction fusion, 
+constant folding for floating points, etc.) better than
 libxc.
 
 .. image:: figures/jax_xc_speed.svg
