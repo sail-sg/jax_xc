@@ -2,9 +2,8 @@ JAX Exchange Correlation Library
 ================================
 |PyPI version shields.io|
 
-.. |PyPI version shields.io| image:: https://img.shields.io/pypi/v/ansicolortags.svg
+.. |PyPI version shields.io| image:: https://img.shields.io/pypi/v/jax-xc.svg
    :target: https://pypi.org/project/jax-xc/
-
 |Documentation Status|
 
 .. |Documentation Status| image:: https://readthedocs.org/projects/ansicolortags/badge/?version=latest
