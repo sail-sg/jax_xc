@@ -148,6 +148,13 @@ The meaning for each attribute is the same as libxc:
 -  nlc_b: non-local correlation, b parameter
 -  nlc_C: non-local correlation, C parameter
 
+Support Functionals
+-------------------
+
+Please refer to the `functionals section <https://jax-xc.readthedocs.io/en/latest/sources/jax_xc.html#module-jax_xc.functionals>`_ 
+in ``jax_xc``'s documentation
+for the complete list of supported functionals.
+
 Numerical Correctness
 ---------------------
 
