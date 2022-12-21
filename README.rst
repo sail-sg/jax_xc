@@ -1,9 +1,16 @@
 JAX Exchange Correlation Library
 ================================
+|PyPI version shields.io|
+
+.. |PyPI version shields.io| image:: https://img.shields.io/pypi/v/ansicolortags.svg
+   :target: https://pypi.org/project/jax-xc/
+
 |Documentation Status|
 
-    .. |Documentation Status| image:: https://readthedocs.org/projects/ansicolortags/badge/?version=latest
-       :target: http://ansicolortags.readthedocs.io/?badge=latest
+.. |Documentation Status| image:: https://readthedocs.org/projects/ansicolortags/badge/?version=latest
+   :target: https://jax-xc.readthedocs.io/en/latest/
+
+
 
 This library contains direct translations of exchange correlation
 functionals in `libxc <https://tddft.org/programs/libxc/>`__ to
