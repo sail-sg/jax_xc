@@ -1,7 +1,9 @@
 JAX Exchange Correlation Library
 ================================
-.. |Documentation Status| image:: https://readthedocs.org/projects/ansicolortags/badge/?version=latest
-   :target: http://ansicolortags.readthedocs.io/?badge=latest
+|Documentation Status|
+
+    .. |Documentation Status| image:: https://readthedocs.org/projects/ansicolortags/badge/?version=latest
+       :target: http://ansicolortags.readthedocs.io/?badge=latest
 
 This library contains direct translations of exchange correlation
 functionals in `libxc <https://tddft.org/programs/libxc/>`__ to
