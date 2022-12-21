@@ -167,14 +167,20 @@ of points from 1 to $10^7$. The benchmark is performed by evaluating the
 runtime of the functional. Note that the runtime of ``jax_xc`` is
 measured by excluding the time of just-in-time compilation.
 
-We visualize the mean value (reduced for both polarized and unpolarized)
+We visualize the mean value (averaged for both polarized and unpolarized)
 of the runtime of ``jax_xc`` and ``libxc`` in the following figure. The
-y-axis is log-scale.
+y-axis is log-scale. Jax_xc's runtime is constantly below libxc's runtime
+for all batch sizes. The speed up is ranging from 3x to 10x, and it is
+more significant for larger batch sizes. We hypothesize that the reason
+for the speed up is that Jax's JIT compiler is able to optimize the
+functionals (e.g. vectorization, instruction fusion, etc.) better than
+libxc.
 
 .. image:: figures/jax_xc_speed.svg
 
 We visualize the distribution of the runtime ratio of ``jax_xc`` and
-``libxc`` in the following figure.
+``libxc`` in the following figure. The ratio is closer to 0.1 for
+large batch sizes (~ 10x speed up). The ratio is constantly below 1.0.
 
 .. image:: figures/jax_xc_ratio.svg
 
