@@ -1,6 +1,11 @@
 JAX Exchange Correlation Library
 ================================
 
+.. image:: figures/logo.png
+   :width: 200
+   :align: center
+   
+
 .. image:: https://img.shields.io/pypi/v/jax-xc.svg
    :target: https://pypi.org/project/jax-xc/
 
