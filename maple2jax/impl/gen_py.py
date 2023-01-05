@@ -44,8 +44,7 @@ def post_process(py_code):
     # convert constants like 0.225000000e-1 to 0.225e-1
     (r"0+e", r"e"),
     # remove the e0 and e00
-    (r"e0", r""),
-    (r"e00", r""),
+    (r"([\d\.]+)e0+", r"\1"),
     (r"_(\d+)_", r"[\1]"),
     # convert numerical value of pi to constant
     (r"0.31415926535897932385e1", r"jnp.pi"),
