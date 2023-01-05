@@ -63,7 +63,12 @@ def {{ name }}(
   @add_hyb_params(p)
   {% endif %}
   def _{{ name }}(r):
-    return call_functional(p, rho, r, polarized, mo)
+    return jax.lax.cond(
+        jnp.sum(rho(r)) < p.dens_threshold,
+        lambda _: 0.,
+        lambda _: call_functional(p, rho, r, polarized, mo),
+        operand=None
+    )
   return _{{ name }}
 
 {% endfor %}
