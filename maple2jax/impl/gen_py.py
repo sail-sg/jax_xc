@@ -14,7 +14,7 @@
 
 from absl import flags, app
 import os
-import re
+import regex as re
 from jinja2 import Template
 import jax.numpy as jnp
 
@@ -44,17 +44,25 @@ def post_process(py_code):
     # convert constants like 0.225000000e-1 to 0.225e-1
     (r"0+e", r"e"),
     # remove the e0 and e00
-    # (r"e0", r""),
-    # (r"e00", r""),
+    (r"e0", r""),
+    (r"e00", r""),
     (r"_(\d+)_", r"[\1]"),
     # convert numerical value of pi to constant
     (r"0.31415926535897932385e1", r"jnp.pi"),
     (r"math.erf", r"jax.lax.erf"),
+    # convert parenthesis ** (0.1e1 / 0.3e1) to cbrt using recursive regex
+    (
+      r"(.*)(\((?:[^)(]+|(?2))*+\)) \*\* \(0.1e1 \/ 0.3e1\)(.*)",
+      r"\1jnp.cbrt\2\3"
+    ),
+    # convert variable ** (0.1e1 / 0.3e1) to cbrt, order matters
+    (r"(.*) (.*) \*\* \(0.1e1 \/ 0.3e1\)(.*)", r"\1 jnp.cbrt(\2)\3"),
     ("scipy.special.i0", "jax.scipy.special.i0"),
     ("scipy.special.lambertw", "lambertw"),
     ("math", "jnp"),
     ("atan", "arctan"),
     ("asinh", "arcsinh"),
+    ("abs", "jnp.abs"),
     ("DBL_EPSILON", f"{jnp.finfo(float).eps}"),
     # for Python
     ("lambda", "lambda_"),
