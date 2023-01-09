@@ -35,11 +35,6 @@ jobs:
   publish:
     runs-on: ubuntu-18.04
     needs: release
-    container:
-      image: ghcr.io/mavenlin/release:latest
-      credentials:
-        username: mavenlin
-        password: ${{ secrets.DOCKER }}
     steps:
     - name: Download artifact
       uses: actions/download-artifact@main
