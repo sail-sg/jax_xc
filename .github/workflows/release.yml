@@ -37,6 +37,7 @@ jobs:
         path: bazel-bin/external/maple2jax/*.whl
   publish:
     runs-on: ubuntu-18.04
+    needs: release
     container:
       image: ghcr.io/mavenlin/release:latest
       credentials:
