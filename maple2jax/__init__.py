@@ -13,3 +13,5 @@
 # limitations under the License.
 
 from .functionals import *  # noqa
+
+__version__ = "0.0.3"
