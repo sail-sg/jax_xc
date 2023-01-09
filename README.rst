@@ -193,7 +193,7 @@ functionals (e.g. vectorization, parallel execution, instruction fusion,
 constant folding for floating points, etc.) better than
 libxc.
 
-.. image:: figures/jax_xc_speed.svg
+.. image:: https://raw.githubusercontent.com/sail-sg/jax_xc/main/figures/jax_xc_speed.svg
 
 We visualize the distribution of the runtime ratio of ``jax_xc`` and
 ``libxc`` in the following figure. The ratio is closer to 0.1 for
