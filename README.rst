@@ -1,7 +1,7 @@
 JAX Exchange Correlation Library
 ================================
 
-.. image:: figures/logo.png
+.. image:: https://github.com/sail-sg/jax_xc/raw/main/figures/logo.png
    :width: 200
    :align: center
    
