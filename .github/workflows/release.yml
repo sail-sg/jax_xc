@@ -35,9 +35,13 @@ jobs:
       with:
         name: wheel
         path: bazel-bin/external/maple2jax/*.whl
+    - name: Move wheel to dist
+      run: |
+        mkdir dist
+        mv bazel-bin/external/maple2jax/*.whl dist/
     - name: Publish package to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         password: ${{ secrets.TEST_PYPI_API_TOKEN }}
         repository_url: https://test.pypi.org/legacy/
-        packages_dir: bazel-bin/external/maple2jax/*
+        packages_dir: dist
