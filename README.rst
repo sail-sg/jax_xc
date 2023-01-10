@@ -21,7 +21,6 @@ are implemented in `maple <https://www.maplesoft.com/>`__. This gives us
 the opportunity to translate them directly into python with the help of
 `CodeGeneration <https://www.maplesoft.com/support/help/maple/view.aspx?path=CodeGeneration%2fPython>`__.
 
-
 Usage
 -----
 
@@ -88,7 +87,7 @@ Unlike LDA and GGA that only depends on the density function, mGGA
 functionals also depend on the molecular orbitals.
 
 .. code:: python
-   
+
    import jax
    import jax.numpy as jnp
    import jax_xc
