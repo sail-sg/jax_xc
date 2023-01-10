@@ -51,34 +51,34 @@ take a density function.
 
 .. code:: python
 
-   import jax
-   import jax.numpy as jnp
-   import jax_xc
+  import jax
+  import jax.numpy as jnp
+  import jax_xc
 
 
-   def rho(r):
-      """Electron number density. We take gaussian as an example.
+  def rho(r):
+    """Electron number density. We take gaussian as an example.
 
-      A function that takes a real coordinate, and returns a scalar
-      indicating the number density of electron at coordinate r.
+    A function that takes a real coordinate, and returns a scalar
+    indicating the number density of electron at coordinate r.
 
-      Args:
-      r: a 3D coordinate.
-      Returns:
-      rho: If it is unpolarized, it is a scalar.
-         If it is polarized, it is a array of shape (2,).
-      """
-      return jnp.exp(-jnp.sum(r**2, axis=-1))
+    Args:
+    r: a 3D coordinate.
+    Returns:
+    rho: If it is unpolarized, it is a scalar.
+        If it is polarized, it is a array of shape (2,).
+    """
+    return jnp.exp(-jnp.sum(r**2, axis=-1))
 
 
-   exc = jax_xc.gga_xc_pbe1w(rho=rho, polarized=False)
+  exc = jax_xc.gga_xc_pbe1w(rho=rho, polarized=False)
 
-   # a grid point in 3D
-   r = jnp.array([0.1, 0.2, 0.3])
+  # a grid point in 3D
+  r = jnp.array([0.1, 0.2, 0.3])
 
-   # evaluate the exchange correlation energy per particle at this point
-   # corresponding to the 'zk' in libxc
-   print(exc(r))
+  # evaluate the exchange correlation energy per particle at this point
+  # corresponding to the 'zk' in libxc
+  print(exc(r))
 
 mGGA
 ^^^^
@@ -88,37 +88,37 @@ functionals also depend on the molecular orbitals.
 
 .. code:: python
 
-   import jax
-   import jax.numpy as jnp
-   import jax_xc
+  import jax
+  import jax.numpy as jnp
+  import jax_xc
 
-   def mo(r):
-     """Molecular orbital. We take gaussian as an example.
+  def mo(r):
+    """Molecular orbital. We take gaussian as an example.
 
-     A function that takes a real coordinate, and returns the value of
-     molecular orbital at this coordinate.
+    A function that takes a real coordinate, and returns the value of
+    molecular orbital at this coordinate.
 
-     Args:
-       r: a 3D coordinate.
-     Returns:
-       mo: If it is unpolarized, it is a array of shape (N,).
-           If it is polarized, it is a array of shape (N, 2).
-     """
-     # Assume we have 3 molecular orbitals
-     return jnp.array([jnp.exp(-jnp.sum(r**2, axis=-1)),
-                       jnp.exp(-jnp.sum((r - 0.5)**2, axis=-1)),
-                       jnp.exp(-jnp.sum((r + 0.5)**2, axis=-1))])
+    Args:
+      r: a 3D coordinate.
+    Returns:
+      mo: If it is unpolarized, it is a array of shape (N,).
+          If it is polarized, it is a array of shape (N, 2).
+    """
+    # Assume we have 3 molecular orbitals
+    return jnp.array([jnp.exp(-jnp.sum(r**2, axis=-1)),
+                      jnp.exp(-jnp.sum((r - 0.5)**2, axis=-1)),
+                      jnp.exp(-jnp.sum((r + 0.5)**2, axis=-1))])
 
 
-   rho = lambda r: jnp.sum(mo(r)**2, axis=0)
-   exc = jax_xc.mgga_xc_cc06(rho=rho, polarized=False, mo=mo)
+  rho = lambda r: jnp.sum(mo(r)**2, axis=0)
+  exc = jax_xc.mgga_xc_cc06(rho=rho, polarized=False, mo=mo)
 
-   # a grid point in 3D
-   r = jnp.array([0.1, 0.2, 0.3])
+  # a grid point in 3D
+  r = jnp.array([0.1, 0.2, 0.3])
 
-   # evaluate the exchange correlation energy per particle at this point
-   # corresponding to the 'zk' in libxc
-   print(exc(r))
+  # evaluate the exchange correlation energy per particle at this point
+  # corresponding to the 'zk' in libxc
+  print(exc(r))
 
 Hybrid Functionals
 ^^^^^^^^^^^^^^^^^^
@@ -129,36 +129,36 @@ fraction of exact exchange).
 
 .. code:: python
 
-   import jax
-   import jax.numpy as jnp
-   import jax_xc
+  import jax
+  import jax.numpy as jnp
+  import jax_xc
 
-   def rho(r):
-     """Electron number density. We take gaussian as an example.
+  def rho(r):
+    """Electron number density. We take gaussian as an example.
 
-     A function that takes a real coordinate, and returns a scalar
-     indicating the number density of electron at coordinate r.
+    A function that takes a real coordinate, and returns a scalar
+    indicating the number density of electron at coordinate r.
 
-     Args:
-       r: a 3D coordinate.
-     Returns:
-       rho: If it is unpolarized, it is a scalar.
-            If it is polarized, it is a array of shape (2,).
-     """
-     return jnp.exp(-jnp.sum(r**2, axis=-1))
+    Args:
+      r: a 3D coordinate.
+    Returns:
+      rho: If it is unpolarized, it is a scalar.
+          If it is polarized, it is a array of shape (2,).
+    """
+    return jnp.exp(-jnp.sum(r**2, axis=-1))
 
 
-   exc = jax_xc.hyb_gga_xc_pbeb0(rho=rho, polarized=False)
+  exc = jax_xc.hyb_gga_xc_pbeb0(rho=rho, polarized=False)
 
-   # a grid point in 3D
-   r = jnp.array([0.1, 0.2, 0.3])
+  # a grid point in 3D
+  r = jnp.array([0.1, 0.2, 0.3])
 
-   # evaluate the exchange correlation energy per particle at this point
-   # corresponding to the 'zk' in libxc
-   print(exc(r))
+  # evaluate the exchange correlation energy per particle at this point
+  # corresponding to the 'zk' in libxc
+  print(exc(r))
 
-   # access to extra attributes
-   cam_alpha = exc.cam_alpha  # fraction of full Hartree-Fock exchange
+  # access to extra attributes
+  cam_alpha = exc.cam_alpha  # fraction of full Hartree-Fock exchange
 
 The complete list of extra attributes can be found in the class below:
 
