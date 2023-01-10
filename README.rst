@@ -91,6 +91,7 @@ functionals also depend on the molecular orbitals.
   import jax
   import jax.numpy as jnp
   import jax_xc
+  
 
   def mo(r):
     """Molecular orbital. We take gaussian as an example.
@@ -134,6 +135,7 @@ fraction of exact exchange).
   import jax
   import jax.numpy as jnp
   import jax_xc
+
 
   def rho(r):
     """Electron number density. We take gaussian as an example.
