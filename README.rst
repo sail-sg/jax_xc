@@ -21,6 +21,7 @@ are implemented in `maple <https://www.maplesoft.com/>`__. This gives us
 the opportunity to translate them directly into python with the help of
 `CodeGeneration <https://www.maplesoft.com/support/help/maple/view.aspx?path=CodeGeneration%2fPython>`__.
 
+
 Usage
 -----
 
