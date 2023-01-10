@@ -51,6 +51,7 @@ at certain coordinates. In ``jax_xc``, the API is designed to directly
 take a density function.
 
 .. code:: python
+
    import jax
    import jax.numpy as jnp
    import jax_xc
@@ -87,6 +88,7 @@ Unlike LDA and GGA that only depends on the density function, mGGA
 functionals also depend on the molecular orbitals.
 
 .. code:: python
+   
    import jax
    import jax.numpy as jnp
    import jax_xc
@@ -127,6 +129,7 @@ users to access parameters needed outside of libxc/jax_xc (e.g. the
 fraction of exact exchange).
 
 .. code:: python
+
    import jax
    import jax.numpy as jnp
    import jax_xc
