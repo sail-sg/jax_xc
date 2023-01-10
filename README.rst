@@ -68,7 +68,7 @@ take a density function.
     rho: If it is unpolarized, it is a scalar.
         If it is polarized, it is a array of shape (2,).
     """
-    return jnp.exp(-jnp.sum(r**2, axis=-1))
+    return jnp.prod(jax.scipy.stats.norm.pdf(r, loc=0, scale=1))
 
 
   exc = jax_xc.gga_xc_pbe1w(rho=rho, polarized=False)
@@ -105,9 +105,11 @@ functionals also depend on the molecular orbitals.
           If it is polarized, it is a array of shape (N, 2).
     """
     # Assume we have 3 molecular orbitals
-    return jnp.array([jnp.exp(-jnp.sum(r**2, axis=-1)),
-                      jnp.exp(-jnp.sum((r - 0.5)**2, axis=-1)),
-                      jnp.exp(-jnp.sum((r + 0.5)**2, axis=-1))])
+    return jnp.array([
+        jnp.prod(jax.scipy.stats.norm.pdf(r, loc=0, scale=1)),
+        jnp.prod(jax.scipy.stats.norm.pdf(r, loc=0.5, scale=1)),
+        jnp.prod(jax.scipy.stats.norm.pdf(r, loc=-0.5, scale=1))
+    ])
 
 
   rho = lambda r: jnp.sum(mo(r)**2, axis=0)
@@ -145,7 +147,7 @@ fraction of exact exchange).
       rho: If it is unpolarized, it is a scalar.
           If it is polarized, it is a array of shape (2,).
     """
-    return jnp.exp(-jnp.sum(r**2, axis=-1))
+    return jnp.prod(jax.scipy.stats.norm.pdf(r, loc=0, scale=1))
 
 
   exc = jax_xc.hyb_gga_xc_pbeb0(rho=rho, polarized=False)
