@@ -51,28 +51,34 @@ take a density function.
 
 .. code:: python
 
-   import jax_xc
-
-   def rho(r):
-     """Electron number density.
-
-     A function that takes a real coordinate, and returns a scalar
-     indicating the number density of electron at coordinate r.
-
-     Args:
-       r: a 3D coordinate.
-     Returns:
-       rho: If it is unpolarized, it is a scalar.
-            If it is polarized, it is a array of shape (2,).
-     """
-     pass
-
-   exc = jax_xc.gga_xc_pbe1w(rho=rho, polarized=False)
+  import jax
+  import jax.numpy as jnp
+  import jax_xc
 
 
-   # Numerical integral with grids and their corresponding weights
-   rho_times_exc = lambda w, r: w * rho(r) * exc(r)
-   Exc = jnp.sum(vmap(rho_times_exc)(weights, grids))
+  def rho(r):
+    """Electron number density. We take gaussian as an example.
+
+    A function that takes a real coordinate, and returns a scalar
+    indicating the number density of electron at coordinate r.
+
+    Args:
+    r: a 3D coordinate.
+    Returns:
+    rho: If it is unpolarized, it is a scalar.
+        If it is polarized, it is a array of shape (2,).
+    """
+    return jnp.prod(jax.scipy.stats.norm.pdf(r, loc=0, scale=1))
+
+
+  exc = jax_xc.gga_xc_pbe1w(rho=rho, polarized=False)
+
+  # a grid point in 3D
+  r = jnp.array([0.1, 0.2, 0.3])
+
+  # evaluate the exchange correlation energy per particle at this point
+  # corresponding to the 'zk' in libxc
+  print(exc(r))
 
 mGGA
 ^^^^
@@ -82,27 +88,40 @@ functionals also depend on the molecular orbitals.
 
 .. code:: python
 
-   import jax_xc
+  import jax
+  import jax.numpy as jnp
+  import jax_xc
+  
 
-   def mo(r):
-     """Molecular orbital.
+  def mo(r):
+    """Molecular orbital. We take gaussian as an example.
 
-     A function that takes a real coordinate, and returns the value of
-     molecular orbital at this coordinate.
+    A function that takes a real coordinate, and returns the value of
+    molecular orbital at this coordinate.
 
-     Args:
-       r: a 3D coordinate.
-     Returns:
-       mo: If it is unpolarized, it is a array of shape (N,).
-           If it is polarized, it is a array of shape (N, 2).
-     """
-     pass
+    Args:
+      r: a 3D coordinate.
+    Returns:
+      mo: If it is unpolarized, it is a array of shape (N,).
+          If it is polarized, it is a array of shape (N, 2).
+    """
+    # Assume we have 3 molecular orbitals
+    return jnp.array([
+        jnp.prod(jax.scipy.stats.norm.pdf(r, loc=0, scale=1)),
+        jnp.prod(jax.scipy.stats.norm.pdf(r, loc=0.5, scale=1)),
+        jnp.prod(jax.scipy.stats.norm.pdf(r, loc=-0.5, scale=1))
+    ])
 
-   exc = jax_xc.mgga_xc_cc06(rho=rho, polarized=polarized, mo=mo)
 
-   # perform numerical integral like the example in LDA and GGA
-   rho_times_exc = lambda w, r: w * rho(r) * exc(r)
-   Exc = jnp.sum(vmap(rho_times_exc)(weights, grids))
+  rho = lambda r: jnp.sum(mo(r)**2, axis=0)
+  exc = jax_xc.mgga_xc_cc06(rho=rho, polarized=False, mo=mo)
+
+  # a grid point in 3D
+  r = jnp.array([0.1, 0.2, 0.3])
+
+  # evaluate the exchange correlation energy per particle at this point
+  # corresponding to the 'zk' in libxc
+  print(exc(r))
 
 Hybrid Functionals
 ^^^^^^^^^^^^^^^^^^
@@ -113,24 +132,37 @@ fraction of exact exchange).
 
 .. code:: python
 
-   import jax_xc
+  import jax
+  import jax.numpy as jnp
+  import jax_xc
 
-   def rho(r):
-     """Electron number density.
 
-     A function that takes a real coordinate, and returns a scalar
-     indicating the number density of electron at coordinate r.
+  def rho(r):
+    """Electron number density. We take gaussian as an example.
 
-     Args:
-       r: a 3D coordinate.
-     Returns:
-       rho: If it is unpolarized, it is a scalar.
-            If it is polarized, it is a array of shape (2,).
-     """
-     pass
+    A function that takes a real coordinate, and returns a scalar
+    indicating the number density of electron at coordinate r.
 
-   exc = jax_xc.hyb_gga_xc_pbeb0(rho=rho, polarized=polarized)
-   cam_alpha = exc.cam_alpha  # fraction of full Hartree-Fock exchange
+    Args:
+      r: a 3D coordinate.
+    Returns:
+      rho: If it is unpolarized, it is a scalar.
+          If it is polarized, it is a array of shape (2,).
+    """
+    return jnp.prod(jax.scipy.stats.norm.pdf(r, loc=0, scale=1))
+
+
+  exc = jax_xc.hyb_gga_xc_pbeb0(rho=rho, polarized=False)
+
+  # a grid point in 3D
+  r = jnp.array([0.1, 0.2, 0.3])
+
+  # evaluate the exchange correlation energy per particle at this point
+  # corresponding to the 'zk' in libxc
+  print(exc(r))
+
+  # access to extra attributes
+  cam_alpha = exc.cam_alpha  # fraction of full Hartree-Fock exchange
 
 The complete list of extra attributes can be found in the class below:
 
@@ -199,7 +231,7 @@ We visualize the distribution of the runtime ratio of ``jax_xc`` and
 ``libxc`` in the following figure. The ratio is closer to 0.1 for
 large batch sizes (~ 10x speed up). The ratio is constantly below 1.0.
 
-.. image:: figures/jax_xc_ratio.svg
+.. image:: https://raw.githubusercontent.com/sail-sg/jax_xc/main/figures/jax_xc_ratio.svg
 
 Note that, we exclude one datapoint ``mgga_x_2d_prhg07`` from the
 runtime ratio visualization because it is an outlier due to Jax's lack
