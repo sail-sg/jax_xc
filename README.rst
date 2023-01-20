@@ -298,5 +298,5 @@ How to build.
 License
 -------
 
-``jax_xc`` is licensed under the Mozilla Public License 2.0. See
+Aligned with ``libxc``, ``jax_xc`` is licensed under the Mozilla Public License 2.0. See
 ``LICENSE`` for the full license text.
