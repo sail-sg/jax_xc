@@ -12,7 +12,6 @@ from absl.testing import absltest, parameterized
 from absl import logging
 import numpy as np
 from jax.tree_util import Partial
-import pandas as pd
 
 from jax_xc import libxc as pylibxc
 from jax_xc.libxc import libxc
@@ -55,7 +54,10 @@ SKIP_LIST = [
 
 class _TestImpl(parameterized.TestCase):
 
-  def test_impl(self):
+  @parameterized.parameters(
+    *(pylibxc.util.xc_available_functional_names()),
+  )
+  def test_impl(self, name):
 
     def get_impl_fn_and_inputs(inputs, impl, fn_type, p, polarized):
       rho0, rho1, sigma0, sigma1, sigma2, lapl0, lapl1, tau0, tau1 = inputs
