@@ -294,3 +294,9 @@ How to build.
 .. code:: sh
 
    bazel --output_user_root=$OUTPUT_USER_ROOT build --action_env=PATH=$PATH:$MAPLE_PATH @maple2jax//:jax_xc_wheel
+
+License
+-------
+
+``jax_xc`` is licensed under the Mozilla Public License 2.0. See
+``LICENSE`` for the full license text.
