@@ -246,26 +246,26 @@ because some functions are not available in ``jax``.
 
 .. code:: python
 
-   gga_x_fd_lb94          # Becke-Roussel not having an closed-form expression
-   gga_x_fd_revlb94       # Becke-Roussel not having an closed-form expression
-   gga_x_gg99             # Becke-Roussel not having an closed-form expression
-   gga_x_kgg99            # Becke-Roussel not having an closed-form expression
-   hyb_gga_xc_case21      # Becke-Roussel not having an closed-form expression
-   hyb_mgga_xc_b94_hyb    # Becke-Roussel not having an closed-form expression
-   hyb_mgga_xc_br3p86     # Becke-Roussel not having an closed-form expression
+   gga_x_fd_lb94          # Becke-Roussel not having a closed-form expression
+   gga_x_fd_revlb94       # Becke-Roussel not having a closed-form expression
+   gga_x_gg99             # Becke-Roussel not having a closed-form expression
+   gga_x_kgg99            # Becke-Roussel not having a closed-form expression
+   hyb_gga_xc_case21      # Becke-Roussel not having a closed-form expression
+   hyb_mgga_xc_b94_hyb    # Becke-Roussel not having a closed-form expression
+   hyb_mgga_xc_br3p86     # Becke-Roussel not having a closed-form expression
    lda_x_1d_exponential   # Requires explicit 1D integration
    lda_x_1d_soft          # Requires explicit 1D integration
-   mgga_c_b94             # Becke-Roussel not having an closed-form expression
-   mgga_x_b00             # Becke-Roussel not having an closed-form expression
-   mgga_x_bj06            # Becke-Roussel not having an closed-form expression
-   mgga_x_br89            # Becke-Roussel not having an closed-form expression
-   mgga_x_br89_1          # Becke-Roussel not having an closed-form expression
-   mgga_x_mbr             # Becke-Roussel not having an closed-form expression
-   mgga_x_mbrxc_bg        # Becke-Roussel not having an closed-form expression
-   mgga_x_mbrxh_bg        # Becke-Roussel not having an closed-form expression
-   mgga_x_mggac           # Becke-Roussel not having an closed-form expression
-   mgga_x_rpp09           # Becke-Roussel not having an closed-form expression
-   mgga_x_tb09            # Becke-Roussel not having an closed-form expression
+   mgga_c_b94             # Becke-Roussel not having a closed-form expression
+   mgga_x_b00             # Becke-Roussel not having a closed-form expression
+   mgga_x_bj06            # Becke-Roussel not having a closed-form expression
+   mgga_x_br89            # Becke-Roussel not having a closed-form expression
+   mgga_x_br89_1          # Becke-Roussel not having a closed-form expression
+   mgga_x_mbr             # Becke-Roussel not having a closed-form expression
+   mgga_x_mbrxc_bg        # Becke-Roussel not having a closed-form expression
+   mgga_x_mbrxh_bg        # Becke-Roussel not having a closed-form expression
+   mgga_x_mggac           # Becke-Roussel not having a closed-form expression
+   mgga_x_rpp09           # Becke-Roussel not having a closed-form expression
+   mgga_x_tb09            # Becke-Roussel not having a closed-form expression
    gga_x_wpbeh            # jit too long for E1_scaled
    gga_c_ft97             # jit too long for E1_scaled
    lda_xc_tih             # vxc functional
