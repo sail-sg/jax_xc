@@ -1,3 +1,9 @@
+# Copyright 2022 Garena Online Private Limited
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at https://mozilla.org/MPL/2.0/.
+#
 # Path: scripts/speed_benchmark.py
 # Requires: jax_xc, jax, numpy, pandas, absl
 # Usage: python scripts/speed_benchmark.py
