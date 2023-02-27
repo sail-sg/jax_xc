@@ -1,0 +1,177 @@
+import jax
+import jax.numpy as jnp
+import ctypes
+from collections import namedtuple
+from typing import Callable, Optional, Tuple
+from . import impl
+from .utils import get_p, rho_to_arguments, call_functional, call_functional_pointwise
+
+{% for name, ext_params, maple_name, ext_params_descriptions, info, aux_info in functionals %}
+{% for polarized in [True, False] %}
+{% if polarized %}
+def {{ name }}_pol(
+  rho0: float,
+  rho1: float,
+  {% if not (name.startswith("lda") or name.startswith("hyb_lda")) %}
+  sigma0: float,
+  sigma1: float,
+  sigma2: float,
+  {% endif %}
+  {% if name.startswith("mgga") or name.startswith("hyb_mgga") %}
+  lapl0: float,
+  lapl1: float,
+  tau0: float,
+  tau1: float,
+  {% endif %}
+{% else %}
+def {{ name }}_unpol(
+  rho: float,
+  {% if not (name.startswith("lda") or name.startswith("hyb_lda")) %}
+  sigma: float,
+  {% endif %}
+  {% if name.startswith("mgga") or name.startswith("hyb_mgga") %}
+  lapl: float,
+  tau: float,
+  {% endif %}
+{% endif %}
+{% for param_name in ext_params.keys() %}
+  {{ param_name }}: Optional[float] = None,
+{% endfor %}
+) -> float:
+  r"""
+  {% for url, doi, ref in info %}
+  {{ ref }}
+  {% if url != "" %}
+  `{{ doi }} <{{ url }}>`_
+  {% else %}
+  {{ doi }}
+  {% endif %}
+
+  {% endfor %}
+  {% if aux_info != [] %}
+  Hybrid Functionals:
+
+  {% for fn_aux_name, mix_coef in aux_info %}
+    {% if maple_name == "DEORBITALIZE" %}
+    {{ fn_aux_name }} (Mixing Coefficient is meaningless for DEORBITALIZE functional)
+    {% else %}
+    {{ fn_aux_name }} (Mixing Coefficient: {{ mix_coef }})
+    {% endif %}
+
+  {% endfor %}
+  {% endif %}
+  Parameters
+  ----------
+  {% if polarized %}
+  rho0 : float
+      Electron density of spin up.
+  rho1 : float
+      Electron density of spin down.
+  {% if not (name.startswith("lda") or name.startswith("hyb_lda")) %}
+  sigma0 : float
+      reduced gradient :math:`\sigma_0 = \nabla \rho_0 \cdot \nabla \rho_0 = |\nabla \rho_0|^2`.
+  sigma1 : float
+      reduced gradient :math:`\sigma_1 = \nabla \rho_0 \cdot \nabla \rho_1`.
+  sigma2 : float
+      reduced gradient :math:`\sigma_2 = \nabla \rho_1 \cdot \nabla \rho_1 = |\nabla \rho_1|^2`.
+  {% endif %}
+  {% if name.startswith("mgga") or name.startswith("hyb_mgga") %}
+  lapl0 : float
+      laplacian of density :math:`\tau_0 = \nabla^2 \rho_0`.
+  lapl1 : float
+      laplacian of density :math:`\tau_1 = \nabla^2 \rho_1`.
+  tau0 : float
+      the non-interacting kinetic energy density 
+      :math:`\tau_0 = \frac{1}{2} \sum_{i}|\nabla \psi_i^{0}(r)|^2`.
+  tau1 : float
+      the non-interacting kinetic energy density 
+      :math:`\tau_1 = \frac{1}{2} \sum_{i}|\nabla \psi_i^{1}(r)|^2`.
+  {% endif %}
+  {% else %}
+  rho : float
+      Electron density.
+  {% if not (name.startswith("lda") or name.startswith("hyb_lda")) %}
+  sigma : float
+      reduced gradient :math:`\sigma = \nabla \rho \cdot \nabla \rho = |\nabla \rho|^2`.
+  {% endif %}
+  {% if name.startswith("mgga") or name.startswith("hyb_mgga") %}
+  lapl : float
+      laplacian of density :math:`\tau = \nabla^2 \rho`.
+  tau : float
+      the non-interacting kinetic energy density 
+      :math:`\tau = \frac{1}{2} \sum_{i}|\nabla \psi_i(r)|^2`.
+  {% endif %}
+  {% endif %}
+{% for (param_name, param_val), param_descrip in zip(ext_params.items(), ext_params_descriptions) %}
+  {{ param_name }} : Optional[float], default: {{ param_val }}
+      {{ param_descrip }}
+{% endfor %}
+  """
+{% for param_name, value in ext_params.items() %}
+  {{ param_name }} = ({{ param_name }} or {{ value }})
+{% endfor %}
+  p = get_p("{{ name }}", {{ polarized }}, {{ ext_params.keys()|join(', ') }})
+  
+  {% if polarized %}
+  return jax.lax.cond(
+    rho0 + rho1 < p.dens_threshold,
+    lambda _: 0.,
+    {% if name.startswith("lda") or name.startswith("hyb_lda") %}
+    lambda _: call_functional_pointwise(rho0, 
+                                        rho1,
+                                        polarized={{ polarized }},
+                                        p=p,
+                                      ),
+    {% elif name.startswith("gga") or name.startswith("hyb_gga") %}
+    lambda _: call_functional_pointwise(rho0,
+                                        rho1,
+                                        sigma0,
+                                        sigma1,
+                                        sigma2,
+                                        polarized={{ polarized }},
+                                        p=p,
+                                      ),    
+    {% elif name.startswith("mgga") or name.startswith("hyb_mgga") %}
+    lambda _: call_functional_pointwise(rho0,
+                                        rho1,
+                                        sigma0,
+                                        sigma1,
+                                        sigma2,
+                                        lapl0,
+                                        lapl1,
+                                        tau0,
+                                        tau1,
+                                        polarized={{ polarized }},
+                                        p=p),
+    {% endif %}
+    operand=None,
+  )
+  {% else %}
+  return jax.lax.cond(
+    rho < p.dens_threshold,
+    lambda _: 0.,
+    {% if name.startswith("lda") or name.startswith("hyb_lda") %}
+    lambda _: call_functional_pointwise(rho, 
+                                        polarized={{ polarized }},
+                                        p=p,
+                                      ),
+    {% elif name.startswith("gga") or name.startswith("hyb_gga") %}
+    lambda _: call_functional_pointwise(rho,
+                                        sigma,
+                                        polarized={{ polarized }},
+                                        p=p,
+                                      ),    
+    {% elif name.startswith("mgga") or name.startswith("hyb_mgga") %}
+    lambda _: call_functional_pointwise(rho,
+                                        sigma,
+                                        lapl,
+                                        tau,
+                                        polarized={{ polarized }},
+                                        p=p),
+    {% endif %}
+    operand=None,
+  )
+  {% endif %}
+
+{% endfor %}
+{% endfor %}

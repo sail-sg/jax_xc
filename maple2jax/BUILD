@@ -8,6 +8,7 @@ exports_files([
     "gen_py.py",
     "build.jinja",
     "python_template.jinja",
+    "python_template_pointwise.jinja",
     "utils.py",
     "wheel.BUILD",
 ])

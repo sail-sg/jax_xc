@@ -24,6 +24,7 @@ py_wheel(
     deps = [
         "@maple2jax//jax_xc",
         "@maple2jax//jax_xc:functionals",
+        "@maple2jax//jax_xc:pointwise_functionals",
         "@maple2jax//jax_xc:utils",
         "@maple2jax//jax_xc/impl",
         "@maple2jax//jax_xc/libxc",

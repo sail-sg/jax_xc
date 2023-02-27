@@ -15,6 +15,8 @@ from jax_xc.libxc import libxc
 FLAGS = flags.FLAGS
 flags.DEFINE_string("output", None, "output py file")
 flags.DEFINE_string("template", None, "template file")
+flags.DEFINE_string("pointwise_output", None, "pointwise output py file")
+flags.DEFINE_string("pointwise_template", None, "pointwise template file")
 
 
 def post_process(param_name):
@@ -83,6 +85,12 @@ def main(_):
     py_template = Template(f.read(), trim_blocks=True, lstrip_blocks=True)
     py_code = py_template.render(functionals=functionals, zip=zip)
     with open(FLAGS.output, "w") as out:
+      out.write(py_code)
+
+  with open(FLAGS.pointwise_template, "r") as f:
+    py_template = Template(f.read(), trim_blocks=True, lstrip_blocks=True)
+    py_code = py_template.render(functionals=functionals, zip=zip)
+    with open(FLAGS.pointwise_output, "w") as out:
       out.write(py_code)
 
 

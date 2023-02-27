@@ -13,7 +13,7 @@ from . import libxc as pylibxc
 from .libxc import libxc
 import ctypes
 from collections import namedtuple
-from typing import NamedTuple, Callable, Optional
+from typing import NamedTuple, Callable, Optional, Tuple
 
 
 class HybridFunctional(Callable):
@@ -260,3 +260,57 @@ def call_functional(
 
   # If it's normal functional
   return _invoke_single_functional(p, rho, r, polarized, mo)
+
+
+def call_functional_pointwise(
+  *pointwise_args: Tuple[jnp.ndarray, ...],
+  p: NamedTuple,
+  polarized: bool,
+):
+
+  def _invoke_single_functional(
+    *pointwise_args: Tuple[jnp.ndarray, ...],
+    p: NamedTuple,
+    polarized: bool,
+  ):
+    # raise error if p.maple_name is not in impl
+    if not hasattr(impl, p.maple_name):
+      raise ValueError(f"Functional {p.maple_name} not implemented")
+    impl_fn = getattr(impl, p.maple_name)
+    func = impl_fn.pol if polarized else impl_fn.unpol
+    return func(*pointwise_args, params=p.params, p=p)
+
+  # If it's hybrid functional
+  if p.maple_name == "":
+    return sum(
+      [
+        call_functional(*pointwise_args, p=p, polarized=polarized) * mix_coef
+        for fn_aux_p, mix_coef in zip(p.func_aux, p.mix_coef)
+      ]
+    )
+  # If it's deorbitalized functional
+  if p.maple_name == "DEORBITALIZE":
+    if len(p.func_aux) != 2:
+      raise ValueError("DEORBITALIZE must have two auxiliary functionals")
+    for fn_aux in p.func_aux:
+      if functional_name_to_type(fn_aux.name) != "mgga":
+        raise ValueError("deorbitalized functional must be mgga functional")
+
+    res = _invoke_single_functional(
+      *pointwise_args, p=p.func_aux[1], polarized=polarized
+    )
+
+    modified_args = pointwise_args
+    # Modify tau of args
+    if polarized:
+      modified_args[-1] = modified_args[1] * res
+      modified_args[-2] = modified_args[0] * res
+    else:
+      modified_args[-1] = modified_args[0] * res
+
+    return _invoke_single_functional(
+      *modified_args, p=p.func_aux[0], polarized=polarized
+    )
+
+  # If it's normal functional
+  return _invoke_single_functional(*pointwise_args, p=p, polarized=polarized)
