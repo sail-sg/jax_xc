@@ -4,13 +4,27 @@ import ctypes
 from collections import namedtuple
 from typing import Callable, Optional
 from . import impl
-from .utils import get_p, rho_to_arguments, call_functional, add_hyb_params
+from .utils import get_p
 
-{% for name, ext_params, maple_name, ext_params_descriptions, info, aux_info in functionals %}
-def {{ name }}(
-  rho: Callable,
+def invoke(p, rho, r, mo=None, deo=None):
+  if p.maple_name == "DEORBITALIZE":
+    p0, p1 = (p.func_aux[0], p.func_aux[1])
+    deo = invoke(p1, rho, r, mo)
+    return invoke(p0, rho, r, mo, deo)
+  elif p.maple_name == "":
+    return sum(
+      [
+        coeff * invoke(fn_p, rho, r, mo, deo)
+        for fn_p, coeff in zip(p.func_aux, p.mix_coef)
+      ]
+    )
+  else:
+    return getattr(impl, p.maple_name).invoke(p, rho, r, mo, deo)
+  
+
+{% for p, ext_params, ext_params_descriptions, info in functionals %}
+def {{ p.name }}(
   polarized: bool = True,
-  mo: Optional[Callable] = None,
 {% for param_name in ext_params.keys() %}
   {{ param_name }}: Optional[float] = None,
 {% endfor %}
@@ -25,50 +39,57 @@ def {{ name }}(
   {% endif %}
 
   {% endfor %}
-  {% if aux_info != [] %}
-  Hybrid Functionals:
-
-  {% for fn_aux_name, mix_coef in aux_info %}
-    {% if maple_name == "DEORBITALIZE" %}
-    {{ fn_aux_name }} (Mixing Coefficient is meaningless for DEORBITALIZE functional)
-    {% else %}
-    {{ fn_aux_name }} (Mixing Coefficient: {{ mix_coef }})
-    {% endif %}
-
+  
+  {% if p.maple_name == "" %}
+  Mixing of the following functionals:
+  {% for fn_p, coeff in zip(p.func_aux, p.mix_coef) %}
+    {{ fn_p.name }} (coefficient: {{ coeff }})
   {% endfor %}
   {% endif %}
   Parameters
   ----------
-  rho : Callable
-      The electron density function, mapping 3D coordinate to a density value.
-      If polarized returns one value for each spin, :math:`\rho\in R^3 \rightarrow R^2`,
-      otherwise, :math:`\rho\in R^3 \rightarrow R`.
   polarized : bool
-      Whether the calculation is polarized.
-  mo : Optional[Callable]
-      Molecular orbital function :math:`R^3 \rightarrow R^{2 \times N}`.
-      :math:`N` is the number of orbitals. It is only needed for
-      mgga functionals.
+    Whether the calculation is polarized.
 {% for (param_name, param_val), param_descrip in zip(ext_params.items(), ext_params_descriptions) %}
   {{ param_name }} : Optional[float], default: {{ param_val }}
-      {{ param_descrip }}
+    {{ param_descrip }}
 {% endfor %}
   """
 {% for param_name, value in ext_params.items() %}
   {{ param_name }} = ({{ param_name }} or {{ value }})
 {% endfor %}
-  p = get_p("{{ name }}", polarized, {{ ext_params.keys()|join(', ') }})
+  p = get_p("{{ p.name }}", polarized, {{ ext_params.keys()|join(', ') }})
+  def _{{ p.name }}_epsilon_xc(rho, r{% if p.type == "mgga" %}, mo=None{% endif %}):
+    r"""
+    The exchange-correlation energy density of {{ p.name }}.
+    
+    Args:
+      rho: Callable
+        The electron density function, mapping 3D coordinate to a density value.
+        If polarized returns one value for each spin, :math:`\rho\in R^3
+        \rightarrow R^2`, otherwise, :math:`\rho\in R^3 \rightarrow R`.
+      r: jnp.ndarray of shape (3,)
+        The 3D coordinate of the point to evaluate the functional.
+        Note this function is designed to accept single input,
+        use vmap for batch.
+{% if p.type == "mgga" %}
+      mo: Callable
+        Molecular orbital function :math:`R^3 \rightarrow R^{2 \times N}`.
+        :math:`N` is the number of orbitals.
+{% endif %}
+    Returns:
+      The energy density evaluated at r.
+    """
+    return invoke(p, rho, r{% if p.type == "mgga" %}, mo{% endif %})
   
-  {% if aux_info != [] %}
-  @add_hyb_params(p)
-  {% endif %}
-  def _{{ name }}(r):
-    return jax.lax.cond(
-        jnp.sum(rho(r)) < p.dens_threshold,
-        lambda _: 0.,
-        lambda _: call_functional(p, rho, r, polarized, mo),
-        operand=None
-    )
-  return _{{ name }}
+{% if p.maple_name == "" %}
+  _{{ p.name }}_epsilon_xc.cam_alpha = p.cam_alpha
+  _{{ p.name }}_epsilon_xc.cam_beta = p.cam_beta
+  _{{ p.name }}_epsilon_xc.cam_omega = p.cam_omega
+  _{{ p.name }}_epsilon_xc.nlc_b = p.nlc_b
+  _{{ p.name }}_epsilon_xc.nlc_C = p.nlc_C
+{% endif %}
+
+  return _{{ p.name }}_epsilon_xc
 
 {% endfor %}

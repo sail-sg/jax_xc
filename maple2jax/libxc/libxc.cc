@@ -50,6 +50,10 @@ std::string get_maple_name(uint64_t xc_func) {
     return "mgga_xc_b98";
   }
 
+  if (func->func_aux != NULL) {
+    return "";
+  }
+
   if (key != NULL) {
     if (work_to_maple_name.count(key) == 0) {
       std::string error_msg_name = func->info->name;
@@ -58,8 +62,6 @@ std::string get_maple_name(uint64_t xc_func) {
     } else {
       return work_to_maple_name.at(key);
     }
-  } else if (func->func_aux != NULL) {
-    return "";
   }
   // if neither hybrid nor in lda/gga/mgga
   throw std::runtime_error(

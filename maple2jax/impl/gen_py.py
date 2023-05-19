@@ -17,19 +17,6 @@ flags.DEFINE_string("output", None, "output py file")
 flags.DEFINE_string("template", None, "template file")
 
 
-def get_additional_import(py_code):
-  additional = []
-  if 'Heaviside' in py_code:
-    additional.append("Heaviside")
-  if 'xc_E1_scaled' in py_code:
-    additional.append("xc_E1_scaled")
-  if 'scipy.special.lambertw' in py_code:
-    additional.append("lambertw")
-  if 'xc_erfcx' in py_code:
-    additional.append("xc_erfcx")
-  return additional
-
-
 def post_process(py_code):
   replace_rules = (
     ("_a_", "."),
@@ -77,9 +64,6 @@ def main(_):
   with open(FLAGS.unpol, "r") as unpol:
     unpol_code = unpol.read()
 
-  additional = get_additional_import(pol_code + unpol_code)
-  additional = ", ".join(additional)
-
   with open(FLAGS.template, "r") as f:
     py_template = Template(f.read(), trim_blocks=True, lstrip_blocks=True)
     py_code = py_template.render(
@@ -87,7 +71,6 @@ def main(_):
       type=type,
       pol_code=pol_code.strip(),
       unpol_code=unpol_code.strip(),
-      additional=additional,
     )
     py_code = post_process(py_code)
     with open(FLAGS.output, "w") as out:

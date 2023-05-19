@@ -11,6 +11,7 @@ from jinja2 import Template
 
 import jax_xc.libxc as pylibxc
 from jax_xc.libxc import libxc
+from jax_xc.utils import dict_to_namedtuple
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("output", None, "output py file")
@@ -39,14 +40,29 @@ def get_ext_params(func):
   return ext_params
 
 
+def check_deorbitalize(p):
+  if len(p.func_aux) != 2:
+    raise ValueError(
+      f"{p.name} is a DEORBITALIZE functional, "
+      "it needs to have exactly two aux functionals"
+    )
+  for fn_p in p.func_aux:
+    if fn_p.type != "mgga":
+      raise ValueError(
+        f"{p.name} is a DEORBITALIZE functional, "
+        "it must be made of mgga functionals"
+      )
+
+
 def main(_):
   functionals = []
   functional_numbers = pylibxc.util.xc_available_functional_numbers()
   for number in functional_numbers:
     func = pylibxc.LibXCFunctional(number, 1)
+    # get ext_params and their descriptions
     ext_params = get_ext_params(func)
     ext_params_descriptions = func.get_ext_param_descriptions()
-
+    # get the bibtex information
     bibtexes = func.get_bibtex()
     # find url = \{(.*?)\} in bibtex, adding |$ to set default to ""
     urls = [re.findall(r"url = \{(.*?)\}|$", bibtex)[0] for bibtex in bibtexes]
@@ -61,28 +77,20 @@ def main(_):
       (url.strip(), doi.strip(), ref.strip())
       for url, doi, ref in zip(urls, dois, refs)
     ]
-
     x = ctypes.cast(func.xc_func, ctypes.c_void_p)
     p = libxc.get_p(x.value)
-    name = p["name"]
-    maple_name = p["maple_name"]
-    # special cases
-    if name == 'mgga_x_2d_prhg07_prp10':
-      maple_name = 'mgga_x_2d_prp10'
-    if name == 'hyb_mgga_xc_b98':
-      maple_name = 'mgga_xc_b98'
+    p = dict_to_namedtuple(p, "P")
 
-    aux_info = zip([fn_aux['name'] for fn_aux in p['func_aux']],
-                   p['mix_coef']) if 'func_aux' in p else []
+    # check if the functional is valid
+    if p.maple_name == "DEORBITALIZE":
+      check_deorbitalize(p)
 
-    functionals.append(
-      (name, ext_params, maple_name, ext_params_descriptions, info, aux_info)
-    )
+    functionals.append((p, ext_params, ext_params_descriptions, info))
 
-  with open(FLAGS.template, "r") as f:
+  with open(FLAGS.template, "rt") as f:
     py_template = Template(f.read(), trim_blocks=True, lstrip_blocks=True)
     py_code = py_template.render(functionals=functionals, zip=zip)
-    with open(FLAGS.output, "w") as out:
+    with open(FLAGS.output, "wt") as out:
       out.write(py_code)
 
 

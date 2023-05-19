@@ -55,8 +55,8 @@ def _impl(rctx):
     rctx.symlink(Label("//maple2jax/impl:gen_maple.py"), "jax_xc/impl/gen_maple.py")
     rctx.symlink(Label("//maple2jax/impl:maple_template.jinja"), "jax_xc/impl/maple_template.jinja")
     rctx.symlink(Label("//maple2jax/impl:gen_py.py"), "jax_xc/impl/gen_py.py")
+    rctx.symlink(Label("//maple2jax/impl:utils.py"), "jax_xc/impl/utils.py")
     rctx.symlink(Label("//maple2jax/impl:python_template.jinja"), "jax_xc/impl/python_template.jinja")
-    rctx.symlink(Label("//maple2jax/impl:_helper.py"), "jax_xc/impl/_helper.py")
     rctx.symlink(Label("//maple2jax/impl:build.jinja"), "jax_xc/impl/build.jinja")
 
     ret = rctx.execute([

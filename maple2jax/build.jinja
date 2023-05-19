@@ -4,7 +4,7 @@ py_binary(
     name = "gen_py",
     srcs = ["gen_py.py"],
     visibility = ["//visibility:public"],
-    deps = ["@maple2jax//jax_xc/libxc"],
+    deps = ["@maple2jax//jax_xc/libxc", ":utils"],
 )
 
 py_library(

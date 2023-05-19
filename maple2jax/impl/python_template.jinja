@@ -5,28 +5,30 @@ import jax.numpy as jnp
 from jax.numpy import array as array
 from jax.numpy import int32 as int32
 from jax.numpy import nan as nan
-from typing import Callable
+from typing import Callable, Optional
+from .utils import *
 
-{% if additional %}
-from ._helper import {{ additional }}
-{% endif %}
 
-{% if type == "lda" %}
-def pol(r0, r1, params, p):
-{% elif type == "gga" %}
-def pol(r0, r1, s0, s1, s2, params, p):
-{% elif type == "mgga" %}
-def pol(r0, r1, s0, s1, s2, l0, l1, tau0, tau1, params, p):
-{% endif %}
+def pol(p, r, s=(None, None, None), l=(None, None), tau=(None, None)):
+  params = p.params
+  (r0, r1), (s0, s1, s2), (l0, l1), (tau0, tau1) = r, s, l, tau
   {{ pol_code | indent(2) }}
   return res
 
-{% if type == "lda" %}
-def unpol(r0, params, p):
-{% elif type == "gga" %}
-def unpol(r0, s0, params, p):
-{% elif type == "mgga" %}
-def unpol(r0, s0, l0, tau0, params, p):
-{% endif %}
+
+def unpol(p, r, s=None, l=None, tau=None):
+  params = p.params
+  r0, s0, l0, tau0 = r, s, l, tau
   {{ unpol_code | indent(2) }}
   return res
+
+
+def invoke(
+  p: NamedTuple, rho: Callable, r: jnp.ndarray, mo: Optional[Callable] = None,
+  deorbitalize: Optional[float] = None,
+):
+  args = rho_to_arguments(p, rho, r, mo, deorbitalize)
+  ret = pol(p, *args) if p.nspin == 2 else unpol(p, *args)
+  dens = args[0] if p.nspin == 1 else sum(args[0])
+  ret = float(dens >= p.dens_threshold) * ret
+  return ret
