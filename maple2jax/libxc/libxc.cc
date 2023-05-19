@@ -25,6 +25,10 @@ std::map<std::string, py::array> get_params(uint64_t xc_func) {
   return registry[func->info->init](func);
 }
 
+/**
+ * This function will return the name of the original maple file,
+ * given the xc_func pointer.
+ */
 std::string get_maple_name(uint64_t xc_func) {
   xc_func_type* func = reinterpret_cast<xc_func_type*>(xc_func);
   void* key = NULL;
@@ -34,6 +38,16 @@ std::string get_maple_name(uint64_t xc_func) {
     key = const_cast<void*>(reinterpret_cast<const void*>(func->info->gga));
   } else if (func->info->mgga != NULL) {
     key = const_cast<void*>(reinterpret_cast<const void*>(func->info->mgga));
+  }
+
+  // special cases
+  // TODO: check if libxc fixed this.
+  std::string name(xc_functional_get_name(func->info->number));
+  if (name == "mgga_x_2d_prhg07_prp10") {
+    return "mgga_x_2d_prp10";
+  }
+  if (name == "hyb_mgga_xc_b98") {
+    return "mgga_xc_b98";
   }
 
   if (key != NULL) {
@@ -52,10 +66,23 @@ std::string get_maple_name(uint64_t xc_func) {
       "Functional is neither hybrid nor any of lda/gga/mgga");
 }
 
+std::string name_to_type(const std::string& name) {
+  if (name.rfind("lda", 0) == 0 || name.rfind("hyb_lda", 0) == 0) {
+    return "lda";
+  } else if (name.rfind("gga", 0) == 0 || name.rfind("hyb_gga", 0) == 0) {
+    return "gga";
+  } else if (name.rfind("mgga", 0) == 0 || name.rfind("hyb_mgga", 0) == 0) {
+    return "mgga";
+  } else {
+    throw std::runtime_error("Unknown functional type");
+  }
+}
+
 py::dict get_p(uint64_t xc_func) {
   xc_func_type* func = reinterpret_cast<xc_func_type*>(xc_func);
   py::dict ret;
-  ret["name"] = py::str(xc_functional_get_name(func->info->number));
+  std::string name(xc_functional_get_name(func->info->number));
+  ret["name"] = py::str(name);
   ret["cam_omega"] = func->cam_omega;
   ret["cam_alpha"] = func->cam_alpha;
   ret["cam_beta"] = func->cam_beta;
@@ -69,6 +96,8 @@ py::dict get_p(uint64_t xc_func) {
   ret["sigma_threshold"] = func->sigma_threshold;
   ret["params"] = get_params(xc_func);
   ret["maple_name"] = get_maple_name(xc_func);
+  ret["type"] = name_to_type(name);
+  ret["nspin"] = func->nspin;
   /*
   if (func->hyb_number_terms > 0) {
     auto hyb_type = py::array(std::array<int, 1>({
