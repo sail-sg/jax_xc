@@ -70,15 +70,16 @@ take a density function.
     """
     return jnp.prod(jax.scipy.stats.norm.pdf(r, loc=0, scale=1))
 
-
-  exc = jax_xc.gga_xc_pbe1w(rho=rho, polarized=False)
+  # create a density functional
+  gga_xc_pbe = jax_xc.gga_x_pbe(polarized=False)
 
   # a grid point in 3D
   r = jnp.array([0.1, 0.2, 0.3])
 
-  # evaluate the exchange correlation energy per particle at this point
+  # pass rho and r to the functional to compute epsilon_xc (energy density) at r.
   # corresponding to the 'zk' in libxc
-  print(exc(r))
+  epsilon_xc_r = gga_xc_pbe(rho, r)
+  print(epsilon_xc_r)
 
 mGGA
 ^^^^
@@ -114,14 +115,14 @@ functionals also depend on the molecular orbitals.
 
 
   rho = lambda r: jnp.sum(mo(r)**2, axis=0)
-  exc = jax_xc.mgga_xc_cc06(rho=rho, polarized=False, mo=mo)
+  mgga_xc_cc06 = jax_xc.mgga_xc_cc06(polarized=False)
 
   # a grid point in 3D
   r = jnp.array([0.1, 0.2, 0.3])
 
   # evaluate the exchange correlation energy per particle at this point
   # corresponding to the 'zk' in libxc
-  print(exc(r))
+  print(mgga_xc_cc06(rho, r, mo))
 
 Hybrid Functionals
 ^^^^^^^^^^^^^^^^^^
@@ -152,23 +153,22 @@ fraction of exact exchange).
     return jnp.prod(jax.scipy.stats.norm.pdf(r, loc=0, scale=1))
 
 
-  exc = jax_xc.hyb_gga_xc_pbeb0(rho=rho, polarized=False)
+  hyb_gga_xc_pbeb0 = jax_xc.hyb_gga_xc_pbeb0(polarized=False)
 
   # a grid point in 3D
   r = jnp.array([0.1, 0.2, 0.3])
 
   # evaluate the exchange correlation energy per particle at this point
   # corresponding to the 'zk' in libxc
-  print(exc(r))
+  print(hyb_gga_xc_pbeb0(rho, r))
 
   # access to extra attributes
-  cam_alpha = exc.cam_alpha  # fraction of full Hartree-Fock exchange
+  cam_alpha = hyb_gga_xc_pbep0.cam_alpha  # fraction of full Hartree-Fock exchange
 
-The complete list of extra attributes can be found in the class below:
+The complete list of extra attributes can be found below:
 
 .. code:: python
 
-   class HybridFunctional(Callable):
      cam_alpha: float
      cam_beta: float
      cam_omega: float
