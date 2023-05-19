@@ -41,7 +41,7 @@ std::string get_maple_name(uint64_t xc_func) {
   }
 
   // special cases
-  // TODO: check if libxc fixed this.
+  // TODO(linmin): check if libxc fixed this.
   std::string name(xc_functional_get_name(func->info->number));
   if (name == "mgga_x_2d_prhg07_prp10") {
     return "mgga_x_2d_prp10";

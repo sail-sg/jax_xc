@@ -101,7 +101,7 @@ bazel-clean: bazel-install
 # documentation
 
 addlicense: addlicense-install
-	addlicense -c $(COPYRIGHT) -l apache -y 2022 $(ADDLICENSE_IGNORE) -check $(PROJECT_FOLDER)
+	addlicense -c $(COPYRIGHT) -l apache -y 2023 $(ADDLICENSE_IGNORE) -check $(PROJECT_FOLDER)
 
 docstyle: doc-install
 	pydocstyle $(PROJECT_NAME) && doc8 docs && cd docs && make html SPHINXOPTS="-W"

@@ -11,7 +11,6 @@ from jax.config import config
 from absl.testing import absltest, parameterized
 from absl import logging
 import numpy as np
-from jax.tree_util import Partial
 
 from jax_xc import libxc as pylibxc
 from jax_xc.libxc import libxc
