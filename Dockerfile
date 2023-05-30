@@ -23,7 +23,7 @@ RUN pyenv install 3.7-dev
 RUN pyenv install 3.8-dev
 RUN pyenv install 3.9-dev
 RUN pyenv install 3.10-dev
-# RUN pyenv install 3.11-dev
+RUN pyenv install 3.11-dev
 
 COPY requirements.txt /app/
 WORKDIR /app
@@ -32,7 +32,7 @@ RUN eval "$(pyenv init -)" && pyenv global 3.7-dev; pip3 install -r requirements
 RUN eval "$(pyenv init -)" && pyenv global 3.8-dev; pip3 install -r requirements.txt;
 RUN eval "$(pyenv init -)" && pyenv global 3.9-dev; pip3 install -r requirements.txt;
 RUN eval "$(pyenv init -)" && pyenv global 3.10-dev; pip3 install -r requirements.txt;
-# RUN eval "$(pyenv init -)" && pyenv global 3.11-dev; pip3 install -r requirements.txt;
+RUN eval "$(pyenv init -)" && pyenv global 3.11-dev; pip3 install -r requirements.txt;
 
 # install go from source
 RUN wget https://golang.org/dl/go1.17.3.linux-amd64.tar.gz
