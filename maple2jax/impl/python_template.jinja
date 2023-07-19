@@ -1,6 +1,7 @@
 """Generated from {{ name }}.mpl."""
 
 import jax
+import jax.lax as lax
 import jax.numpy as jnp
 from jax.numpy import array as array
 from jax.numpy import int32 as int32
@@ -30,5 +31,5 @@ def invoke(
   args = rho_to_arguments(p, rho, r, mo, deorbitalize)
   ret = pol(p, *args) if p.nspin == 2 else unpol(p, *args)
   dens = args[0] if p.nspin == 1 else sum(args[0])
-  ret = float(dens >= p.dens_threshold) * ret
+  ret = lax.select((dens < p.dens_threshold), 0., ret)
   return ret
