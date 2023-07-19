@@ -29,7 +29,8 @@ def invoke(
   deorbitalize: Optional[float] = None,
 ):
   args = rho_to_arguments(p, rho, r, mo, deorbitalize)
-  ret = pol(p, *args) if p.nspin == 2 else unpol(p, *args)
+  code = pol if p.nspin == 2 else unpol
   dens = args[0] if p.nspin == 1 else sum(args[0])
-  ret = lax.select((dens < p.dens_threshold), 0., ret)
+  ret = lax.cond((dens < p.dens_threshold), lambda *_: 0.,
+                 lambda *_: code(p, *args), None)
   return ret
