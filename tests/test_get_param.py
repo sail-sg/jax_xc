@@ -15,9 +15,7 @@ import ctypes
 
 class _TestGetParams(parameterized.TestCase):
 
-  @parameterized.parameters(
-    *pylibxc.util.xc_available_functional_numbers(),
-  )
+  @parameterized.parameters(*pylibxc.util.xc_available_functional_numbers(),)
   def test_get_params_unpol(self, name):
     func = pylibxc.LibXCFunctional(name, 1)
     logging.info("Testing %s", func._xc_func_name)
@@ -27,9 +25,7 @@ class _TestGetParams(parameterized.TestCase):
     self.assertTrue(all(map(lambda x: isinstance(x, str), out.keys())))
     self.assertTrue(all(map(lambda x: isinstance(x, np.ndarray), out.values())))
 
-  @parameterized.parameters(
-    *pylibxc.util.xc_available_functional_numbers(),
-  )
+  @parameterized.parameters(*pylibxc.util.xc_available_functional_numbers(),)
   def test_get_p_unpol(self, name):
     func = pylibxc.LibXCFunctional(name, 1)
     logging.info("Testing %s", func._xc_func_name)
