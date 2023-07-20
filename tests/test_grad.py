@@ -22,16 +22,21 @@ class _TestGrad(parameterized.TestCase):
     xc_fn = xc_fn_fac(polarized=False)
     r = jnp.array([[10., 10., 10.], [9, 9, 9]])
 
-    def rho(r):
-      return jnp.prod(jax.scipy.stats.norm.pdf(r, loc=0, scale=1))
+    def rho(r, s=1):
+      return jnp.prod(jax.scipy.stats.norm.pdf(r, loc=0, scale=s))
 
     def grad(r):
       return jax.grad(xc_fn, argnums=1)(rho, r)
+
+    def param_grad(s):
+      return jax.grad(lambda s: xc_fn(lambda r: rho(r, s), r), argnums=1)(s)
 
     v = jax.vmap(lambda r: xc_fn(rho, r))(r)
     self.assertFalse(jnp.isnan(v).any())
     g = jax.vmap(grad)(r)
     self.assertFalse(jnp.isnan(g).any())
+    pg = param_grad(1.5)
+    self.assertFalse(jnp.isnan(pg).any())
 
   # def test_grad_is_not_nan(self):
   #   """Test that the gradient of the functional is not nan."""
