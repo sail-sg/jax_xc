@@ -29,7 +29,7 @@ class _TestGrad(parameterized.TestCase):
       return jax.grad(xc_fn, argnums=1)(rho, r)
 
     def param_grad(s):
-      return jax.grad(lambda s: xc_fn(lambda r: rho(r, s), r), argnums=1)(s)
+      return jax.grad(lambda s: xc_fn(lambda r: rho(r, s), r))(s)
 
     v = jax.vmap(lambda r: xc_fn(rho, r))(r)
     self.assertFalse(jnp.isnan(v).any())
