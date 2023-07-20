@@ -61,8 +61,10 @@ def main(_):
 
   with open(FLAGS.pol, "r") as pol:
     pol_code = pol.read()
+    pol_code = post_process(pol_code)
   with open(FLAGS.unpol, "r") as unpol:
     unpol_code = unpol.read()
+    unpol_code = post_process(unpol_code)
 
   with open(FLAGS.template, "r") as f:
     py_template = Template(f.read(), trim_blocks=True, lstrip_blocks=True)
@@ -72,7 +74,6 @@ def main(_):
       pol_code=pol_code.strip(),
       unpol_code=unpol_code.strip(),
     )
-    py_code = post_process(py_code)
     with open(FLAGS.output, "w") as out:
       out.write(py_code)
 

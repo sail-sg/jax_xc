@@ -21,3 +21,11 @@ py_test(
         "@maple2jax//jax_xc",
     ],
 )
+
+py_test(
+    name = "test_grad",
+    srcs = ["test_grad.py"],
+    deps = [
+        "@maple2jax//jax_xc",
+    ],
+)
