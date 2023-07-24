@@ -310,17 +310,21 @@ Install the python wheel. If needed, specify the install path by
 Running Test
 ------------
 
-The test could be run without the command above that builds wheel from source. To run all the test:
+The test could be run without the command above that builds wheel from source, though it might take longer time to
+build all the components needed for the test. To run all the test:
 
 .. code:: sh
 
-   bazel --output_user_root=$OUTPUT_USER_ROOT test --action_env=PATH=$PATH:$MAPLE_PATH //tests:*
+   bazel --output_user_root=$OUTPUT_USER_ROOT test --action_env=PATH=$PATH:$MAPLE_PATH //tests/...
 
 To run a specific test, for example ``test_impl``:
 
 .. code:: sh
 
    bazel --output_user_root=$OUTPUT_USER_ROOT test --action_env=PATH=$PATH:$MAPLE_PATH //tests:test_impl
+
+The test output could be found in ``bazel-testlogs/tests/test_impl/test.log`` for the ``tests:test_impl`` and similar to
+the others. If you prefer output in command line, add `--test_output=all` to the above command.
 
 License
 -------
