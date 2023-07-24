@@ -60,10 +60,10 @@ t229 = math.exp(-0.2e1 / 0.9e1 * t82 * t84 * t26 * (0.1064009e1 + 0.636183333333
 t231 = 0.2e1 - (0.2e1 / 0.3e1 - 0.34815250000000000000e-2 * t126) / (0.1e1 + 0.45802000000000000000e-1 * t126) * t229
 t232 = p_a_zeta_threshold ** t231
 t233 = t212 ** t231
-t234 = jnp.where(t212 <= p_a_zeta_threshold, t232, t233)
+t234 = lax_cond(t212 <= p_a_zeta_threshold, t232, t233)
 t235 = 0.1e1 - t211
 t237 = t235 ** t231
-t238 = jnp.where(t235 <= p_a_zeta_threshold, t232, t237)
+t238 = lax_cond(t235 <= p_a_zeta_threshold, t232, t237)
 t240 = 2 ** t231
 t243 = (t234 + t238 - 0.2e1) / (t240 - 0.2e1)
 t248 = 2 ** (0.1e1 / 0.3e1)

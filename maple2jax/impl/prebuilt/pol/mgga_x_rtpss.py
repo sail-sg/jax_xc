@@ -8,13 +8,13 @@ t11 = p_a_zeta_threshold - 0.1e1
 t14 = 0.2e1 * r1 * t7 <= p_a_zeta_threshold
 t15 = -t11
 t17 = (r0 - r1) * t7
-t18 = jnp.where(t14, t15, t17)
-t19 = jnp.where(t10, t11, t18)
+t18 = lax_cond(t14, t15, t17)
+t19 = lax_cond(t10, t11, t18)
 t20 = 0.1e1 + t19
 t22 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t23 = t22 * p_a_zeta_threshold
 t24 = t20 ** (0.1e1 / 0.3e1)
-t26 = jnp.where(t20 <= p_a_zeta_threshold, t23, t24 * t20)
+t26 = lax_cond(t20 <= p_a_zeta_threshold, t23, t24 * t20)
 t27 = t6 ** (0.1e1 / 0.3e1)
 t29 = s0 ** 2
 t31 = r0 ** 2
@@ -56,12 +56,12 @@ t116 = t90 ** 2
 t122 = t107 * t46
 t126 = (0.1e1 + t122 * t57 / 0.24e2) ** 2
 t130 = math.exp(-((0.10e2 / 0.81e2 + params_a_c * t29 * t35 / t40 / 0.64e2) * t46 * t57 / 0.24e2 + 0.146e3 / 0.2025e4 * t83 - 0.73e2 / 0.97200e5 * t82 * t98 + 0.25e2 / 0.944784e6 * t102 * t88 * t29 * t93 + t107 * t29 * t35 / 0.720e3 + t111 * t113 * t29 * s0 / t116 / 0.2304e4) / t126 * t101)
-t137 = jnp.where(r0 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t26 * t27 * (0.1e1 + params_a_kappa * (0.1e1 - t130)))
-t139 = jnp.where(t10, t15, -t17)
-t140 = jnp.where(t14, t11, t139)
+t137 = lax_cond(r0 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t26 * t27 * (0.1e1 + params_a_kappa * (0.1e1 - t130)))
+t139 = lax_cond(t10, t15, -t17)
+t140 = lax_cond(t14, t11, t139)
 t141 = 0.1e1 + t140
 t143 = t141 ** (0.1e1 / 0.3e1)
-t145 = jnp.where(t141 <= p_a_zeta_threshold, t23, t143 * t141)
+t145 = lax_cond(t141 <= p_a_zeta_threshold, t23, t143 * t141)
 t147 = s2 ** 2
 t149 = r1 ** 2
 t150 = 0.1e1 / t149
@@ -86,5 +86,5 @@ t206 = math.sqrt(0.50e2 * t89 * t147 * t201 + 0.162e3 * t155)
 t218 = t198 ** 2
 t227 = (0.1e1 + t122 * t170 / 0.24e2) ** 2
 t231 = math.exp(-((0.10e2 / 0.81e2 + params_a_c * t147 * t153 / t158 / 0.64e2) * t46 * t170 / 0.24e2 + 0.146e3 / 0.2025e4 * t195 - 0.73e2 / 0.97200e5 * t194 * t206 + 0.25e2 / 0.944784e6 * t102 * t88 * t147 * t201 + t107 * t147 * t153 / 0.720e3 + t111 * t113 * t147 * s2 / t218 / 0.2304e4) / t227 * t101)
-t238 = jnp.where(r1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t145 * t27 * (0.1e1 + params_a_kappa * (0.1e1 - t231)))
+t238 = lax_cond(r1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t145 * t27 * (0.1e1 + params_a_kappa * (0.1e1 - t231)))
 res = t137 + t238

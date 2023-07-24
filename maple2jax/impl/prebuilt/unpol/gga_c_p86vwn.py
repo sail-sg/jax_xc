@@ -24,7 +24,7 @@ t47 = (t26 + 0.47584e-2) ** 2
 t49 = math.log(t47 * t36)
 t53 = 0.1e1 <= p_a_zeta_threshold
 t54 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
-t56 = jnp.where(t53, t54 * p_a_zeta_threshold, 1)
+t56 = lax_cond(t53, t54 * p_a_zeta_threshold, 1)
 t59 = 2 ** (0.1e1 / 0.3e1)
 t60 = t59 - 0.1e1
 t68 = r0 ** 2
@@ -38,6 +38,6 @@ t104 = math.sqrt(s0)
 t106 = r0 ** (0.1e1 / 0.6e1)
 t111 = math.exp(-params_a_ftilde * (params_a_aa + params_a_bb) / t102 * t104 / t106 / r0)
 t113 = t54 ** 2
-t115 = jnp.where(t53, t113 * p_a_zeta_threshold, 1)
+t115 = lax_cond(t53, t113 * p_a_zeta_threshold, 1)
 t116 = math.sqrt(t115)
 res = 0.310907e-1 * t19 + 0.38783294878113014393e-1 * t24 + 0.96902277115443742139e-3 * t30 - 0.1e1 / t32 * (t40 + 0.31770800474394146400e0 * t44 + 0.41403379428206274608e-3 * t49) * (0.9e1 * t56 - 0.9e1) / 0.24e2 + s0 / t7 / t68 * t111 * t102 / t116

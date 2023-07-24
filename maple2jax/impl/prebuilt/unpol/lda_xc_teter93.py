@@ -1,5 +1,5 @@
 t2 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
-t4 = jnp.where(0.1e1 <= p_a_zeta_threshold, t2 * p_a_zeta_threshold, 1)
+t4 = lax_cond(0.1e1 <= p_a_zeta_threshold, t2 * p_a_zeta_threshold, 1)
 t7 = 2 ** (0.1e1 / 0.3e1)
 t11 = (0.2e1 * t4 - 0.2e1) / (0.2e1 * t7 - 0.2e1)
 t15 = 3 ** (0.1e1 / 0.3e1)

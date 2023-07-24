@@ -8,13 +8,13 @@ t11 = p_a_zeta_threshold - 0.1e1
 t14 = 0.2e1 * r1 * t7 <= p_a_zeta_threshold
 t15 = -t11
 t17 = (r0 - r1) * t7
-t18 = jnp.where(t14, t15, t17)
-t19 = jnp.where(t10, t11, t18)
+t18 = lax_cond(t14, t15, t17)
+t19 = lax_cond(t10, t11, t18)
 t20 = 0.1e1 + t19
 t22 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t23 = t22 * p_a_zeta_threshold
 t24 = t20 ** (0.1e1 / 0.3e1)
-t26 = jnp.where(t20 <= p_a_zeta_threshold, t23, t24 * t20)
+t26 = lax_cond(t20 <= p_a_zeta_threshold, t23, t24 * t20)
 t28 = t6 ** (0.1e1 / 0.3e1)
 t29 = r0 ** (0.1e1 / 0.3e1)
 t30 = t29 ** 2
@@ -39,12 +39,12 @@ t72 = 0.1e1 / t43 / t42
 t73 = s0 ** 2
 t75 = t34 ** 2
 t83 = (0.1e1 + t70 * t72 * t73 / t29 / t75 / r0 / 0.576e3) ** (0.1e1 / 0.8e1)
-t88 = jnp.where(r0 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t26 * t28 * (0.1e1 + params_a_k0 * (0.1e1 - t39 / t47) / t65) / t83)
-t90 = jnp.where(t10, t15, -t17)
-t91 = jnp.where(t14, t11, t90)
+t88 = lax_cond(r0 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t26 * t28 * (0.1e1 + params_a_k0 * (0.1e1 - t39 / t47) / t65) / t83)
+t90 = lax_cond(t10, t15, -t17)
+t91 = lax_cond(t14, t11, t90)
 t92 = 0.1e1 + t91
 t94 = t92 ** (0.1e1 / 0.3e1)
-t96 = jnp.where(t92 <= p_a_zeta_threshold, t23, t94 * t92)
+t96 = lax_cond(t92 <= p_a_zeta_threshold, t23, t94 * t92)
 t98 = r1 ** (0.1e1 / 0.3e1)
 t99 = t98 ** 2
 t102 = tau1 / t99 / r1
@@ -60,5 +60,5 @@ t127 = (t120 + params_a_c1 * t121 / t123) ** (0.1e1 / 0.4e1)
 t132 = s2 ** 2
 t134 = t103 ** 2
 t142 = (0.1e1 + t70 * t72 * t132 / t98 / t134 / r1 / 0.576e3) ** (0.1e1 / 0.8e1)
-t147 = jnp.where(r1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t96 * t28 * (0.1e1 + params_a_k0 * (0.1e1 - t108 / t109) / t127) / t142)
+t147 = lax_cond(r1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t96 * t28 * (0.1e1 + params_a_k0 * (0.1e1 - t108 / t109) / t127) / t142)
 res = t88 + t147

@@ -13,6 +13,7 @@
 # limitations under the License.
 """Utils for the impl of the functionals."""
 import jax
+from jax import lax
 import jax.numpy as jnp
 import tensorflow_probability as tfp
 from typing import Callable, Optional, NamedTuple
@@ -36,6 +37,14 @@ def lambertw(x):
 
 def xc_erfcx(x):
   return jnp.exp(x**2) * jax.scipy.special.erfc(x)
+
+
+def lax_cond(a, b, c):
+  if isinstance(b, int):
+    b = float(b)
+  if isinstance(c, int):
+    c = float(c)
+  return lax.cond(a, lambda _: b, lambda _: c, None)
 
 
 def rho_to_arguments(

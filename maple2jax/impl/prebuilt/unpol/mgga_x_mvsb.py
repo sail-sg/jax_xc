@@ -2,12 +2,12 @@ t3 = 3 ** (0.1e1 / 0.3e1)
 t4 = math.pi ** (0.1e1 / 0.3e1)
 t7 = 0.1e1 <= p_a_zeta_threshold
 t8 = p_a_zeta_threshold - 0.1e1
-t10 = jnp.where(t7, -t8, 0)
-t11 = jnp.where(t7, t8, t10)
+t10 = lax_cond(t7, -t8, 0)
+t11 = lax_cond(t7, t8, t10)
 t12 = 0.1e1 + t11
 t14 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t16 = t12 ** (0.1e1 / 0.3e1)
-t18 = jnp.where(t12 <= p_a_zeta_threshold, t14 * p_a_zeta_threshold, t16 * t12)
+t18 = lax_cond(t12 <= p_a_zeta_threshold, t14 * p_a_zeta_threshold, t16 * t12)
 t20 = r0 ** (0.1e1 / 0.3e1)
 t21 = 2 ** (0.1e1 / 0.3e1)
 t22 = t21 ** 2
@@ -30,5 +30,5 @@ t60 = (t53 + params_a_c1 * t54 / t56) ** (0.1e1 / 0.4e1)
 t69 = s0 ** 2
 t71 = t29 ** 2
 t79 = (0.1e1 + params_a_b * t36 / t38 / t37 * t69 * t21 / t20 / t71 / r0 / 0.288e3) ** (0.1e1 / 0.8e1)
-t84 = jnp.where(r0 / 0.2e1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t3 / t4 * t18 * t20 * (0.1e1 + params_a_k0 * (0.1e1 - t34 / t42) / t60) / t79)
+t84 = lax_cond(r0 / 0.2e1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t3 / t4 * t18 * t20 * (0.1e1 + params_a_k0 * (0.1e1 - t34 / t42) / t60) / t79)
 res = 0.2e1 * t84

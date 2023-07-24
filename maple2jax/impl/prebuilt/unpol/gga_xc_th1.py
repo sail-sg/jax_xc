@@ -13,7 +13,7 @@ t28 = t15 ** 2
 t29 = t28 * r0
 t34 = math.sqrt(s0)
 t36 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
-t38 = jnp.where(0.1e1 <= p_a_zeta_threshold, t36 * p_a_zeta_threshold, 1)
+t38 = lax_cond(0.1e1 <= p_a_zeta_threshold, t36 * p_a_zeta_threshold, 1)
 t64 = t38 ** 2
 t70 = 0.1e1 / r0
 t77 = t7 ** 2

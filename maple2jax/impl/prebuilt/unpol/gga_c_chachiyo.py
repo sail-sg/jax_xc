@@ -13,7 +13,7 @@ t24 = params_a_ap * t23
 t32 = math.log(0.1e1 + params_a_bf * t2 * t10 / 0.3e1 + params_a_cf * t1 * t19 / 0.3e1)
 t36 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t37 = t36 ** 2
-t38 = jnp.where(0.1e1 <= p_a_zeta_threshold, t37, 1)
+t38 = lax_cond(0.1e1 <= p_a_zeta_threshold, t37, 1)
 t39 = t38 ** 2
 t44 = t24 + (params_a_af * t32 - t24) * (-0.2e1 * t39 * t38 + 0.2e1)
 t45 = math.pi ** (0.1e1 / 0.3e1)

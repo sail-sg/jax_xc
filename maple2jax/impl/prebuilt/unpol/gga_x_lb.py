@@ -14,5 +14,5 @@ t26 = t11 * t15
 t28 = params_a_gamma * t10 * t26
 t29 = math.asinh(t28)
 t38 = math.log(0.2e1 * t28)
-t43 = jnp.where(t12 * t15 < 0.300e3, params_a_beta * s0 * t19 / t21 / t20 / (0.3e1 * params_a_beta * t10 * t26 * t29 + 0.1e1), t12 * t15 / t38 / 0.3e1)
+t43 = lax_cond(t12 * t15 < 0.300e3, params_a_beta * s0 * t19 / t21 / t20 / (0.3e1 * params_a_beta * t10 * t26 * t29 + 0.1e1), t12 * t15 / t38 / 0.3e1)
 res = (-params_a_alpha * t1 * t4 * t6 / 0.2e1 - t43) * t19 * t13 / 0.2e1

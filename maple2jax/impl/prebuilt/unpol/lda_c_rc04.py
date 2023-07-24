@@ -1,6 +1,6 @@
 t2 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t3 = t2 ** 2
-t4 = jnp.where(0.1e1 <= p_a_zeta_threshold, t3, 1)
+t4 = lax_cond(0.1e1 <= p_a_zeta_threshold, t3, 1)
 t5 = t4 ** 2
 t7 = 3 ** (0.1e1 / 0.3e1)
 t9 = (0.1e1 / math.pi) ** (0.1e1 / 0.3e1)

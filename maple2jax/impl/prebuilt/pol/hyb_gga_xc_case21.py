@@ -9,13 +9,13 @@ t15 = 0.2e1 * r1 * t8 <= p_a_zeta_threshold
 t16 = -t12
 t17 = r0 - r1
 t18 = t17 * t8
-t19 = jnp.where(t15, t16, t18)
-t20 = jnp.where(t11, t12, t19)
+t19 = lax_cond(t15, t16, t18)
+t20 = lax_cond(t11, t12, t19)
 t21 = 0.1e1 + t20
 t23 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t24 = t23 * p_a_zeta_threshold
 t25 = t21 ** (0.1e1 / 0.3e1)
-t27 = jnp.where(t21 <= p_a_zeta_threshold, t24, t25 * t21)
+t27 = lax_cond(t21 <= p_a_zeta_threshold, t24, t25 * t21)
 t28 = t7 ** (0.1e1 / 0.3e1)
 t30 = 6 ** (0.1e1 / 0.3e1)
 t31 = params_a_gammax * t30
@@ -29,29 +29,29 @@ t38 = r0 ** (0.1e1 / 0.3e1)
 t39 = t38 ** 2
 t41 = 0.1e1 / t39 / t37
 t52 = xbspline(t36 * s0 * t41 / (0.1e1 + t31 * t35 * s0 * t41 / 0.24e2) / 0.24e2, 0, params)
-t56 = jnp.where(r0 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t6 * t27 * t28 * t52)
-t58 = jnp.where(t11, t16, -t18)
-t59 = jnp.where(t15, t12, t58)
+t56 = lax_cond(r0 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t6 * t27 * t28 * t52)
+t58 = lax_cond(t11, t16, -t18)
+t59 = lax_cond(t15, t12, t58)
 t60 = 0.1e1 + t59
 t62 = t60 ** (0.1e1 / 0.3e1)
-t64 = jnp.where(t60 <= p_a_zeta_threshold, t24, t62 * t60)
+t64 = lax_cond(t60 <= p_a_zeta_threshold, t24, t62 * t60)
 t66 = r1 ** 2
 t67 = r1 ** (0.1e1 / 0.3e1)
 t68 = t67 ** 2
 t70 = 0.1e1 / t68 / t66
 t81 = xbspline(t36 * s2 * t70 / (0.1e1 + t31 * t35 * s2 * t70 / 0.24e2) / 0.24e2, 0, params)
-t85 = jnp.where(r1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t6 * t64 * t28 * t81)
+t85 = lax_cond(r1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t6 * t64 * t28 * t81)
 t88 = t18 + 0.1e1
 t89 = t88 <= p_a_zeta_threshold
 t90 = t23 ** 2
 t91 = t88 ** (0.1e1 / 0.3e1)
 t92 = t91 ** 2
-t93 = jnp.where(t89, t90, t92)
+t93 = lax_cond(t89, t90, t92)
 t94 = 0.1e1 - t18
 t95 = t94 <= p_a_zeta_threshold
 t96 = t94 ** (0.1e1 / 0.3e1)
 t97 = t96 ** 2
-t98 = jnp.where(t95, t90, t97)
+t98 = lax_cond(t95, t90, t97)
 t101 = t3 ** 2
 t102 = (t93 / 0.2e1 + t98 / 0.2e1) * t101
 t104 = math.sqrt(s0)
@@ -73,8 +73,8 @@ t144 = 0.621814e-1 * (0.1e1 + 0.53425000000000000000e-1 * t123) * t142
 t145 = t17 ** 2
 t146 = t145 ** 2
 t147 = t108 ** 2
-t151 = jnp.where(t89, t24, t91 * t88)
-t153 = jnp.where(t95, t24, t96 * t94)
+t151 = lax_cond(t89, t24, t91 * t88)
+t153 = lax_cond(t95, t24, t96 * t94)
 t155 = 2 ** (0.1e1 / 0.3e1)
 t159 = (t151 + t153 - 0.2e1) / (0.2e1 * t155 - 0.2e1)
 t170 = math.log(0.1e1 + 0.32163958997385070134e2 / (0.70594500000000000000e1 * t126 + 0.15494250000000000000e1 * t123 + 0.42077500000000000000e0 * t129 + 0.15629250000000000000e0 * t136))

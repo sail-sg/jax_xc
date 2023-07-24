@@ -8,13 +8,13 @@ t11 = p_a_zeta_threshold - 0.1e1
 t14 = 0.2e1 * r1 * t7 <= p_a_zeta_threshold
 t15 = -t11
 t17 = (r0 - r1) * t7
-t18 = jnp.where(t14, t15, t17)
-t19 = jnp.where(t10, t11, t18)
+t18 = lax_cond(t14, t15, t17)
+t19 = lax_cond(t10, t11, t18)
 t20 = 0.1e1 + t19
 t22 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t23 = t22 * p_a_zeta_threshold
 t24 = t20 ** (0.1e1 / 0.3e1)
-t26 = jnp.where(t20 <= p_a_zeta_threshold, t23, t24 * t20)
+t26 = lax_cond(t20 <= p_a_zeta_threshold, t23, t24 * t20)
 t27 = t6 ** (0.1e1 / 0.3e1)
 t29 = 6 ** (0.1e1 / 0.3e1)
 t30 = math.pi ** 2
@@ -38,12 +38,12 @@ t62 = 0.1e1 - 0.4e1 * t53 / t58
 t63 = t62 ** 2
 t70 = t53 ** 2
 t73 = t58 ** 2
-t92 = jnp.where(r0 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t26 * t27 * (0.1e1 + t47 + t63 * t62 / (0.1e1 + 0.8e1 * t53 * t52 / t58 / t57 + 0.64e2 * params_a_b * t70 * t53 / t73 / t58) * (params_a_kappa * (0.1e1 - params_a_kappa / (params_a_kappa + t42 + params_a_c)) - t47)))
-t94 = jnp.where(t10, t15, -t17)
-t95 = jnp.where(t14, t11, t94)
+t92 = lax_cond(r0 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t26 * t27 * (0.1e1 + t47 + t63 * t62 / (0.1e1 + 0.8e1 * t53 * t52 / t58 / t57 + 0.64e2 * params_a_b * t70 * t53 / t73 / t58) * (params_a_kappa * (0.1e1 - params_a_kappa / (params_a_kappa + t42 + params_a_c)) - t47)))
+t94 = lax_cond(t10, t15, -t17)
+t95 = lax_cond(t14, t11, t94)
 t96 = 0.1e1 + t95
 t98 = t96 ** (0.1e1 / 0.3e1)
-t100 = jnp.where(t96 <= p_a_zeta_threshold, t23, t98 * t96)
+t100 = lax_cond(t96 <= p_a_zeta_threshold, t23, t98 * t96)
 t102 = r1 ** 2
 t103 = r1 ** (0.1e1 / 0.3e1)
 t104 = t103 ** 2
@@ -59,5 +59,5 @@ t126 = 0.1e1 - 0.4e1 * t120 / t122
 t127 = t126 ** 2
 t134 = t120 ** 2
 t137 = t122 ** 2
-t156 = jnp.where(r1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t100 * t27 * (0.1e1 + t114 + t127 * t126 / (0.1e1 + 0.8e1 * t120 * t119 / t122 / t121 + 0.64e2 * params_a_b * t134 * t120 / t137 / t122) * (params_a_kappa * (0.1e1 - params_a_kappa / (params_a_kappa + t109 + params_a_c)) - t114)))
+t156 = lax_cond(r1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t100 * t27 * (0.1e1 + t114 + t127 * t126 / (0.1e1 + 0.8e1 * t120 * t119 / t122 / t121 + 0.64e2 * params_a_b * t134 * t120 / t137 / t122) * (params_a_kappa * (0.1e1 - params_a_kappa / (params_a_kappa + t109 + params_a_c)) - t114)))
 res = t92 + t156

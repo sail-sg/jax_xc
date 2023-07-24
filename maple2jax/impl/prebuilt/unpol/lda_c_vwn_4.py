@@ -21,7 +21,7 @@ t44 = math.atan(0.66920720466459414830e1 / (t12 + 0.106835e1))
 t47 = (t26 + 0.228344e0) ** 2
 t49 = math.log(t47 * t36)
 t54 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
-t56 = jnp.where(0.1e1 <= p_a_zeta_threshold, t54 * p_a_zeta_threshold, 1)
+t56 = lax_cond(0.1e1 <= p_a_zeta_threshold, t54 * p_a_zeta_threshold, 1)
 t59 = 2 ** (0.1e1 / 0.3e1)
 t60 = t59 - 0.1e1
 res = 0.310907e-1 * t19 + 0.38783294878113014393e-1 * t24 + 0.96902277115443742139e-3 * t30 - 0.1e1 / t32 * (t40 + 0.32323836906055067299e0 * t44 + 0.21608710360898267022e-1 * t49) * (0.9e1 * t56 - 0.9e1) / 0.24e2

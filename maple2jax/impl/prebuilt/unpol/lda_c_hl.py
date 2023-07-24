@@ -19,7 +19,7 @@ t36 = t17 ** 2
 t38 = t36 / t18
 t44 = params_a_hl_c[0] * ((0.1e1 + 0.3e1 / 0.4e1 * t4 / t6 / t5) * t24 - t27 * t30 / t6 / 0.4e1 + t35 * t38 / t5 / 0.8e1 - 0.1e1 / 0.3e1)
 t46 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
-t48 = jnp.where(0.1e1 <= p_a_zeta_threshold, t46 * p_a_zeta_threshold, 1)
+t48 = lax_cond(0.1e1 <= p_a_zeta_threshold, t46 * p_a_zeta_threshold, 1)
 t51 = 2 ** (0.1e1 / 0.3e1)
 t57 = params_a_hl_r[1]
 t58 = t57 ** 2

@@ -8,13 +8,13 @@ t11 = p_a_zeta_threshold - 0.1e1
 t14 = 0.2e1 * r1 * t7 <= p_a_zeta_threshold
 t15 = -t11
 t17 = (r0 - r1) * t7
-t18 = jnp.where(t14, t15, t17)
-t19 = jnp.where(t10, t11, t18)
+t18 = lax_cond(t14, t15, t17)
+t19 = lax_cond(t10, t11, t18)
 t20 = 0.1e1 + t19
 t22 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t23 = t22 * p_a_zeta_threshold
 t24 = t20 ** (0.1e1 / 0.3e1)
-t26 = jnp.where(t20 <= p_a_zeta_threshold, t23, t24 * t20)
+t26 = lax_cond(t20 <= p_a_zeta_threshold, t23, t24 * t20)
 t27 = t6 ** (0.1e1 / 0.3e1)
 t29 = 6 ** (0.1e1 / 0.3e1)
 t30 = t29 ** 2
@@ -50,14 +50,14 @@ t91 = 0.86979166666666666668e-1 * t86 * t35 * s0 / t62
 t92 = 0.26041666666666666667e-2 * t67
 t95 = t29 / t43 / t31
 t102 = 0.16276041666666666667e-3 * t95 * t35 * t61 / t47 / t62 / t46
-t108 = jnp.where(0.26e1 < t41, t83, (-0.40608000000000000000e0 + t84 - t85 + t91 - t92 + t102) * t83 + (0.14060800000000000000e1 - t84 + t85 - t91 + t92 - t102) * t74)
-t109 = jnp.where(t41 < 0.6e0, t74, t108)
-t113 = jnp.where(r0 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t26 * t27 * t109)
-t115 = jnp.where(t10, t15, -t17)
-t116 = jnp.where(t14, t11, t115)
+t108 = lax_cond(0.26e1 < t41, t83, (-0.40608000000000000000e0 + t84 - t85 + t91 - t92 + t102) * t83 + (0.14060800000000000000e1 - t84 + t85 - t91 + t92 - t102) * t74)
+t109 = lax_cond(t41 < 0.6e0, t74, t108)
+t113 = lax_cond(r0 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t26 * t27 * t109)
+t115 = lax_cond(t10, t15, -t17)
+t116 = lax_cond(t14, t11, t115)
 t117 = 0.1e1 + t116
 t119 = t117 ** (0.1e1 / 0.3e1)
-t121 = jnp.where(t117 <= p_a_zeta_threshold, t23, t119 * t117)
+t121 = lax_cond(t117 <= p_a_zeta_threshold, t23, t119 * t117)
 t123 = math.sqrt(s2)
 t124 = r1 ** (0.1e1 / 0.3e1)
 t128 = t34 * t123 / t124 / r1
@@ -80,7 +80,7 @@ t166 = 0.19500000000000000000e0 * t136
 t171 = 0.86979166666666666668e-1 * t86 * t123 * s2 / t144
 t172 = 0.26041666666666666667e-2 * t149
 t179 = 0.16276041666666666667e-3 * t95 * t123 * t143 / t132 / t144 / t131
-t185 = jnp.where(0.26e1 < t129, t164, (-0.40608000000000000000e0 + t165 - t166 + t171 - t172 + t179) * t164 + (0.14060800000000000000e1 - t165 + t166 - t171 + t172 - t179) * t156)
-t186 = jnp.where(t129 < 0.6e0, t156, t185)
-t190 = jnp.where(r1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t121 * t27 * t186)
+t185 = lax_cond(0.26e1 < t129, t164, (-0.40608000000000000000e0 + t165 - t166 + t171 - t172 + t179) * t164 + (0.14060800000000000000e1 - t165 + t166 - t171 + t172 - t179) * t156)
+t186 = lax_cond(t129 < 0.6e0, t156, t185)
+t190 = lax_cond(r1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t121 * t27 * t186)
 res = t113 + t190

@@ -24,8 +24,8 @@ t72 = 0.1e1 + t71
 t74 = math.sqrt(p_a_zeta_threshold)
 t75 = t74 * p_a_zeta_threshold
 t76 = math.sqrt(t72)
-t78 = jnp.where(t72 <= p_a_zeta_threshold, t75, t76 * t72)
+t78 = lax_cond(t72 <= p_a_zeta_threshold, t75, t76 * t72)
 t80 = 0.1e1 - t71
 t82 = math.sqrt(t80)
-t84 = jnp.where(t80 <= p_a_zeta_threshold, t75, t82 * t80)
+t84 = lax_cond(t80 <= p_a_zeta_threshold, t75, t82 * t80)
 res = -0.1925e0 + (0.863136e-1 * t6 + 0.572384e-1 * t10 + 0.3362975e-2 * t16) * t27 + (0.117331e0 + (-0.3394e-1 * t6 - 0.766765e-2 * t10 - 0.915064469e-4 * t16) * t39) * t43 * t46 + (0.234188e-1 + (-0.37093e-1 * t6 + 0.163618e-1 * t10 - 0.272383828612e-1 * t16) * t57) * t60 * t63 - 0.4e1 / 0.3e1 * (t66 - 0.1e1) * t68 * t2 * t4 * (t78 / 0.2e1 + t84 / 0.2e1 - 0.1e1 - 0.3e1 / 0.8e1 * t43 * t46 - 0.3e1 / 0.128e3 * t60 * t63)

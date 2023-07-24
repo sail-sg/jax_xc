@@ -24,11 +24,11 @@ t44 = t43 <= p_a_zeta_threshold
 t45 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t46 = t45 * p_a_zeta_threshold
 t47 = t43 ** (0.1e1 / 0.3e1)
-t49 = jnp.where(t44, t46, t47 * t43)
+t49 = lax_cond(t44, t46, t47 * t43)
 t50 = 0.1e1 - t42
 t51 = t50 <= p_a_zeta_threshold
 t52 = t50 ** (0.1e1 / 0.3e1)
-t54 = jnp.where(t51, t46, t52 * t50)
+t54 = lax_cond(t51, t46, t52 * t50)
 t55 = t49 + t54 - 0.2e1
 t56 = 2 ** (0.1e1 / 0.3e1)
 t57 = t56 - 0.1e1
@@ -44,9 +44,9 @@ t93 = 0.1e1 - t92
 t94 = math.pi ** 2
 t97 = t45 ** 2
 t98 = t47 ** 2
-t99 = jnp.where(t44, t97, t98)
+t99 = lax_cond(t44, t97, t98)
 t100 = t52 ** 2
-t101 = jnp.where(t51, t97, t100)
+t101 = lax_cond(t51, t97, t100)
 t103 = t99 / 0.2e1 + t101 / 0.2e1
 t104 = t103 ** 2
 t105 = t104 * t103
@@ -88,16 +88,16 @@ t209 = 0.1e1 / t208
 t214 = 0.5e1 / 0.9e1 * (tau0 / t181 / r0 * t188 + tau1 / t191 / r1 * t198 - t124 * t201 / 0.8e1) * t205 * t209 / (t188 + t198)
 t216 = math.log(DBL_EPSILON)
 t219 = t216 / (-t216 + 0.1131e1)
-t222 = jnp.where(t214 < -t219, t214, -t219)
+t222 = lax_cond(t214 < -t219, t214, -t219)
 t227 = math.exp(-0.1131e1 * t222 / (0.1e1 - t222))
-t228 = jnp.where(-t219 < t214, 0, t227)
+t228 = lax_cond(-t219 < t214, 0, t227)
 t230 = math.log(0.72992700729927007299e0 * DBL_EPSILON)
 t233 = (-t230 + 0.17e1) / t230
 t234 = t214 < -t233
-t235 = jnp.where(t234, -t233, t214)
+t235 = lax_cond(t234, -t233, t214)
 t239 = math.exp(0.17e1 / (0.1e1 - t235))
-t241 = jnp.where(t234, 0, -0.137e1 * t239)
-t242 = jnp.where(t214 <= 0.1e1, t228, t241)
+t241 = lax_cond(t234, 0, -0.137e1 * t239)
+t242 = lax_cond(t214 <= 0.1e1, t228, t241)
 t246 = 0.1e1 / (0.1e1 - 0.33115000000000000000e-1 * t14 + 0.41680000000000000000e-1 * t11)
 t249 = math.exp(0.10000000000000000000e1 * t246)
 t257 = (0.1e1 + 0.21337642104376358333e-1 * t205 * t209 * t158 * t124 * t201) ** (0.1e1 / 0.4e1)

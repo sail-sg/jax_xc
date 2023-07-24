@@ -21,13 +21,13 @@ t38 = 0.1e1 + t37
 t40 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t41 = t40 * p_a_zeta_threshold
 t42 = t38 ** (0.1e1 / 0.3e1)
-t44 = jnp.where(t38 <= p_a_zeta_threshold, t41, t42 * t38)
+t44 = lax_cond(t38 <= p_a_zeta_threshold, t41, t42 * t38)
 t45 = 2 ** (0.1e1 / 0.3e1)
 t46 = t45 ** 2
 t49 = math.sqrt(s2)
 t52 = 0.1e1 - t37
 t54 = t52 ** (0.1e1 / 0.3e1)
-t56 = jnp.where(t52 <= p_a_zeta_threshold, t41, t54 * t52)
+t56 = lax_cond(t52 <= p_a_zeta_threshold, t41, t54 * t52)
 t60 = t31 / t10 * t44 * t46 / 0.4e1 + t49 / t12 * t56 * t46 / 0.4e1
 t72 = t2 ** 2
 t73 = t72 ** 2
