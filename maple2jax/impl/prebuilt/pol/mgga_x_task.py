@@ -8,13 +8,13 @@ t11 = p_a_zeta_threshold - 0.1e1
 t14 = 0.2e1 * r1 * t7 <= p_a_zeta_threshold
 t15 = -t11
 t17 = (r0 - r1) * t7
-t18 = jnp.where(t14, t15, t17)
-t19 = jnp.where(t10, t11, t18)
+t18 = lax_cond(t14, t15, t17)
+t19 = lax_cond(t10, t11, t18)
 t20 = t19 + 0.1e1
 t22 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t23 = t22 * p_a_zeta_threshold
 t24 = t20 ** (0.1e1 / 0.3e1)
-t26 = jnp.where(t20 <= p_a_zeta_threshold, t23, t24 * t20)
+t26 = lax_cond(t20 <= p_a_zeta_threshold, t23, t24 * t20)
 t27 = t6 ** (0.1e1 / 0.3e1)
 t29 = 6 ** (0.1e1 / 0.3e1)
 t30 = math.pi ** 2
@@ -27,10 +27,10 @@ t37 = t36 ** 2
 t38 = t37 * t35
 t42 = t34 * s0 / t38 / 0.24e2
 t43 = 0.0e0 < t42
-t44 = jnp.where(t43, t42, 0)
+t44 = lax_cond(t43, t42, 0)
 t45 = t44 ** (0.1e1 / 0.4e1)
 t48 = math.exp(-params_a_task_c / t45)
-t50 = jnp.where(t43, 0.1e1 - t48, 0)
+t50 = lax_cond(t43, 0.1e1 - t48, 0)
 t52 = params_a_task_bnu[0]
 t53 = t35 ** 2
 t55 = t37 * t53 * t35
@@ -38,7 +38,7 @@ t58 = t53 * r0
 t60 = r0 * tau0
 t63 = 0.1e1 / r0
 t65 = 0.1e1 / tau0
-t74 = jnp.where(0.0e0 < 0.12500000000000000000e0 * (0.79999999992000000000e1 * t60 - s0) * t63 * t65, (0.8e1 * t60 - s0) * t63 * t65 / 0.8e1, 0.1e-9)
+t74 = lax_cond(0.0e0 < 0.12500000000000000000e0 * (0.79999999992000000000e1 * t60 - s0) * t63 * t65, (0.8e1 * t60 - s0) * t63 * t65 / 0.8e1, 0.1e-9)
 t75 = t74 * tau0
 t79 = t36 * t35 * r0
 t81 = t74 ** 2
@@ -70,29 +70,29 @@ t189 = s0 ** 2
 t190 = t188 * t189
 t199 = (t29 * s0 + 0.24e2 * t180 * t38) ** 2
 t204 = t50 ** params_a_task_d
-t210 = jnp.where(r0 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t26 * t27 * (params_a_task_h0x * t50 + (0.10e1 - (t119 + t156) / t162) * ((0.48e2 * t179 * t181 * t170 - 0.144e3 * t179 * t181 * t176 + 0.576e3 * t169 * t170 - 0.576e3 * t169 * t173 + 0.576e3 * t169 * t176 + t190 * t170 + t190 * t173 + t190 * t176) / t199 - params_a_task_h0x) * t204))
-t212 = jnp.where(t10, t15, -t17)
-t213 = jnp.where(t14, t11, t212)
+t210 = lax_cond(r0 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t26 * t27 * (params_a_task_h0x * t50 + (0.10e1 - (t119 + t156) / t162) * ((0.48e2 * t179 * t181 * t170 - 0.144e3 * t179 * t181 * t176 + 0.576e3 * t169 * t170 - 0.576e3 * t169 * t173 + 0.576e3 * t169 * t176 + t190 * t170 + t190 * t173 + t190 * t176) / t199 - params_a_task_h0x) * t204))
+t212 = lax_cond(t10, t15, -t17)
+t213 = lax_cond(t14, t11, t212)
 t214 = t213 + 0.1e1
 t216 = t214 ** (0.1e1 / 0.3e1)
-t218 = jnp.where(t214 <= p_a_zeta_threshold, t23, t216 * t214)
+t218 = lax_cond(t214 <= p_a_zeta_threshold, t23, t216 * t214)
 t220 = r1 ** 2
 t221 = r1 ** (0.1e1 / 0.3e1)
 t222 = t221 ** 2
 t223 = t222 * t220
 t227 = t34 * s2 / t223 / 0.24e2
 t228 = 0.0e0 < t227
-t229 = jnp.where(t228, t227, 0)
+t229 = lax_cond(t228, t227, 0)
 t230 = t229 ** (0.1e1 / 0.4e1)
 t233 = math.exp(-params_a_task_c / t230)
-t235 = jnp.where(t228, 0.1e1 - t233, 0)
+t235 = lax_cond(t228, 0.1e1 - t233, 0)
 t237 = t220 ** 2
 t239 = t222 * t237 * t220
 t242 = t237 * r1
 t244 = r1 * tau1
 t247 = 0.1e1 / r1
 t249 = 0.1e1 / tau1
-t258 = jnp.where(0.0e0 < 0.12500000000000000000e0 * (0.79999999992000000000e1 * t244 - s2) * t247 * t249, (0.8e1 * t244 - s2) * t247 * t249 / 0.8e1, 0.1e-9)
+t258 = lax_cond(0.0e0 < 0.12500000000000000000e0 * (0.79999999992000000000e1 * t244 - s2) * t247 * t249, (0.8e1 * t244 - s2) * t247 * t249 / 0.8e1, 0.1e-9)
 t259 = tau1 * t258
 t263 = t221 * t220 * r1
 t265 = tau1 ** 2
@@ -113,5 +113,5 @@ t362 = s2 ** 2
 t363 = t188 * t362
 t372 = (t29 * s2 + 0.24e2 * t180 * t223) ** 2
 t377 = t235 ** params_a_task_d
-t383 = jnp.where(r1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t218 * t27 * (params_a_task_h0x * t235 + (0.10e1 - (t301 + t336) / t342) * ((0.48e2 * t354 * t355 * t170 - 0.144e3 * t354 * t355 * t176 + 0.576e3 * t347 * t170 + t363 * t170 - 0.576e3 * t347 * t173 + t363 * t173 + 0.576e3 * t347 * t176 + t363 * t176) / t372 - params_a_task_h0x) * t377))
+t383 = lax_cond(r1 <= p_a_dens_threshold, 0, -0.3e1 / 0.8e1 * t5 * t218 * t27 * (params_a_task_h0x * t235 + (0.10e1 - (t301 + t336) / t342) * ((0.48e2 * t354 * t355 * t170 - 0.144e3 * t354 * t355 * t176 + 0.576e3 * t347 * t170 + t363 * t170 - 0.576e3 * t347 * t173 + t363 * t173 + 0.576e3 * t347 * t176 + t363 * t176) / t372 - params_a_task_h0x) * t377))
 res = t210 + t383

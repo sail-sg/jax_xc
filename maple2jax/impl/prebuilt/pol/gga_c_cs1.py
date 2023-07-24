@@ -10,7 +10,7 @@ t22 = t8 ** 2
 t28 = (0.1e1 + 0.6e-2 * t15 / t22 / t4) ** 2
 t36 = t1 / t3
 t37 = 0.1e1 + t36
-t39 = jnp.where(t37 <= p_a_zeta_threshold, p_a_zeta_threshold, t37)
+t39 = lax_cond(t37 <= p_a_zeta_threshold, p_a_zeta_threshold, t37)
 t40 = r0 ** (0.1e1 / 0.3e1)
 t44 = s0 ** 2
 t45 = r0 ** 2
@@ -18,7 +18,7 @@ t46 = t45 ** 2
 t51 = t40 ** 2
 t57 = (0.1e1 + 0.6e-2 * s0 / t51 / t45) ** 2
 t65 = 0.1e1 - t36
-t67 = jnp.where(t65 <= p_a_zeta_threshold, p_a_zeta_threshold, t65)
+t67 = lax_cond(t65 <= p_a_zeta_threshold, p_a_zeta_threshold, t65)
 t68 = r1 ** (0.1e1 / 0.3e1)
 t72 = s2 ** 2
 t73 = r1 ** 2

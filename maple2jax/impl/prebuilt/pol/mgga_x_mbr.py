@@ -5,13 +5,13 @@ t7 = p_a_zeta_threshold - 0.1e1
 t10 = 0.2e1 * r1 * t3 <= p_a_zeta_threshold
 t11 = -t7
 t13 = (r0 - r1) * t3
-t14 = jnp.where(t10, t11, t13)
-t15 = jnp.where(t6, t7, t14)
+t14 = lax_cond(t10, t11, t13)
+t15 = lax_cond(t6, t7, t14)
 t16 = 0.1e1 + t15
 t18 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t19 = t18 * p_a_zeta_threshold
 t20 = t16 ** (0.1e1 / 0.3e1)
-t22 = jnp.where(t16 <= p_a_zeta_threshold, t19, t20 * t16)
+t22 = lax_cond(t16 <= p_a_zeta_threshold, t19, t20 * t16)
 t23 = t2 ** (0.1e1 / 0.3e1)
 t26 = (0.1e1 / math.pi) ** (0.1e1 / 0.3e1)
 t27 = 0.1e1 / t26
@@ -41,17 +41,17 @@ t68 = t45 ** 2
 t76 = (0.1e1 + 0.175e3 / 0.162e3 * t55 * t56 * s0 * t47 + t63 * t65 * t66 / t32 / t68 / r0 / 0.576e3) ** (0.1e1 / 0.5e1)
 t86 = t31 * (t37 - t44 - s0 * t47 / 0.36e2) + t43 * (t76 - 0.1e1) / 0.5e1 - params_a_gamma * (t37 - t54 * s0 * t47 / 0.4e1) / 0.3e1
 t87 = abs(t86)
-t90 = jnp.where(0.0e0 < t86, 0.50e-12, -0.50e-12)
-t91 = jnp.where(t87 < 0.50e-12, t90, t86)
+t90 = lax_cond(0.0e0 < t86, 0.50e-12, -0.50e-12)
+t91 = lax_cond(t87 < 0.50e-12, t90, t86)
 t92 = br89_x(t91)
 t94 = math.exp(t92 / 0.3e1)
 t96 = math.exp(-t92)
-t106 = jnp.where(r0 <= p_a_dens_threshold, 0, -t22 * t23 * t27 * t29 * t94 * (0.1e1 - t96 * (0.1e1 + t92 / 0.2e1)) / t92 / 0.4e1)
-t108 = jnp.where(t6, t11, -t13)
-t109 = jnp.where(t10, t7, t108)
+t106 = lax_cond(r0 <= p_a_dens_threshold, 0, -t22 * t23 * t27 * t29 * t94 * (0.1e1 - t96 * (0.1e1 + t92 / 0.2e1)) / t92 / 0.4e1)
+t108 = lax_cond(t6, t11, -t13)
+t109 = lax_cond(t10, t7, t108)
 t110 = 0.1e1 + t109
 t112 = t110 ** (0.1e1 / 0.3e1)
-t114 = jnp.where(t110 <= p_a_zeta_threshold, t19, t112 * t110)
+t114 = lax_cond(t110 <= p_a_zeta_threshold, t19, t112 * t110)
 t117 = r1 ** (0.1e1 / 0.3e1)
 t118 = t117 ** 2
 t122 = 0.2e1 * tau1 / t118 / r1
@@ -62,10 +62,10 @@ t136 = t123 ** 2
 t144 = (0.1e1 + 0.175e3 / 0.162e3 * t55 * t56 * s2 * t125 + t63 * t65 * t134 / t117 / t136 / r1 / 0.576e3) ** (0.1e1 / 0.5e1)
 t154 = t31 * (t122 - t44 - s2 * t125 / 0.36e2) + t43 * (t144 - 0.1e1) / 0.5e1 - params_a_gamma * (t122 - t54 * s2 * t125 / 0.4e1) / 0.3e1
 t155 = abs(t154)
-t158 = jnp.where(0.0e0 < t154, 0.50e-12, -0.50e-12)
-t159 = jnp.where(t155 < 0.50e-12, t158, t154)
+t158 = lax_cond(0.0e0 < t154, 0.50e-12, -0.50e-12)
+t159 = lax_cond(t155 < 0.50e-12, t158, t154)
 t160 = br89_x(t159)
 t162 = math.exp(t160 / 0.3e1)
 t164 = math.exp(-t160)
-t174 = jnp.where(r1 <= p_a_dens_threshold, 0, -t114 * t23 * t27 * t29 * t162 * (0.1e1 - t164 * (0.1e1 + t160 / 0.2e1)) / t160 / 0.4e1)
+t174 = lax_cond(r1 <= p_a_dens_threshold, 0, -t114 * t23 * t27 * t29 * t162 * (0.1e1 - t164 * (0.1e1 + t160 / 0.2e1)) / t160 / 0.4e1)
 res = t106 + t174

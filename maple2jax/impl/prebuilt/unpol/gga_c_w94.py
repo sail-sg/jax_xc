@@ -1,5 +1,5 @@
-t2 = jnp.where(0 < 0, 0, 0)
-t4 = jnp.where(0.1e-9 < t2, t2, 0.1e-9)
+t2 = lax_cond(0 < 0, 0, 0)
+t4 = lax_cond(0.1e-9 < t2, t2, 0.1e-9)
 t5 = t4 ** (0.1e1 / 0.3e1)
 t6 = t5 ** 2
 t9 = math.sqrt(-t6 * t4 + 0.1e1)

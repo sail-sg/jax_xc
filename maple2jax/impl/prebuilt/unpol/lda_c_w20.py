@@ -51,5 +51,5 @@ t129 = t120 / 0.2e1
 t138 = t121 ** 2
 t151 = math.log(0.1e1 + (t120 - 0.2e1 * t28 * (0.2e1 * (-0.9e0 + 0.3e1 / 0.16e2 * t33 * t34 * t121) * t9 * t3 + t129)) * t15 * t48 / 0.3e1 - 0.240e2 * t62 + (t120 - 0.2e1 * t28 * (-0.3e1 / 0.20e2 * t65 * t66 * t138 * t9 + t129)) * t14 * t77 / 0.3e1)
 t166 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
-t168 = jnp.where(0.1e1 <= p_a_zeta_threshold, t166 * p_a_zeta_threshold, 1)
+t168 = lax_cond(0.1e1 <= p_a_zeta_threshold, t166 * p_a_zeta_threshold, 1)
 res = -t83 + t115 + (-t5 * t151 / 0.4e1 - t54 * t85 * t94 * t138 * t64 * t97 * (0.13e2 / 0.12e2 * t3 - t99 + 0.1e1 / 0.2e1) * t107 / 0.144e3 + t83 - t115) * (0.2e1 * t168 - 0.2e1) / (0.2e1 * t121 - 0.2e1)

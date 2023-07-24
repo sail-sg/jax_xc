@@ -1,7 +1,7 @@
 t2 = r0 + r1
 t4 = (r0 - r1) / t2
-t6 = jnp.where(0.0e0 < t4, t4, -t4)
-t8 = jnp.where(0.1e-9 < t6, t6, 0.1e-9)
+t6 = lax_cond(0.0e0 < t4, t4, -t4)
+t8 = lax_cond(0.1e-9 < t6, t6, 0.1e-9)
 t9 = t8 ** (0.1e1 / 0.3e1)
 t10 = t9 ** 2
 t13 = math.sqrt(-t10 * t8 + 0.1e1)

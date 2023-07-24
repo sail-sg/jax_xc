@@ -4,7 +4,7 @@ t5 = t2 / t3
 t6 = 0.1e1 + t5
 t7 = t6 <= p_a_zeta_threshold
 t8 = jnp.logical_or(r0 <= p_a_dens_threshold, t7)
-t9 = jnp.where(t7, p_a_zeta_threshold, t6)
+t9 = lax_cond(t7, p_a_zeta_threshold, t6)
 t10 = 3 ** (0.1e1 / 0.3e1)
 t12 = (0.1e1 / math.pi) ** (0.1e1 / 0.3e1)
 t13 = t10 * t12
@@ -18,7 +18,7 @@ t20 = t18 * t19
 t21 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t22 = 0.1e1 / t21
 t23 = t6 ** (0.1e1 / 0.3e1)
-t25 = jnp.where(t7, t22, 0.1e1 / t23)
+t25 = lax_cond(t7, t22, 0.1e1 / t23)
 t27 = t16 * t20 * t25
 t28 = t27 / 0.4e1
 t29 = math.sqrt(t27)
@@ -37,12 +37,12 @@ t62 = math.atan(0.47309269095601128300e1 / (t29 + 0.706042e1))
 t65 = (t44 + 0.32500e0) ** 2
 t67 = math.log(t65 * t52)
 t71 = t21 * p_a_zeta_threshold
-t73 = jnp.where(0.2e1 <= p_a_zeta_threshold, t71, 0.2e1 * t19)
-t75 = jnp.where(0.0e0 <= p_a_zeta_threshold, t71, 0)
+t73 = lax_cond(0.2e1 <= p_a_zeta_threshold, t71, 0.2e1 * t19)
+t75 = lax_cond(0.0e0 <= p_a_zeta_threshold, t71, 0)
 t76 = t73 + t75 - 0.2e1
 t78 = t19 - 0.1e1
 t80 = 0.1e1 / t78 / 0.2e1
-t85 = jnp.where(t8, 0, t9 * (t38 + t43 + t49 + (0.1554535e-1 * t57 + 0.52491393169780936218e-1 * t62 + 0.22478670955426118383e-2 * t67 - t38 - t43 - t49) * t76 * t80) / 0.2e1)
+t85 = lax_cond(t8, 0, t9 * (t38 + t43 + t49 + (0.1554535e-1 * t57 + 0.52491393169780936218e-1 * t62 + 0.22478670955426118383e-2 * t67 - t38 - t43 - t49) * t76 * t80) / 0.2e1)
 t86 = r0 ** 2
 t87 = r0 ** (0.1e1 / 0.3e1)
 t88 = t87 ** 2
@@ -55,9 +55,9 @@ t108 = t98 ** 2
 t118 = 0.1e1 - t5
 t119 = t118 <= p_a_zeta_threshold
 t120 = jnp.logical_or(r1 <= p_a_dens_threshold, t119)
-t121 = jnp.where(t119, p_a_zeta_threshold, t118)
+t121 = lax_cond(t119, p_a_zeta_threshold, t118)
 t122 = t118 ** (0.1e1 / 0.3e1)
-t124 = jnp.where(t119, t22, 0.1e1 / t122)
+t124 = lax_cond(t119, t22, 0.1e1 / t122)
 t126 = t16 * t20 * t124
 t127 = t126 / 0.4e1
 t128 = math.sqrt(t126)
@@ -75,7 +75,7 @@ t156 = math.log(t16 * t20 * t124 * t151 / 0.4e1)
 t161 = math.atan(0.47309269095601128300e1 / (t128 + 0.706042e1))
 t164 = (t143 + 0.32500e0) ** 2
 t166 = math.log(t164 * t151)
-t174 = jnp.where(t120, 0, t121 * (t137 + t142 + t148 + (0.1554535e-1 * t156 + 0.52491393169780936218e-1 * t161 + 0.22478670955426118383e-2 * t166 - t137 - t142 - t148) * t76 * t80) / 0.2e1)
+t174 = lax_cond(t120, 0, t121 * (t137 + t142 + t148 + (0.1554535e-1 * t156 + 0.52491393169780936218e-1 * t161 + 0.22478670955426118383e-2 * t166 - t137 - t142 - t148) * t76 * t80) / 0.2e1)
 t175 = r1 ** 2
 t176 = r1 ** (0.1e1 / 0.3e1)
 t177 = t176 ** 2
@@ -104,8 +104,8 @@ t237 = math.log(t13 * t206 * t233 / 0.4e1)
 t241 = math.atan(0.71231089178181179908e1 / (t209 + 0.113107e1))
 t244 = (t223 + 0.47584e-2) ** 2
 t246 = math.log(t244 * t233)
-t251 = jnp.where(t7, t71, t23 * t6)
-t253 = jnp.where(t119, t71, t122 * t118)
+t251 = lax_cond(t7, t71, t23 * t6)
+t253 = lax_cond(t119, t71, t122 * t118)
 t254 = t251 + t253 - 0.2e1
 t256 = t2 ** 2
 t257 = t256 ** 2

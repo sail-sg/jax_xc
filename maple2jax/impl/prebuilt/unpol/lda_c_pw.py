@@ -13,7 +13,7 @@ t34 = t21 / 0.4e1
 t37 = t34 ** (params_a_pp[0] + 0.1e1)
 t44 = math.log(0.1e1 + 0.1e1 / t1 / (params_a_beta1[0] * t22 / 0.2e1 + params_a_beta2[0] * t3 * t12 / 0.4e1 + 0.12500000000000000000e0 * params_a_beta3[0] * t30 + params_a_beta4[0] * t37) / 0.2e1)
 t47 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
-t49 = jnp.where(0.1e1 <= p_a_zeta_threshold, t47 * p_a_zeta_threshold, 1)
+t49 = lax_cond(0.1e1 <= p_a_zeta_threshold, t47 * p_a_zeta_threshold, 1)
 t52 = 2 ** (0.1e1 / 0.3e1)
 t57 = params_a_a[2]
 t78 = t34 ** (params_a_pp[2] + 0.1e1)

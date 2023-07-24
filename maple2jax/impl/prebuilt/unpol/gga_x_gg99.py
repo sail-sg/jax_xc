@@ -3,12 +3,12 @@ t4 = t3 ** 2
 t5 = math.pi ** (0.1e1 / 0.3e1)
 t9 = 0.1e1 <= p_a_zeta_threshold
 t10 = p_a_zeta_threshold - 0.1e1
-t12 = jnp.where(t9, -t10, 0)
-t13 = jnp.where(t9, t10, t12)
+t12 = lax_cond(t9, -t10, 0)
+t13 = lax_cond(t9, t10, t12)
 t14 = 0.1e1 + t13
 t16 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t18 = t14 ** (0.1e1 / 0.3e1)
-t20 = jnp.where(t14 <= p_a_zeta_threshold, t16 * p_a_zeta_threshold, t18 * t14)
+t20 = lax_cond(t14 <= p_a_zeta_threshold, t16 * p_a_zeta_threshold, t18 * t14)
 t21 = r0 ** (0.1e1 / 0.3e1)
 t24 = math.pi ** 2
 t25 = math.sqrt(s0)
@@ -23,7 +23,7 @@ t38 = 3 ** (0.1e1 / 0.4e1)
 t39 = math.sqrt(0.2e1)
 t41 = math.sqrt(math.pi)
 t45 = t36 - 0.1e-9
-t47 = jnp.where(t45 < t30, t45, t30)
+t47 = lax_cond(t45 < t30, t45, t30)
 t48 = t47 ** 2
 t50 = t24 ** 2
 t51 = t50 * t24
@@ -37,7 +37,7 @@ t63 = t57 ** (0.1e1 / 0.6e1)
 t68 = math.asinh(t38 * t39 / t41 / math.pi * t47 * t61 / t63 / 0.4e1)
 t69 = 0.1e1 / math.pi
 t70 = t36 + 0.1e-9
-t72 = jnp.where(t70 < t30, t30, t70)
+t72 = lax_cond(t70 < t30, t30, t70)
 t73 = t72 ** 2
 t77 = t73 ** 2
 t82 = math.sqrt(0.3e1 / t51 * t77 * t73 - 0.144e3)
@@ -45,7 +45,7 @@ t84 = math.atan(t82 / 0.12e2)
 t86 = math.cos(t84 / 0.3e1)
 t89 = math.sqrt(t73 * t72 * t32 * t69 * t86)
 t92 = math.asinh(t69 * t89 / 0.2e1)
-t93 = jnp.where(t30 < t36, t68, t92)
+t93 = lax_cond(t30 < t36, t68, t92)
 t95 = math.exp(-0.2e1 * t93)
 t97 = math.log(0.1e1 + t95)
 t100 = my_dilog(-t95)
@@ -53,5 +53,5 @@ t105 = 0.1e1 / math.cosh(t93)
 t106 = t105 ** (0.1e1 / 0.3e1)
 t107 = t106 ** 2
 t109 = t69 ** (0.1e1 / 0.3e1)
-t116 = jnp.where(r0 / 0.2e1 <= p_a_dens_threshold, 0, -t4 / t5 / math.pi * t20 * t21 * (-0.12e2 * t93 * t97 + 0.12e2 * t100 + t24) / t93 / t107 / t109 * t31 / 0.24e2)
+t116 = lax_cond(r0 / 0.2e1 <= p_a_dens_threshold, 0, -t4 / t5 / math.pi * t20 * t21 * (-0.12e2 * t93 * t97 + 0.12e2 * t100 + t24) / t93 / t107 / t109 * t31 / 0.24e2)
 res = 0.2e1 * t116

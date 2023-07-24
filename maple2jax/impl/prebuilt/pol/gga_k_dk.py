@@ -9,15 +9,15 @@ t12 = p_a_zeta_threshold - 0.1e1
 t15 = 0.2e1 * r1 * t8 <= p_a_zeta_threshold
 t16 = -t12
 t18 = (r0 - r1) * t8
-t19 = jnp.where(t15, t16, t18)
-t20 = jnp.where(t11, t12, t19)
+t19 = lax_cond(t15, t16, t18)
+t20 = lax_cond(t11, t12, t19)
 t21 = 0.1e1 + t20
 t23 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t24 = t23 ** 2
 t25 = t24 * p_a_zeta_threshold
 t26 = t21 ** (0.1e1 / 0.3e1)
 t27 = t26 ** 2
-t29 = jnp.where(t21 <= p_a_zeta_threshold, t25, t27 * t21)
+t29 = lax_cond(t21 <= p_a_zeta_threshold, t25, t27 * t21)
 t31 = t7 ** (0.1e1 / 0.3e1)
 t32 = t31 ** 2
 t33 = params_a_aa[0]
@@ -42,13 +42,13 @@ t66 = params_a_bb[1]
 t69 = params_a_bb[2]
 t72 = params_a_bb[3]
 t75 = params_a_bb[4]
-t83 = jnp.where(r0 <= p_a_dens_threshold, 0, 0.3e1 / 0.20e2 * t6 * t29 * t32 * (t34 * s0 * t40 + t42 * t43 * t48 + t50 * t51 * t54 + t56 * t57 * t61 + t33) / (t66 * s0 * t40 + t69 * t43 * t48 + t72 * t51 * t54 + t75 * t57 * t61 + t65))
-t85 = jnp.where(t11, t16, -t18)
-t86 = jnp.where(t15, t12, t85)
+t83 = lax_cond(r0 <= p_a_dens_threshold, 0, 0.3e1 / 0.20e2 * t6 * t29 * t32 * (t34 * s0 * t40 + t42 * t43 * t48 + t50 * t51 * t54 + t56 * t57 * t61 + t33) / (t66 * s0 * t40 + t69 * t43 * t48 + t72 * t51 * t54 + t75 * t57 * t61 + t65))
+t85 = lax_cond(t11, t16, -t18)
+t86 = lax_cond(t15, t12, t85)
 t87 = 0.1e1 + t86
 t89 = t87 ** (0.1e1 / 0.3e1)
 t90 = t89 ** 2
-t92 = jnp.where(t87 <= p_a_zeta_threshold, t25, t90 * t87)
+t92 = lax_cond(t87 <= p_a_zeta_threshold, t25, t90 * t87)
 t95 = r1 ** 2
 t96 = r1 ** (0.1e1 / 0.3e1)
 t97 = t96 ** 2
@@ -61,5 +61,5 @@ t110 = t103 ** 2
 t111 = 0.1e1 / t110
 t113 = t101 ** 2
 t117 = 0.1e1 / t97 / t110 / t95
-t134 = jnp.where(r1 <= p_a_dens_threshold, 0, 0.3e1 / 0.20e2 * t6 * t92 * t32 * (t34 * s2 * t99 + t42 * t101 * t106 + t50 * t108 * t111 + t56 * t113 * t117 + t33) / (t66 * s2 * t99 + t69 * t101 * t106 + t72 * t108 * t111 + t75 * t113 * t117 + t65))
+t134 = lax_cond(r1 <= p_a_dens_threshold, 0, 0.3e1 / 0.20e2 * t6 * t92 * t32 * (t34 * s2 * t99 + t42 * t101 * t106 + t50 * t108 * t111 + t56 * t113 * t117 + t33) / (t66 * s2 * t99 + t69 * t101 * t106 + t72 * t108 * t111 + t75 * t113 * t117 + t65))
 res = t83 + t134

@@ -24,10 +24,10 @@ t57 = 0.1e1 + t56
 t59 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t60 = t59 * p_a_zeta_threshold
 t61 = t57 ** (0.1e1 / 0.3e1)
-t63 = jnp.where(t57 <= p_a_zeta_threshold, t60, t61 * t57)
+t63 = lax_cond(t57 <= p_a_zeta_threshold, t60, t61 * t57)
 t64 = 0.1e1 - t56
 t66 = t64 ** (0.1e1 / 0.3e1)
-t68 = jnp.where(t64 <= p_a_zeta_threshold, t60, t66 * t64)
+t68 = lax_cond(t64 <= p_a_zeta_threshold, t60, t66 * t64)
 t70 = 2 ** (0.1e1 / 0.3e1)
 t74 = (t63 + t68 - 0.2e1) / (0.2e1 * t70 - 0.2e1)
 t75 = params_a_a[1]

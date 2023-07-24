@@ -12,6 +12,6 @@ t23 = math.log(0.1e1 + params_a_bp * t2 * t10 / 0.3e1 + params_a_cp * t1 * t19 /
 t24 = params_a_ap * t23
 t32 = math.log(0.1e1 + params_a_bf * t2 * t10 / 0.3e1 + params_a_cf * t1 * t19 / 0.3e1)
 t36 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
-t38 = jnp.where(0.1e1 <= p_a_zeta_threshold, t36 * p_a_zeta_threshold, 1)
+t38 = lax_cond(0.1e1 <= p_a_zeta_threshold, t36 * p_a_zeta_threshold, 1)
 t42 = 2 ** (0.1e1 / 0.3e1)
 res = t24 + (params_a_af * t32 - t24) * (0.2e1 * t38 - 0.2e1) / (0.2e1 * t42 - 0.2e1)

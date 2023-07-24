@@ -4,7 +4,7 @@ t7 = math.exp(-0.25330000000000000000e0 * t2)
 t9 = p_a_zeta_threshold ** 2
 t10 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t11 = t10 ** 2
-t13 = jnp.where(0.1e1 <= p_a_zeta_threshold, t11 * t9, 1)
+t13 = lax_cond(0.1e1 <= p_a_zeta_threshold, t11 * t9, 1)
 t14 = 2 ** (0.1e1 / 0.3e1)
 t16 = t14 ** 2
 t18 = t1 ** 2

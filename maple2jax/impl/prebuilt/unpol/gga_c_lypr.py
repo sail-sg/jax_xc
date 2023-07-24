@@ -18,12 +18,12 @@ t34 = 0.1e1 <= p_a_zeta_threshold
 t35 = p_a_zeta_threshold ** 2
 t36 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t37 = t36 ** 2
-t39 = jnp.where(t34, t37 * t35, 1)
+t39 = lax_cond(t34, t37 * t35, 1)
 t45 = t20 * t39
-t52 = jnp.where(t34, t37 * t35 * p_a_zeta_threshold, 1)
+t52 = lax_cond(t34, t37 * t35 * p_a_zeta_threshold, 1)
 t56 = 2 ** (0.1e1 / 0.3e1)
 t57 = t56 ** 2
-t61 = jnp.where(t34, t35, 1)
+t61 = lax_cond(t34, t35, 1)
 t74 = math.sqrt(math.pi)
 t78 = params_a_m2 ** 2
 t79 = params_a_omega ** 2

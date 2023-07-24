@@ -5,10 +5,10 @@ t5 = 0.1e1 + t4
 t7 = p_a_zeta_threshold ** (0.1e1 / 0.3e1)
 t8 = t7 * p_a_zeta_threshold
 t9 = t5 ** (0.1e1 / 0.3e1)
-t11 = jnp.where(t5 <= p_a_zeta_threshold, t8, t9 * t5)
+t11 = lax_cond(t5 <= p_a_zeta_threshold, t8, t9 * t5)
 t12 = 0.1e1 - t4
 t14 = t12 ** (0.1e1 / 0.3e1)
-t16 = jnp.where(t12 <= p_a_zeta_threshold, t8, t14 * t12)
+t16 = lax_cond(t12 <= p_a_zeta_threshold, t8, t14 * t12)
 t18 = 2 ** (0.1e1 / 0.3e1)
 t22 = (t11 + t16 - 0.2e1) / (0.2e1 * t18 - 0.2e1)
 t26 = 3 ** (0.1e1 / 0.3e1)
