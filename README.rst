@@ -324,7 +324,7 @@ To run a specific test, for example ``test_impl``:
    bazel --output_user_root=$OUTPUT_USER_ROOT test --action_env=PATH=$PATH:$MAPLE_PATH //tests:test_impl
 
 The test output could be found in ``bazel-testlogs/tests/test_impl/test.log`` for the ``tests:test_impl`` and similar to
-the others. If you prefer output in command line, add `--test_output=all` to the above command.
+the others. If you prefer output in command line, add ``--test_output=all`` to the above command.
 
 License
 -------
