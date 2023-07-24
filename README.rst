@@ -289,11 +289,38 @@ shell.
    wheel will be installed. This is useful if you are building on a
    shared filesystem.
 
-How to build.
+Make sure you have ``bazel`` and ``maple`` installed. Your python envrionment has installed the dependencies in
+``requirements.txt``.
+
+How to build python wheel.
 
 .. code:: sh
 
    bazel --output_user_root=$OUTPUT_USER_ROOT build --action_env=PATH=$PATH:$MAPLE_PATH @maple2jax//:jax_xc_wheel
+
+Once the build finished, the python wheel could be found under ``bazel-bin/external/maple2jax``. For example, the
+name for version 0.0.7 is ``jax_xc-0.0.7-cp310-cp310-manylinux_2_17_x86_64.whl``.
+
+Install the python wheel. If needed, specify the install path by
+
+.. code:: sh
+
+   pip install {{wheel_name}} --target $TMP_INSTALL_PATH
+
+Running Test
+------------
+
+The test could be run without the command above that builds wheel from source. To run all the test:
+
+.. code:: sh
+
+   bazel --output_user_root=$OUTPUT_USER_ROOT test --action_env=PATH=$PATH:$MAPLE_PATH //tests:*
+
+To run a specific test, for example ``test_impl``:
+
+.. code:: sh
+
+   bazel --output_user_root=$OUTPUT_USER_ROOT test --action_env=PATH=$PATH:$MAPLE_PATH //tests:test_impl
 
 License
 -------
