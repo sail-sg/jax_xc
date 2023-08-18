@@ -67,8 +67,7 @@ def rho_to_arguments(
   if p.type == "mgga":
     if mo is None:
       raise ValueError(
-        "Molecular orbital function are required for mgga functionals, "
-        f"got {p.type}"
+        "Molecular orbital function are required for mgga functionals"
       )
 
   # compute density
@@ -83,14 +82,12 @@ def rho_to_arguments(
 
   if (p.nspin == 1 and polarized) or (p.nspin == 2 and not polarized):
     raise ValueError(
-      f"The functional is initialized as polarized={p.nspin==2}, "
-      f"while for the density function polarized={polarized}"
+      f"The functional is initialized with nspin={p.nspin}, "
+      f"while the density function returns array of shape {density.shape}."
     )
 
-  dens = (density[0], density[1]) if polarized else density
-
   if p.type == "lda":
-    return (dens,)
+    return (density,)
 
   # compute s
   jac, hvp = jax.linearize(jax.jacrev(rho), r)
@@ -103,14 +100,12 @@ def rho_to_arguments(
     s = jnp.dot(jac, jac)
 
   if p.type == "gga":
-    return (dens, s)
+    return (density, s)
 
   # compute l
   # normally, r is a 3d vector for a coordinate in real space.
   eye = jnp.eye(r.shape[-1])
   ll = sum([hvp(eye[i])[..., i] for i in range(r.shape[-1])])
-  if polarized:
-    ll = (ll[0], ll[1])
 
   # compute tau
   mo_jac = jax.jacobian(mo)(r)
@@ -129,6 +124,4 @@ def rho_to_arguments(
   tau = jnp.sum(mo_jac**2, axis=[-1, -2]) / 2
   if deorbitalize is not None:
     tau = density * deorbitalize
-  if polarized:
-    tau = (tau[0], tau[1])
-  return (dens, s, ll, tau)
+  return (density, s, ll, tau)
