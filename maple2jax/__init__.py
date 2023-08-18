@@ -5,5 +5,6 @@
 # You can obtain one at https://mozilla.org/MPL/2.0/.
 
 from .functionals import *  # noqa
+from . import experimental
 
 __version__ = "0.0.7"

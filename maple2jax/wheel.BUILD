@@ -23,6 +23,7 @@ py_wheel(
     version = "0.0.7",
     deps = [
         "@maple2jax//jax_xc",
+        "@maple2jax//jax_xc:experimental",
         "@maple2jax//jax_xc:functionals",
         "@maple2jax//jax_xc:utils",
         "@maple2jax//jax_xc/impl",

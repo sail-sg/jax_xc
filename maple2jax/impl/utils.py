@@ -17,6 +17,8 @@ from jax import lax
 import jax.numpy as jnp
 import tensorflow_probability as tfp
 from typing import Callable, Optional, NamedTuple
+from jaxtyping import Array
+from typing import Tuple
 
 
 def Heaviside(x):
@@ -45,6 +47,141 @@ def lax_cond(a, b, c):
   if isinstance(c, int):
     c = float(c)
   return lax.cond(a, lambda _: b, lambda _: c, None)
+
+
+def energy_functional(p, impl, deorbitalize=None):
+  import autofd.operators as o
+  from autofd.general_array import (
+    SpecTree,
+    return_annotation,
+    _dtype_to_jaxtyping,
+  )
+
+  # filter 0 density
+  def _impl(r, s=None, l=None, tau=None):
+    dens = r if p.nspin == 1 else r.sum()
+    ret = lax.cond(
+      (dens < p.dens_threshold), lambda *_: 0.,
+      lambda *_: impl(p, r, s, l, tau), None
+    )
+    return ret
+
+  # define the energy functional, that takes a rho function
+  # and an optional mo function.
+  def epsilon_xc(rho: Callable, mo: Optional[Callable] = None):
+    if p.type == "mgga":
+      if mo is None:
+        raise ValueError(
+          "Molecular orbital function are required for mgga functionals."
+        )
+
+    o_spec = SpecTree.from_ret(rho)
+    i_spec = SpecTree.from_args(rho)[0]
+    if o_spec.shape not in ((), (2,)):
+      raise RuntimeError(
+        "The density function rho passed to the functional "
+        "needs to return either a scalar (unpolarized), "
+        f"or a shape (2,) array (polarized). Got shape {o_spec.shape}."
+      )
+    polarized = (o_spec.shape == (2,))
+    if (p.nspin == 1 and polarized) or (p.nspin == 2 and not polarized):
+      raise ValueError(
+        f"The functional is initialized with nspin={p.nspin}, "
+        f"while the density function returns array of shape {o_spec.shape}."
+      )
+
+    # compute arguments relating to density
+    T = _dtype_to_jaxtyping[o_spec.dtype.name]
+
+    # 0th order
+    r_fn = rho
+
+    if p.type == "lda":
+
+      def _energy(r: return_annotation(rho)) -> return_annotation(rho):
+        return _impl(r)
+
+      return o.compose(_energy, rho)
+
+    # 1st order
+    nabla_rho = o.nabla(rho)
+
+    def compute_s(
+      jac: return_annotation(nabla_rho),
+    ) -> T[Array, ("3" if polarized else "")]:
+      if polarized:
+        return jnp.stack(
+          [
+            jnp.dot(jac[0], jac[0]),
+            jnp.dot(jac[0], jac[1]),
+            jnp.dot(jac[1], jac[1]),
+          ]
+        )
+      else:
+        return jnp.dot(jac, jac)
+
+    s_fn = o.compose(compute_s, nabla_rho)
+
+    # compute the functional
+    if p.type == "gga":
+
+      def _energy(r: return_annotation(rho),
+                  s: return_annotation(s_fn)) -> return_annotation(rho):
+        return _impl(r, s)
+
+      return o.compose(_energy, rho, s_fn, share_inputs=True)
+
+    # 2nd order
+    hess_rho = o.nabla(nabla_rho)
+
+    def compute_l(
+      hess: return_annotation(hess_rho),
+    ) -> T[Array, ("2" if polarized else "")]:
+      return jnp.diagonal(hess, axis1=-2, axis2=-1).sum(axis=-1)
+
+    l_fn = o.compose(compute_l, hess_rho)
+
+    # Now deal with mo
+    mo_o_spec = SpecTree.from_ret(mo)
+    mo_i_spec = SpecTree.from_args(mo)[0]
+    if mo_i_spec != i_spec:
+      raise ValueError("mo must take the same argument as rho.")
+    if mo_o_spec.shape != (*(2,) * polarized, mo_o_spec.shape[1]):
+      raise ValueError(
+        "mo must return (2, N) if polarized, or (N,) if not. "
+        f"Got {mo_o_spec.shape} while polarized={polarized}."
+      )
+    nabla_mo = o.nabla(mo)
+
+    def compute_tau(
+      mo_jac: return_annotation(nabla_mo),
+    ) -> return_annotation(rho):
+      tau = jnp.sum(mo_jac**2, axis=[-1, -2]) / 2
+      return tau
+
+    def compute_tau_deorbitalize(
+      density: return_annotation(rho),
+      deo: return_annotation(rho),
+    ) -> return_annotation(rho):
+      return density * deo
+
+    if deorbitalize is None:
+      tau_fn = o.compose(compute_tau, nabla_mo)
+    else:
+      tau_fn = o.compose(
+        compute_tau_deorbitalize, rho, deorbitalize(rho, mo), share_inputs=True
+      )
+
+    # compute the functional
+    def _energy(
+      r: return_annotation(rho), s: return_annotation(s_fn),
+      l: return_annotation(l_fn), tau: return_annotation(tau_fn)
+    ) -> return_annotation(rho):
+      return _impl(r, s, l, tau)
+
+    return o.compose(_energy, rho, s_fn, l_fn, tau_fn, share_inputs=True)
+
+  return epsilon_xc
 
 
 def rho_to_arguments(
