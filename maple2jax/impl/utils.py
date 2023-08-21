@@ -18,7 +18,6 @@ import jax.numpy as jnp
 import tensorflow_probability as tfp
 from typing import Callable, Optional, NamedTuple
 from jaxtyping import Array
-from typing import Tuple
 
 
 def Heaviside(x):
@@ -94,8 +93,6 @@ def energy_functional(p, impl, deorbitalize=None):
     T = _dtype_to_jaxtyping[o_spec.dtype.name]
 
     # 0th order
-    r_fn = rho
-
     if p.type == "lda":
 
       def _energy(r: return_annotation(rho)) -> return_annotation(rho):
