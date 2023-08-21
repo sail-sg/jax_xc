@@ -10,7 +10,7 @@ from typing import Callable, Optional
 from .utils import *
 
 
-def pol(p, r, s=None, l=None, tau=None):
+def pol(p, r, s=(None, None, None), l=(None, None), tau=(None, None)):
   params = p.params
   (r0, r1), (s0, s1, s2), (l0, l1), (tau0, tau1) = r, s, l, tau
   {{ pol_code | indent(2) }}

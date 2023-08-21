@@ -56,7 +56,7 @@ SKIP_LIST = [
 
 def get_impl_fn_and_inputs(inputs, impl, fn_type, p, polarized):
   rho0, rho1, sigma0, sigma1, sigma2, lapl0, lapl1, tau0, tau1 = inputs
-  impl_fn = jax.vmap(Partial(impl, params=p.params, p=p))
+  impl_fn = jax.vmap(Partial(impl, p))
 
   if polarized:
     libxc_input_args = {
@@ -66,21 +66,21 @@ def get_impl_fn_and_inputs(inputs, impl, fn_type, p, polarized):
       "tau": jnp.stack([tau0, tau1], -1),
     }
     if fn_type == "lda":
-      fn_input_args = (rho0, rho1)
+      fn_input_args = ((rho0, rho1),)
 
     elif fn_type == "gga":
-      fn_input_args = (rho0, rho1, sigma0, sigma1, sigma2)
+      fn_input_args = ((rho0, rho1), (sigma0, sigma1, sigma2))
 
     elif fn_type == "mgga":
       fn_input_args = (
-        rho0, rho1, sigma0, sigma1, sigma2, lapl0, lapl1, tau0, tau1
+        (rho0, rho1), (sigma0, sigma1, sigma2), (lapl0, lapl1), (tau0, tau1)
       )
   else:
     rho = rho0 + rho1
     sigma = sigma0 + sigma2 + 2 * sigma1
     lapl = lapl0 + lapl1
     tau = tau0 + tau1
-    libxc_input_args = dict(rho=rho, sigma=sigma, lapl=lapl, tau=tau)
+    libxc_input_args = {"rho": rho, "sigma": sigma, "lapl": lapl, "tau": tau}
     if fn_type == "lda":
       fn_input_args = (rho,)
     elif fn_type == "gga":
@@ -110,7 +110,7 @@ def test_speed(batch):
       if not hasattr(impl, p.name):
         logging.debug(f"Skipping {p.name} due to no maple code implementation")
         continue
-      fn_type = utils.functional_name_to_type(name)
+      fn_type = p.type
 
       seed = 0
       key = jax.random.PRNGKey(seed)
@@ -150,7 +150,7 @@ def test_speed(batch):
       jaxxc_time.append(end_time - start_time)
 
       start_time = time.time()
-      res1 = func.compute(libxc_input_args)  # noqa: F841
+      res1 = func.compute(libxc_input_args, do_vxc=False)  # noqa: F841
       end_time = time.time()
       logging.debug(f"pylibxc {name} took {end_time - start_time} seconds")
       libxc_time.append(end_time - start_time)
