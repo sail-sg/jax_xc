@@ -124,7 +124,7 @@ class _TestImpl(parameterized.TestCase):
     module = getattr(impl, p.maple_name)
     fn = module.pol if polarized else module.unpol
     res2_zk = jax.jit(jax.vmap(lambda *args: fn(p, *args)))(r, s, l, t)
-    res1 = func.compute(libxc_input_args)
+    res1 = func.compute(libxc_input_args, do_vxc=False)
     res1_zk = res1["zk"].squeeze()
     # absolute(res2_zk - res1_zk) <= (atol + rtol * absolute(res1_zk)
     np.testing.assert_allclose(res2_zk, res1_zk, rtol=THRESHOLD, atol=THRESHOLD)
