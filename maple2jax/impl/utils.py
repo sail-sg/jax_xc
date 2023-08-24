@@ -49,33 +49,58 @@ def lax_cond(a, b, c):
 
 
 def energy_functional(p, impl, deorbitalize=None):
-  import autofd.operators as o
+  from autofd.operators import compose, nabla
   from autofd.general_array import (
     SpecTree,
     return_annotation,
-    _dtype_to_jaxtyping,
+    dtype_to_jaxtyping,
   )
 
   # filter 0 density
-  def _impl(r, s=None, l=None, tau=None):
+  def _impl(r, *args):
     dens = r if p.nspin == 1 else r.sum()
     ret = lax.cond(
-      (dens < p.dens_threshold), lambda *_: 0.,
-      lambda *_: impl(p, r, s, l, tau), None
+      (dens < p.dens_threshold), lambda *_: 0., lambda *_: impl(p, r, *args),
+      None
     )
     return ret
 
   # define the energy functional, that takes a rho function
   # and an optional mo function.
   def epsilon_xc(rho: Callable, mo: Optional[Callable] = None):
-    if p.type == "mgga":
-      if mo is None:
-        raise ValueError(
-          "Molecular orbital function are required for mgga functionals."
-        )
+    r"""epsilon_xc is the xc energy density functional.
+    The exchange correlation energy is defined as
+    .. raw:: latex
 
+      E_{xc} = \int \rho(r) \epsilon_{xc}[\rho](r) dr
+
+    Therefore the way to use this functional is to
+
+    .. code-block:: python
+
+      energy_density = epsilon_xc(rho)
+
+      def Exc(rho):
+        return integrate(compose(mul, energy_density, rho))
+
+      Vxc = jax.grad(Exc)(rho)
+
+    `compose` and `integrate` are operators imported from autofd.
+
+    Args:
+      rho: the density function `f[3] -> f[2]` if polarized,
+        `f[3] -> f[]` otherwise.
+      mo: the molecular orbital function `f[3] -> f[2, nmo]` if polarized,
+        `f[3] -> f[nmo]` otherwise.
+
+    Returns:
+      The energy density function, `f[3] -> f[2]` if polarized,
+      `f[3] -> f[]` otherwise.
+    """
     o_spec = SpecTree.from_ret(rho)
     i_spec = SpecTree.from_args(rho)[0]
+    T = dtype_to_jaxtyping[o_spec.dtype.name]
+    # Check for any errors
     if o_spec.shape not in ((), (2,)):
       raise RuntimeError(
         "The density function rho passed to the functional "
@@ -89,19 +114,14 @@ def energy_functional(p, impl, deorbitalize=None):
         f"while the density function returns array of shape {o_spec.shape}."
       )
 
-    # compute arguments relating to density
-    T = _dtype_to_jaxtyping[o_spec.dtype.name]
+    def lda_energy(r: return_annotation(rho)) -> return_annotation(rho):
+      return _impl(r)
 
-    # 0th order
     if p.type == "lda":
+      return compose(lda_energy, rho)
 
-      def _energy(r: return_annotation(rho)) -> return_annotation(rho):
-        return _impl(r)
-
-      return o.compose(_energy, rho)
-
-    # 1st order
-    nabla_rho = o.nabla(rho)
+    # 1st order derivative
+    nabla_rho = nabla(rho)
 
     def compute_s(
       jac: return_annotation(nabla_rho),
@@ -117,43 +137,44 @@ def energy_functional(p, impl, deorbitalize=None):
       else:
         return jnp.dot(jac, jac)
 
-    s_fn = o.compose(compute_s, nabla_rho)
+    def gga_energy(r: return_annotation(rho),
+                   s: return_annotation(compute_s)) -> return_annotation(rho):
+      return _impl(r, s)
 
     # compute the functional
     if p.type == "gga":
+      return compose(
+        gga_energy, rho, compose(compute_s, nabla_rho), share_inputs=True
+      )
 
-      def _energy(r: return_annotation(rho),
-                  s: return_annotation(s_fn)) -> return_annotation(rho):
-        return _impl(r, s)
-
-      return o.compose(_energy, rho, s_fn, share_inputs=True)
-
-    # 2nd order
-    hess_rho = o.nabla(nabla_rho)
+    # 2nd order derivative
+    hess_rho = nabla(nabla_rho)
 
     def compute_l(
       hess: return_annotation(hess_rho),
     ) -> T[Array, ("2" if polarized else "")]:
       return jnp.diagonal(hess, axis1=-2, axis2=-1).sum(axis=-1)
 
-    l_fn = o.compose(compute_l, hess_rho)
-
-    # Now deal with mo
+    # Now deal with the terms related to mo
+    if mo is None:
+      raise ValueError(
+        "Molecular orbital function are required for mgga functionals."
+      )
     mo_o_spec = SpecTree.from_ret(mo)
     mo_i_spec = SpecTree.from_args(mo)[0]
     if mo_i_spec != i_spec:
       raise ValueError("mo must take the same argument as rho.")
-    if mo_o_spec.shape != (*(2,) * polarized, mo_o_spec.shape[1]):
+    if mo_o_spec.shape != (*(2,) * polarized, mo_o_spec.shape[-1]):
       raise ValueError(
         "mo must return (2, N) if polarized, or (N,) if not. "
         f"Got {mo_o_spec.shape} while polarized={polarized}."
       )
-    nabla_mo = o.nabla(mo)
+    nabla_mo = nabla(mo)
 
     def compute_tau(
       mo_jac: return_annotation(nabla_mo),
     ) -> return_annotation(rho):
-      tau = jnp.sum(mo_jac**2, axis=[-1, -2]) / 2
+      tau = jnp.sum(jnp.real(jnp.conj(mo_jac) * mo_jac), axis=[-1, -2]) / 2
       return tau
 
     def compute_tau_deorbitalize(
@@ -163,20 +184,27 @@ def energy_functional(p, impl, deorbitalize=None):
       return density * deo
 
     if deorbitalize is None:
-      tau_fn = o.compose(compute_tau, nabla_mo)
+      tau_fn = compose(compute_tau, nabla_mo)
     else:
-      tau_fn = o.compose(
+      tau_fn = compose(
         compute_tau_deorbitalize, rho, deorbitalize(rho, mo), share_inputs=True
       )
 
     # compute the functional
-    def _energy(
-      r: return_annotation(rho), s: return_annotation(s_fn),
-      l: return_annotation(l_fn), tau: return_annotation(tau_fn)
+    def mgga_energy(
+      r: return_annotation(rho), s: return_annotation(compute_s),
+      l: return_annotation(compute_l), tau: return_annotation(rho)
     ) -> return_annotation(rho):
       return _impl(r, s, l, tau)
 
-    return o.compose(_energy, rho, s_fn, l_fn, tau_fn, share_inputs=True)
+    return compose(
+      mgga_energy,
+      rho,
+      compose(compute_s, nabla_rho),
+      compose(compute_l, hess_rho),
+      tau_fn,
+      share_inputs=True,
+    )
 
   return epsilon_xc
 
@@ -242,7 +270,7 @@ def rho_to_arguments(
   ll = sum([hvp(eye[i])[..., i] for i in range(r.shape[-1])])
 
   # compute tau
-  mo_jac = jax.jacobian(mo)(r)
+  mo_jac = jax.jacfwd(mo)(r)
   if polarized and mo_jac.shape != (2, mo_jac.shape[1], r.shape[-1]):
     raise ValueError(
       "Since this functional is initialized to be polarized."
@@ -255,7 +283,7 @@ def rho_to_arguments(
       "mo must return an array of shape (N,), where N stands for the number of "
       "molecular orbitals."
     )
-  tau = jnp.sum(mo_jac**2, axis=[-1, -2]) / 2
+  tau = jnp.sum(jnp.real(jnp.conj(mo_jac) * mo_jac), axis=[-1, -2]) / 2
   if deorbitalize is not None:
     tau = density * deorbitalize
   return (density, s, ll, tau)

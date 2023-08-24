@@ -6,29 +6,47 @@ from typing import Callable, Optional
 from . import impl
 from .impl.utils import energy_functional
 from .utils import get_p
+from autofd.general_array import SpecTree
 
-def get_functional(p):
-  if p.nspin == 1:
-    code = getattr(impl, p.maple_name).unpol
-  elif p.nspin == 2:
-    code = getattr(impl, p.maple_name).pol
+def get_functional(p, deo_functional=None):
   if p.maple_name == "DEORBITALIZE":
     p0, p1 = (p.func_aux[0], p.func_aux[1])
-    epsilon_xc_p1 = energy_functional(p1, code)
-    epsilon_xc_p0 = energy_functional(p0, code, epsilon_xc_p1)
-    fnal = p0
-  # elif p.maple_name == "":
-  #   def epsilon_xc(rho, mo):
-  #     funals = [energy_functional(fn_p, code)(rho, mo) for fn_p, coeff in zip(p.func_aux, p.mix_coef)]
+    epsilon_xc_p1 = get_functional(p1)
+    epsilon_xc_p0 = get_functional(p0, epsilon_xc_p1)
+    return epsilon_xc_p0
+  elif p.maple_name == "":
+    def epsilon_xc(rho, mo=None):
+      energy_density_fns = [
+        get_functional(fn_p)(rho, mo)
+        for fn_p in p.func_aux
+      ]
+      parameters = (
+        SpecTree.to_parameter(SpecTree.from_ret(f), name=f"arg{i}")
+        for i, f in enumerate(energy_density_fns)
+      )
+      @with_signature(
+        inspect.Signature(
+          parameters,
+          return_annotation=return_annotation(rho),
+        )
+      )
+      def linear_combine(*args):
+        return sum(c * d for c, d in zip(p.mix_coef, args))
+      return compose(linear_combine, *energy_density_fns, share_inputs=True)
+    epsilon_xc.cam_alpha = p.cam_alpha
+    epsilon_xc.cam_beta = p.cam_beta
+    epsilon_xc.cam_omega = p.cam_omega
+    epsilon_xc.nlc_b = p.nlc_b
+    epsilon_xc.nlc_C = p.nlc_C
+    return epsilon_xc
   else:
-    fnal = energy_functional(p, code)
-  if p.maple_name == "":
-    fnal.cam_alpha = p.cam_alpha
-    fnal.cam_beta = p.cam_beta
-    fnal.cam_omega = p.cam_omega
-    fnal.nlc_b = p.nlc_b
-    fnal.nlc_C = p.nlc_C
-  return fnal
+    if p.nspin == 1:
+      code = getattr(impl, p.maple_name).unpol
+    elif p.nspin == 2:
+      code = getattr(impl, p.maple_name).pol
+    return energy_functional(p, code, deo_functional)
+
+
 
 {% for p, ext_params, ext_params_descriptions, info in functionals %}
 def {{ p.name }}(

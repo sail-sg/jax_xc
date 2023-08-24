@@ -59,7 +59,7 @@ def {{ p.name }}(
   {{ param_name }} = ({{ param_name }} or {{ value }})
 {% endfor %}
   p = get_p("{{ p.name }}", polarized, {{ ext_params.keys()|join(', ') }})
-  def _{{ p.name }}_epsilon_xc(rho, r{% if p.type == "mgga" %}, mo=None{% endif %}):
+  def _{{ p.name }}_epsilon_xc(rho, r, mo=None):
     r"""
     The exchange-correlation energy density of {{ p.name }}.
     
@@ -72,11 +72,9 @@ def {{ p.name }}(
         The 3D coordinate of the point to evaluate the functional.
         Note this function is designed to accept single input,
         use vmap for batch.
-{% if p.type == "mgga" %}
       mo: Callable
         Molecular orbital function :math:`R^3 \rightarrow R^{2 \times N}`.
-        :math:`N` is the number of orbitals.
-{% endif %}
+        :math:`N` is the number of orbitals. Requried only for mgga functionals.
     Returns:
       The energy density evaluated at r.
     """

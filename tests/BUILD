@@ -15,8 +15,8 @@ py_test(
 )
 
 py_test(
-    name = "test_impl",
-    srcs = ["test_impl.py"],
+    name = "test_against_libxc",
+    srcs = ["test_against_libxc.py"],
     deps = [
         "@maple2jax//jax_xc",
     ],
