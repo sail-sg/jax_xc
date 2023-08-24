@@ -5,7 +5,6 @@
 # You can obtain one at https://mozilla.org/MPL/2.0/.
 
 import jax
-import ctypes
 import jax.numpy as jnp
 from jax.config import config
 from absl.testing import absltest, parameterized
@@ -15,7 +14,6 @@ import numpy as np
 import jax_xc
 from jax_xc.utils import get_p
 from jax_xc import libxc as pylibxc
-from jax_xc import utils, impl, functionals
 from functools import partial
 from jaxtyping import Array, Float64
 
