@@ -1,5 +1,5 @@
-load("@rules_python//python:packaging.bzl", "py_wheel")
 load("@python_abi//:abi.bzl", "abi_tag", "python_tag")
+load("@rules_python//python:packaging.bzl", "py_wheel")
 
 py_wheel(
     name = "jax_xc_wheel",
