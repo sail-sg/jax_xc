@@ -99,6 +99,7 @@ def energy_functional(p, impl, deorbitalize=None):
     o_spec = SpecTree.from_ret(rho)
     i_spec = SpecTree.from_args(rho)
     dtype = o_spec.dtype
+    scalar = Spec((), dtype)
     # Check for any errors
     if o_spec.shape not in ((), (2,)):
       raise RuntimeError(
@@ -113,7 +114,7 @@ def energy_functional(p, impl, deorbitalize=None):
         f"while the density function returns array of shape {o_spec.shape}."
       )
 
-    @with_spec((o_spec,), o_spec)
+    @with_spec((o_spec,), scalar)
     def lda_energy(r):
       return _impl(r)
 
@@ -139,7 +140,7 @@ def energy_functional(p, impl, deorbitalize=None):
       else:
         return jnp.dot(jac, jac)
 
-    @with_spec((o_spec, compute_s.ret_spec), o_spec)
+    @with_spec((o_spec, compute_s.ret_spec), scalar)
     def gga_energy(r, s):
       return _impl(r, s)
 
@@ -186,10 +187,7 @@ def energy_functional(p, impl, deorbitalize=None):
       tau_fn = rho * deorbitalize(rho, mo)
 
     # compute the functional
-    @with_spec(
-      (o_spec, compute_s.ret_spec, compute_l.ret_spec, o_spec),
-      o_spec,
-    )
+    @with_spec((o_spec, compute_s.ret_spec, compute_l.ret_spec, o_spec), scalar)
     def mgga_energy(r, s, l, tau):
       return _impl(r, s, l, tau)
 
