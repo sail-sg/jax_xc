@@ -36,6 +36,7 @@ THRESHOLD = {
   "gga_x_beefvdw": 1e-10,
   "gga_x_pbepow": 1e-10,
   "mgga_c_bc95": 1e-12,
+  "mgga_x_m06l": 1e-12,
 }
 
 # NOT-IMPLEMENTED due to jax's lack of support
