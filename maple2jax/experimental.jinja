@@ -6,7 +6,6 @@ from typing import Callable, Optional
 from . import impl
 from .impl.utils import energy_functional
 from .utils import get_p
-from autofd.general_array import SpecTree
 
 def get_functional(p, deo_functional=None):
   if p.maple_name == "DEORBITALIZE":
@@ -16,23 +15,11 @@ def get_functional(p, deo_functional=None):
     return epsilon_xc_p0
   elif p.maple_name == "":
     def epsilon_xc(rho, mo=None):
-      energy_density_fns = [
+      fnals = [
         get_functional(fn_p)(rho, mo)
         for fn_p in p.func_aux
       ]
-      parameters = (
-        SpecTree.to_parameter(SpecTree.from_ret(f), name=f"arg{i}")
-        for i, f in enumerate(energy_density_fns)
-      )
-      @with_signature(
-        inspect.Signature(
-          parameters,
-          return_annotation=return_annotation(rho),
-        )
-      )
-      def linear_combine(*args):
-        return sum(c * d for c, d in zip(p.mix_coef, args))
-      return compose(linear_combine, *energy_density_fns, share_inputs=True)
+      epsilon_xc = sum(coef * f for coef, f in zip(p.mix_coef, fnals))
     epsilon_xc.cam_alpha = p.cam_alpha
     epsilon_xc.cam_beta = p.cam_beta
     epsilon_xc.cam_omega = p.cam_omega

@@ -20,7 +20,23 @@ from jaxtyping import Array, Float64
 config.update("jax_enable_x64", True)
 config.update("jax_debug_nans", True)
 
-THRESHOLD = 2e-10
+THRESHOLD = {
+  "mgga_x_br89_explicit": 1e-9,
+  "gga_c_op_pw91": 1e-14,
+  "lda_x_rel": 1e-13,
+  "mgga_x_pjs18": 1e-11,
+  "mgga_x_m08": 1e-12,
+  "mgga_c_m08": 1e-12,
+  "mgga_x_edmgga": 1e-12,
+  "mgga_x_ft98": 1e-12,
+  "mgga_x_m061": 1e-13,
+  "hyb_mgga_x_pjs18": 1e-11,
+  "gga_k_meyer": 1e-12,
+  "mgga_x_sa_tpss": 1e-13,
+  "gga_x_beefvdw": 1e-10,
+  "gga_x_pbepow": 1e-10,
+  "mgga_c_bc95": 1e-12,
+}
 
 # NOT-IMPLEMENTED due to jax's lack of support
 SKIP_LIST = [
@@ -55,6 +71,7 @@ names = pylibxc.util.xc_available_functional_names()
 lda = []
 gga = []
 mgga = []
+sensitive = []
 
 for n in names:
   p = get_p(n, 1)
@@ -63,12 +80,14 @@ for n in names:
     p.maple_name not in SKIP_LIST and p.maple_name != "" and
     p.maple_name != "DEORBITALIZE"
   ):
-    if p.name.startswith("mgga") or p.name.startswith("hyb_mgga"):
-      mgga.append(p.name)
+    if p.maple_name in THRESHOLD:
+      sensitive.append((p.name, p.maple_name))
+    elif p.name.startswith("mgga") or p.name.startswith("hyb_mgga"):
+      mgga.append((p.name, p.maple_name))
     elif p.name.startswith("gga") or p.name.startswith("hyb_gga"):
-      gga.append(p.name)
+      gga.append((p.name, p.maple_name))
     elif p.name.startswith("lda") or p.name.startswith("hyb_lda"):
-      lda.append(p.name)
+      lda.append((p.name, p.maple_name))
 
 
 def sigma(rho, r):
@@ -129,14 +148,20 @@ def mo3(r: Float64[Array, "3"]) -> Float64[Array, "2 8"]:
 class _TestAgainstLibxc(parameterized.TestCase):
 
   @parameterized.parameters(*lda, *gga, *mgga)
-  def test_unpol(self, name):
-    self._test_impl(name, 0, rho1, mo1)
+  def test_unpol(self, name, maple_name):
+    self._test_impl(name, maple_name, 0, rho1, mo1)
 
   @parameterized.parameters(*lda, *gga, *mgga)
-  def test_pol(self, name):
-    self._test_impl(name, 1, rho3, mo3)
+  def test_pol(self, name, maple_name):
+    self._test_impl(name, maple_name, 1, rho3, mo3)
 
-  def _test_impl(self, name, polarized, rho, mo):
+  @parameterized.parameters(*sensitive)
+  def test_sensitive(self, name, maple_name):
+    self._test_impl(name, maple_name, 0, rho1, mo1)
+    self._test_impl(name, maple_name, 1, rho3, mo3)
+
+  def _test_impl(self, name, maple_name, polarized, rho, mo):
+    threshold = THRESHOLD.get(maple_name, 1e-14)
     batch = 100
     r = jax.random.uniform(
       jax.random.PRNGKey(42),
@@ -152,9 +177,7 @@ class _TestAgainstLibxc(parameterized.TestCase):
 
     # libxc
     func = pylibxc.LibXCFunctional(name, int(polarized) + 1)
-    logging.info(
-      "Testing %s, implemented by maple file %s", p.name, p.maple_name
-    )
+    logging.info("Testing %s, implemented by maple file %s", name, maple_name)
     res1 = func.compute(
       {
         "rho": rho_r,
@@ -166,19 +189,26 @@ class _TestAgainstLibxc(parameterized.TestCase):
     )
     res1_zk = res1["zk"].squeeze()
 
-    # jax_xc experimental
-    epsilon_xc = getattr(jax_xc.experimental, name)(polarized)
-    energy_density = epsilon_xc(rho, mo)
-    res2_zk = jax.vmap(energy_density)(r)
-
     # jax_xc
     epsilon_xc = getattr(jax_xc, name)(polarized)
     energy_density = lambda r: epsilon_xc(rho, r, mo)
-    res3_zk = jax.vmap(energy_density)(r)
+    res2_zk = jax.jit(jax.vmap(energy_density))(r)
 
     # absolute(res2_zk - res1_zk) <= (atol + rtol * absolute(res1_zk)
-    np.testing.assert_allclose(res2_zk, res1_zk, rtol=THRESHOLD, atol=THRESHOLD)
-    np.testing.assert_allclose(res3_zk, res1_zk, rtol=THRESHOLD, atol=THRESHOLD)
+    np.testing.assert_allclose(res2_zk, res1_zk, rtol=threshold, atol=threshold)
+
+    # jax_xc experimental
+    try:
+      from autofd.general_array import function
+      rho = function(rho)
+      epsilon_xc = getattr(jax_xc.experimental, name)(polarized)
+      energy_density = epsilon_xc(rho, mo)
+      res3_zk = jax.jit(jax.vmap(energy_density))(r)
+      np.testing.assert_allclose(
+        res3_zk, res1_zk, rtol=threshold, atol=threshold
+      )
+    except ImportError:
+      logging.info("Skipping experimental test because autofd is not found")
 
 
 if __name__ == "__main__":

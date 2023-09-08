@@ -17,7 +17,6 @@ from jax import lax
 import jax.numpy as jnp
 import tensorflow_probability as tfp
 from typing import Callable, Optional, NamedTuple
-from jaxtyping import Array
 
 
 def Heaviside(x):
@@ -51,9 +50,9 @@ def lax_cond(a, b, c):
 def energy_functional(p, impl, deorbitalize=None):
   from autofd.operators import compose, nabla
   from autofd.general_array import (
+    with_spec,
+    Spec,
     SpecTree,
-    return_annotation,
-    dtype_to_jaxtyping,
   )
 
   # filter 0 density
@@ -98,8 +97,8 @@ def energy_functional(p, impl, deorbitalize=None):
       `f[3] -> f[]` otherwise.
     """
     o_spec = SpecTree.from_ret(rho)
-    i_spec = SpecTree.from_args(rho)[0]
-    T = dtype_to_jaxtyping[o_spec.dtype.name]
+    i_spec = SpecTree.from_args(rho)
+    dtype = o_spec.dtype
     # Check for any errors
     if o_spec.shape not in ((), (2,)):
       raise RuntimeError(
@@ -114,18 +113,21 @@ def energy_functional(p, impl, deorbitalize=None):
         f"while the density function returns array of shape {o_spec.shape}."
       )
 
-    def lda_energy(r: return_annotation(rho)) -> return_annotation(rho):
+    @with_spec((o_spec,), o_spec)
+    def lda_energy(r):
       return _impl(r)
 
     if p.type == "lda":
       return compose(lda_energy, rho)
 
     # 1st order derivative
-    nabla_rho = nabla(rho)
+    nabla_rho = nabla(rho, method=jax.jacrev)
 
-    def compute_s(
-      jac: return_annotation(nabla_rho),
-    ) -> T[Array, ("3" if polarized else "")]:
+    @with_spec(
+      (nabla_rho.ret_spec,),
+      Spec((3,) if polarized else (), dtype),
+    )
+    def compute_s(jac):
       if polarized:
         return jnp.stack(
           [
@@ -137,8 +139,8 @@ def energy_functional(p, impl, deorbitalize=None):
       else:
         return jnp.dot(jac, jac)
 
-    def gga_energy(r: return_annotation(rho),
-                   s: return_annotation(compute_s)) -> return_annotation(rho):
+    @with_spec((o_spec, compute_s.ret_spec), o_spec)
+    def gga_energy(r, s):
       return _impl(r, s)
 
     # compute the functional
@@ -148,11 +150,13 @@ def energy_functional(p, impl, deorbitalize=None):
       )
 
     # 2nd order derivative
-    hess_rho = nabla(nabla_rho)
+    hess_rho = nabla(nabla_rho, method=jax.jacfwd)
 
-    def compute_l(
-      hess: return_annotation(hess_rho),
-    ) -> T[Array, ("2" if polarized else "")]:
+    @with_spec(
+      (hess_rho.ret_spec,),
+      Spec((2,) if polarized else (), dtype),
+    )
+    def compute_l(hess):
       return jnp.diagonal(hess, axis1=-2, axis2=-1).sum(axis=-1)
 
     # Now deal with the terms related to mo
@@ -161,7 +165,7 @@ def energy_functional(p, impl, deorbitalize=None):
         "Molecular orbital function are required for mgga functionals."
       )
     mo_o_spec = SpecTree.from_ret(mo)
-    mo_i_spec = SpecTree.from_args(mo)[0]
+    mo_i_spec = SpecTree.from_args(mo)
     if mo_i_spec != i_spec:
       raise ValueError("mo must take the same argument as rho.")
     if mo_o_spec.shape != (*(2,) * polarized, mo_o_spec.shape[-1]):
@@ -169,32 +173,24 @@ def energy_functional(p, impl, deorbitalize=None):
         "mo must return (2, N) if polarized, or (N,) if not. "
         f"Got {mo_o_spec.shape} while polarized={polarized}."
       )
-    nabla_mo = nabla(mo)
+    nabla_mo = nabla(mo, method=jax.jacfwd)
 
-    def compute_tau(
-      mo_jac: return_annotation(nabla_mo),
-    ) -> return_annotation(rho):
+    @with_spec((nabla_mo.ret_spec,), o_spec)
+    def compute_tau(mo_jac):
       tau = jnp.sum(jnp.real(jnp.conj(mo_jac) * mo_jac), axis=[-1, -2]) / 2
       return tau
-
-    def compute_tau_deorbitalize(
-      density: return_annotation(rho),
-      deo: return_annotation(rho),
-    ) -> return_annotation(rho):
-      return density * deo
 
     if deorbitalize is None:
       tau_fn = compose(compute_tau, nabla_mo)
     else:
-      tau_fn = compose(
-        compute_tau_deorbitalize, rho, deorbitalize(rho, mo), share_inputs=True
-      )
+      tau_fn = rho * deorbitalize(rho, mo)
 
     # compute the functional
-    def mgga_energy(
-      r: return_annotation(rho), s: return_annotation(compute_s),
-      l: return_annotation(compute_l), tau: return_annotation(rho)
-    ) -> return_annotation(rho):
+    @with_spec(
+      (o_spec, compute_s.ret_spec, compute_l.ret_spec, o_spec),
+      o_spec,
+    )
+    def mgga_energy(r, s, l, tau):
       return _impl(r, s, l, tau)
 
     return compose(
