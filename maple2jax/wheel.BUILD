@@ -1,5 +1,5 @@
-load("@rules_python//python:packaging.bzl", "py_wheel")
 load("@python_abi//:abi.bzl", "abi_tag", "python_tag")
+load("@rules_python//python:packaging.bzl", "py_wheel")
 
 py_wheel(
     name = "jax_xc_wheel",
@@ -20,9 +20,10 @@ py_wheel(
         "numpy",
         "tensorflow-probability",
     ],
-    version = "0.0.7",
+    version = "0.0.8",
     deps = [
         "@maple2jax//jax_xc",
+        "@maple2jax//jax_xc:experimental",
         "@maple2jax//jax_xc:functionals",
         "@maple2jax//jax_xc:utils",
         "@maple2jax//jax_xc/impl",

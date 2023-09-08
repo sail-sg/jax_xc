@@ -1,0 +1,77 @@
+import jax
+import jax.numpy as jnp
+import ctypes
+from collections import namedtuple
+from typing import Callable, Optional
+from . import impl
+from .impl.utils import energy_functional
+from .utils import get_p
+
+def get_functional(p, deo_functional=None):
+  if p.maple_name == "DEORBITALIZE":
+    p0, p1 = (p.func_aux[0], p.func_aux[1])
+    epsilon_xc_p1 = get_functional(p1)
+    epsilon_xc_p0 = get_functional(p0, epsilon_xc_p1)
+    return epsilon_xc_p0
+  elif p.maple_name == "":
+    def epsilon_xc(rho, mo=None):
+      fnals = [
+        get_functional(fn_p)(rho, mo)
+        for fn_p in p.func_aux
+      ]
+      epsilon_xc = sum(coef * f for coef, f in zip(p.mix_coef, fnals))
+    epsilon_xc.cam_alpha = p.cam_alpha
+    epsilon_xc.cam_beta = p.cam_beta
+    epsilon_xc.cam_omega = p.cam_omega
+    epsilon_xc.nlc_b = p.nlc_b
+    epsilon_xc.nlc_C = p.nlc_C
+    return epsilon_xc
+  else:
+    if p.nspin == 1:
+      code = getattr(impl, p.maple_name).unpol
+    elif p.nspin == 2:
+      code = getattr(impl, p.maple_name).pol
+    return energy_functional(p, code, deo_functional)
+
+
+
+{% for p, ext_params, ext_params_descriptions, info in functionals %}
+def {{ p.name }}(
+  polarized: bool = True,
+{% for param_name in ext_params.keys() %}
+  {{ param_name }}: Optional[float] = None,
+{% endfor %}
+) -> Callable:
+  r"""
+  {% for url, doi, ref in info %}
+  {{ ref }}
+  {% if url != "" %}
+  `{{ doi }} <{{ url }}>`_
+  {% else %}
+  {{ doi }}
+  {% endif %}
+
+  {% endfor %}
+
+  {% if p.maple_name == "" %}
+  Mixing of the following functionals:
+  {% for fn_p, coeff in zip(p.func_aux, p.mix_coef) %}
+    {{ fn_p.name }} (coefficient: {{ coeff }})
+  {% endfor %}
+  {% endif %}
+  Parameters
+  ----------
+  polarized : bool
+    Whether the calculation is polarized.
+{% for (param_name, param_val), param_descrip in zip(ext_params.items(), ext_params_descriptions) %}
+  {{ param_name }} : Optional[float], default: {{ param_val }}
+    {{ param_descrip }}
+{% endfor %}
+  """
+{% for param_name, value in ext_params.items() %}
+  {{ param_name }} = ({{ param_name }} or {{ value }})
+{% endfor %}
+  p = get_p("{{ p.name }}", polarized, {{ ext_params.keys()|join(', ') }})
+  return get_functional(p)
+
+{% endfor %}

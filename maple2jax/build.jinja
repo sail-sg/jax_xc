@@ -24,6 +24,16 @@ genrule(
     ],
 )
 
+genrule(
+    name = "gen_experimental",
+    outs = ["experimental.py"],
+    cmd = "$(execpath :gen_py) --output $@ --template $(execpath :experimental.jinja)",
+    tools = [
+        ":gen_py",
+        ":experimental.jinja",
+    ],
+)
+
 py_library(
     name = "functionals",
     srcs = [":gen_functionals"],
@@ -36,8 +46,19 @@ py_library(
 )
 
 py_library(
+    name = "experimental",
+    srcs = [":gen_experimental"],
+    deps = [
+        ":utils",
+        "@maple2jax//jax_xc/libxc",
+        "@maple2jax//jax_xc/impl",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
     name = "jax_xc",
     srcs = ["__init__.py"],
-    deps = [":functionals"],
+    deps = [":functionals", ":experimental"],
     visibility = ["//visibility:public"],
 )

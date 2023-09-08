@@ -185,6 +185,53 @@ The meaning for each attribute is the same as libxc:
 -  nlc_b: non-local correlation, b parameter
 -  nlc_C: non-local correlation, C parameter
 
+Experimental
+------------
+
+We support automatic functional derivative!
+
+.. code:: python
+
+  import jax
+  import jax_xc
+  import autofd
+  from autofd.general_array import general_shape
+  import jax.numpy as jnp
+  from jaxtyping import Array, Float32
+
+  def rho(r: Float32[Array, "3"]) -> Float32[Array, ""]:
+    """Electron number density. We take gaussian as an example.
+
+    A function that takes a real coordinate, and returns a scalar
+    indicating the number density of electron at coordinate r.
+
+    Args:
+    r: a 3D coordinate.
+    Returns:
+    rho: If it is unpolarized, it is a scalar.
+        If it is polarized, it is a array of shape (2,).
+    """
+    return jnp.prod(jax.scipy.stats.norm.pdf(r, loc=0, scale=1))
+
+  # create a density functional
+  gga_xc_pbe = jax_xc.experimental.gga_x_pbe(polarized=False)
+
+  # a grid point in 3D
+  r = jnp.array([0.1, 0.2, 0.3])
+
+  # pass rho and r to the functional to compute epsilon_xc (energy density) at r.
+  # corresponding to the 'zk' in libxc
+  epsilon_xc = gga_xc_pbe(rho)
+  print(f"The function signature of epsilon_xc is {general_shape(epsilon_xc)}")
+
+  energy_density = epsilon_xc(r)
+  print(f"epsilon_xc(r) = {energy_density}")
+
+  vxc = jax.grad(lambda rho: autofd.operators.integrate(gga_xc_pbe(rho)))(rho)
+  print(f"The function signature of vxc is {general_shape(vxc)}")
+  print(vxc(r))
+
+
 Support Functionals
 -------------------
 

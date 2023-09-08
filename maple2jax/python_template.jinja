@@ -6,7 +6,7 @@ from typing import Callable, Optional
 from . import impl
 from .utils import get_p
 
-def invoke(p, rho, r, mo=None, deo=None):
+def invoke(p, rho, r, mo=None):
   if p.maple_name == "DEORBITALIZE":
     p0, p1 = (p.func_aux[0], p.func_aux[1])
     deo = invoke(p1, rho, r, mo)
@@ -14,12 +14,12 @@ def invoke(p, rho, r, mo=None, deo=None):
   elif p.maple_name == "":
     return sum(
       [
-        coeff * invoke(fn_p, rho, r, mo, deo)
+        coeff * invoke(fn_p, rho, r, mo)
         for fn_p, coeff in zip(p.func_aux, p.mix_coef)
       ]
     )
   else:
-    return getattr(impl, p.maple_name).invoke(p, rho, r, mo, deo)
+    return getattr(impl, p.maple_name).invoke(p, rho, r, mo)
   
 
 {% for p, ext_params, ext_params_descriptions, info in functionals %}
@@ -59,7 +59,7 @@ def {{ p.name }}(
   {{ param_name }} = ({{ param_name }} or {{ value }})
 {% endfor %}
   p = get_p("{{ p.name }}", polarized, {{ ext_params.keys()|join(', ') }})
-  def _{{ p.name }}_epsilon_xc(rho, r{% if p.type == "mgga" %}, mo=None{% endif %}):
+  def _{{ p.name }}_epsilon_xc(rho, r, mo=None):
     r"""
     The exchange-correlation energy density of {{ p.name }}.
     
@@ -72,11 +72,9 @@ def {{ p.name }}(
         The 3D coordinate of the point to evaluate the functional.
         Note this function is designed to accept single input,
         use vmap for batch.
-{% if p.type == "mgga" %}
       mo: Callable
         Molecular orbital function :math:`R^3 \rightarrow R^{2 \times N}`.
-        :math:`N` is the number of orbitals.
-{% endif %}
+        :math:`N` is the number of orbitals. Requried only for mgga functionals.
     Returns:
       The energy density evaluated at r.
     """
