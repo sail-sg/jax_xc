@@ -20,7 +20,7 @@ py_wheel(
         "numpy",
         "tensorflow-probability",
     ],
-    version = "0.0.7",
+    version = "0.0.8",
     deps = [
         "@maple2jax//jax_xc",
         "@maple2jax//jax_xc:experimental",
