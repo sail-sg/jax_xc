@@ -15,7 +15,8 @@ import jax_xc
 from jax_xc.utils import get_p
 from jax_xc import libxc as pylibxc
 from functools import partial
-from jaxtyping import Array, Float64
+from jaxtyping import Array, Float64, Complex128
+from autofd import function
 
 config.update("jax_enable_x64", True)
 config.update("jax_debug_nans", True)
@@ -83,7 +84,7 @@ for n in names:
   ):
     if p.maple_name in THRESHOLD:
       sensitive.append((p.name, p.maple_name))
-    elif p.name.startswith("mgga") or p.name.startswith("hyb_mgga"):
+    if p.name.startswith("mgga") or p.name.startswith("hyb_mgga"):
       mgga.append((p.name, p.maple_name))
     elif p.name.startswith("gga") or p.name.startswith("hyb_gga"):
       gga.append((p.name, p.maple_name))
@@ -119,49 +120,57 @@ def tau(rho, mo, r, deorbitalize=None):
   return tau
 
 
+@function
 def rho1(r: Float64[Array, "3"]) -> Float64[Array, ""]:
   return jnp.prod(jax.scipy.stats.norm.pdf(r, loc=0, scale=1))
 
 
+@function
 def rho2(r: Float64[Array, "3"]) -> Float64[Array, ""]:
   return jnp.prod(jax.scipy.stats.cauchy.pdf(r, loc=0, scale=1))
 
 
+@function
 def rho3(r: Float64[Array, "3"]) -> Float64[Array, "2"]:
   return jnp.stack([rho1(r), rho2(r)], axis=0)
 
 
-def mo1(r: Float64[Array, "3"]) -> Float64[Array, "8"]:
+@function
+def mo1(r: Float64[Array, "3"]) -> Complex128[Array, "8"]:
   # create 8 orbitals
   r = r[None, :] * jnp.arange(8)[:, None]
   return jnp.sum(jnp.sin(r), axis=-1) + jnp.sum(jnp.cos(r), axis=-1) * 1.j
 
 
-def mo2(r: Float64[Array, "3"]) -> Float64[Array, "8"]:
+@function
+def mo2(r: Float64[Array, "3"]) -> Complex128[Array, "8"]:
   r = r[None, :] * jnp.arange(8)[:, None] * 2
   return jnp.sum(jnp.sin(r), axis=-1) + jnp.sum(jnp.cos(r), axis=-1) * 1.j
 
 
-def mo3(r: Float64[Array, "3"]) -> Float64[Array, "2 8"]:
+@function
+def mo3(r: Float64[Array, "3"]) -> Complex128[Array, "2 8"]:
   return jnp.stack([mo1(r), mo2(r)], axis=0)
 
 
 class _TestAgainstLibxc(parameterized.TestCase):
 
-  @parameterized.parameters(*lda, *gga, *mgga)
-  def test_unpol(self, name, maple_name):
-    self._test_impl(name, maple_name, 0, rho1, mo1)
+  @parameterized.parameters(*lda)
+  def test_lda(self, name, maple_name):
+    self._test_impl(name, maple_name, 0, rho1)
+    self._test_impl(name, maple_name, 1, rho3)
 
-  @parameterized.parameters(*lda, *gga, *mgga)
-  def test_pol(self, name, maple_name):
+  @parameterized.parameters(*gga)
+  def test_gga(self, name, maple_name):
+    self._test_impl(name, maple_name, 0, rho1)
+    self._test_impl(name, maple_name, 1, rho3)
+
+  @parameterized.parameters(*mgga)
+  def test_mgga(self, name, maple_name):
+    self._test_impl(name, maple_name, 0, rho1, mo1)
     self._test_impl(name, maple_name, 1, rho3, mo3)
 
-  @parameterized.parameters(*sensitive)
-  def test_sensitive(self, name, maple_name):
-    self._test_impl(name, maple_name, 0, rho1, mo1)
-    self._test_impl(name, maple_name, 1, rho3, mo3)
-
-  def _test_impl(self, name, maple_name, polarized, rho, mo):
+  def _test_impl(self, name, maple_name, polarized, rho, mo=None):
     threshold = THRESHOLD.get(maple_name, 1e-14)
     batch = 100
     r = jax.random.uniform(
@@ -174,7 +183,10 @@ class _TestAgainstLibxc(parameterized.TestCase):
     rho_r = jax.vmap(rho)(r)
     sigma_r = jax.vmap(partial(sigma, rho))(r)
     lapl_r = jax.vmap(partial(lapl, rho))(r)
-    tau_r = jax.vmap(partial(tau, rho, mo))(r)
+    if mo is not None:
+      tau_r = jax.vmap(partial(tau, rho, mo))(r)
+    else:
+      tau_r = None
 
     # libxc
     func = pylibxc.LibXCFunctional(name, int(polarized) + 1)
@@ -200,11 +212,11 @@ class _TestAgainstLibxc(parameterized.TestCase):
 
     # jax_xc experimental
     try:
-      from autofd.general_array import function
+      from autofd import function
       rho = function(rho)
-      epsilon_xc = getattr(jax_xc.experimental, name)(polarized)
-      energy_density = epsilon_xc(rho, mo)
-      res3_zk = jax.jit(jax.vmap(energy_density))(r)
+      args = (rho, mo) if mo is not None else (rho,)
+      epsilon_xc = getattr(jax_xc.experimental, name)(*args)
+      res3_zk = jax.jit(jax.vmap(epsilon_xc))(r)
       np.testing.assert_allclose(
         res3_zk, res1_zk, rtol=threshold, atol=threshold
       )

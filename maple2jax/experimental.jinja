@@ -1,43 +1,140 @@
 import jax
+from jax import lax
 import jax.numpy as jnp
 import ctypes
 from collections import namedtuple
 from typing import Callable, Optional
+from functools import partial
+import autofd.operators as o
+
 from . import impl
-from .impl.utils import energy_functional
 from .utils import get_p
 
-def get_functional(p, deo_functional=None):
+
+def _filter_small_density(p, code, r, *args):
+  dens = r if p.nspin == 1 else r.sum()
+  ret = lax.cond(
+    (dens < p.dens_threshold), lambda *_: 0., lambda *_: code(p, r, *args),
+    None
+  )
+  return ret
+
+
+def make_epsilon_xc(
+  p, rho: Callable, mo: Optional[Callable] = None, deorbitalize=None
+):
+  # if they are deorbitalize or hybrid functionals
   if p.maple_name == "DEORBITALIZE":
     p0, p1 = (p.func_aux[0], p.func_aux[1])
-    epsilon_xc_p1 = get_functional(p1)
-    epsilon_xc_p0 = get_functional(p0, epsilon_xc_p1)
-    return epsilon_xc_p0
+    deorbitalize = partial(make_epsilon_xc, p1)
+    return make_epsilon_xc(p0, rho, mo, deorbitalize=deorbitalize)
   elif p.maple_name == "":
-    def epsilon_xc(rho, mo=None):
-      fnals = [
-        get_functional(fn_p)(rho, mo)
-        for fn_p in p.func_aux
-      ]
-      epsilon_xc = sum(coef * f for coef, f in zip(p.mix_coef, fnals))
+
+    def mix(*args):
+      return sum(coef * a for a, coef in zip(args, p.mix_coef))
+
+    epsilon_xc = o.compose(mix, *[make_epsilon_xc(fn_p, rho, mo)
+                                  for fn_p in p.func_aux], share_inputs=True)
     epsilon_xc.cam_alpha = p.cam_alpha
     epsilon_xc.cam_beta = p.cam_beta
     epsilon_xc.cam_omega = p.cam_omega
     epsilon_xc.nlc_b = p.nlc_b
     epsilon_xc.nlc_C = p.nlc_C
     return epsilon_xc
-  else:
-    if p.nspin == 1:
-      code = getattr(impl, p.maple_name).unpol
-    elif p.nspin == 2:
-      code = getattr(impl, p.maple_name).pol
-    return energy_functional(p, code, deo_functional)
 
+  # otherwise, it is a single functional
+  if p.nspin == 1:
+    code = getattr(impl, p.maple_name).unpol
+  elif p.nspin == 2:
+    code = getattr(impl, p.maple_name).pol
+
+  code = partial(_filter_small_density, p, code)
+
+  # construct first order derivative of rho for gga
+  nabla_rho = o.nabla(rho, method=jax.jacrev)
+
+  def compute_s(jac):
+    if jac.shape == (2, 3):
+      return jnp.stack([jac[0] @ jac[0], jac[0] @ jac[1], jac[1] @ jac[1]])
+    elif jac.shape == (3,):
+      return jac @ jac
+
+  # construct second order derivative of rho for mgga
+  hess_rho = o.nabla(nabla_rho, method=jax.jacfwd)
+
+  def compute_l(hess_rho):
+    return jnp.trace(hess_rho, axis1=-2, axis2=-1)
+
+  # create the epsilon_xc function
+  if p.type == "lda":
+    return o.compose(code, rho)
+  elif p.type == "gga":
+    return o.compose(
+      code, rho, o.compose(compute_s, nabla_rho), share_inputs=True
+    )
+  elif p.type == "mgga":
+    nabla_mo = o.nabla(mo, method=jax.jacfwd)
+
+    def compute_tau(mo_jac):
+      tau = jnp.sum(jnp.real(jnp.conj(mo_jac) * mo_jac), axis=[-1, -2]) / 2
+      return tau
+
+    if deorbitalize is None:
+      tau_fn = o.compose(compute_tau, nabla_mo)
+    else:
+      tau_fn = rho * deorbitalize(rho, mo)
+    return o.compose(
+      code,
+      rho,
+      o.compose(compute_s, nabla_rho),
+      o.compose(compute_l, hess_rho),
+      tau_fn,
+      share_inputs=True
+    )
+
+
+def is_polarized(rho):
+  try:
+    out = jax.eval_shape(rho, jax.ShapeDtypeStruct((3,), jnp.float32))
+  except:
+    out = jax.eval_shape(rho, jax.ShapeDtypeStruct((3,), jnp.float64))
+  if out.shape != (2,) and out.shape != ():
+    raise ValueError(
+      f"rho must return an array of shape (2,) or (), got {out.shape}"
+    )
+  return (out.shape == (2,))
+
+
+def check_mo_shape(mo, polarized):
+  try:
+    out = jax.eval_shape(mo, jax.ShapeDtypeStruct((3,), jnp.float32))
+  except:
+    out = jax.eval_shape(mo, jax.ShapeDtypeStruct((3,), jnp.float64))
+  if polarized:
+    if len(out.shape) != 2 or out.shape[0] != 2:
+      raise ValueError(
+        "Return value of rho has shape (2,), which means it is polarized. "
+        "Therefore mo must return an array of shape (2, number_of_orbital), "
+        f"got {out.shape}"
+      )
+  else:
+    if len(out.shape) != 1:
+      raise ValueError(
+        "Return value of rho has shape (), which means it is unpolarized. "
+        "Therefore mo must return an array of shape (number_of_orbital,), "
+        f"got {out.shape}"
+      )
 
 
 {% for p, ext_params, ext_params_descriptions, info in functionals %}
 def {{ p.name }}(
-  polarized: bool = True,
+  rho: Callable,
+{% if p.type == "mgga" %}
+  mo: Callable,
+{% endif %}
+{% if ext_params|length > 0 %}
+  *,
+{% endif %}
 {% for param_name in ext_params.keys() %}
   {{ param_name }}: Optional[float] = None,
 {% endfor %}
@@ -61,17 +158,20 @@ def {{ p.name }}(
   {% endif %}
   Parameters
   ----------
-  polarized : bool
-    Whether the calculation is polarized.
+  rho: the density function
 {% for (param_name, param_val), param_descrip in zip(ext_params.items(), ext_params_descriptions) %}
   {{ param_name }} : Optional[float], default: {{ param_val }}
     {{ param_descrip }}
 {% endfor %}
   """
+  polarized = is_polarized(rho)
+{% if p.type == "mgga" %}
+  check_mo_shape(mo, polarized)
+{% endif %}
 {% for param_name, value in ext_params.items() %}
   {{ param_name }} = ({{ param_name }} or {{ value }})
 {% endfor %}
   p = get_p("{{ p.name }}", polarized, {{ ext_params.keys()|join(', ') }})
-  return get_functional(p)
+  return make_epsilon_xc(p, rho{% if p.type == "mgga" %}, mo{% endif %})
 
 {% endfor %}

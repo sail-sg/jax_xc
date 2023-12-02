@@ -13,14 +13,15 @@ py_wheel(
     description_file = "@jax_xc//:README.rst",
     distribution = "jax_xc",
     platform = "manylinux_2_17_x86_64",
-    python_requires = ">=3.7",
+    python_requires = ">=3.9",
     python_tag = python_tag(),
     requires = [
         "jax",
         "numpy",
         "tensorflow-probability",
+        "autofd",
     ],
-    version = "0.0.8",
+    version = "0.0.9",
     deps = [
         "@maple2jax//jax_xc",
         "@maple2jax//jax_xc:experimental",
