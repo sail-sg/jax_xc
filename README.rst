@@ -215,7 +215,8 @@ We support automatic functional derivative!
     return jnp.prod(jax.scipy.stats.norm.pdf(r, loc=0, scale=1))
 
   # create a density functional
-  epsilon_xc = jax_xc.experimental.gga_x_pbe(rho)
+  gga_x_pbe = jax_xc.experimental.gga_x_pbe
+  epsilon_xc = gga_x_pbe(rho)
 
   # a grid point in 3D
   r = jnp.array([0.1, 0.2, 0.3])
@@ -227,7 +228,7 @@ We support automatic functional derivative!
   energy_density = epsilon_xc(r)
   print(f"epsilon_xc(r) = {energy_density}")
 
-  vxc = jax.grad(lambda rho: o.integrate(rho * gga_xc_pbe(rho)))(rho)
+  vxc = jax.grad(lambda rho: o.integrate(rho * gga_x_pbe(rho)))(rho)
   print(f"The function signature of vxc is {vxc}")
   print(vxc(r))
 
