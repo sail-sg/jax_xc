@@ -84,7 +84,7 @@ for n in names:
   ):
     if p.maple_name in THRESHOLD:
       sensitive.append((p.name, p.maple_name))
-    elif p.name.startswith("mgga") or p.name.startswith("hyb_mgga"):
+    if p.name.startswith("mgga") or p.name.startswith("hyb_mgga"):
       mgga.append((p.name, p.maple_name))
     elif p.name.startswith("gga") or p.name.startswith("hyb_gga"):
       gga.append((p.name, p.maple_name))
@@ -167,11 +167,6 @@ class _TestAgainstLibxc(parameterized.TestCase):
 
   @parameterized.parameters(*mgga)
   def test_mgga(self, name, maple_name):
-    self._test_impl(name, maple_name, 0, rho1, mo1)
-    self._test_impl(name, maple_name, 1, rho3, mo3)
-
-  @parameterized.parameters(*sensitive)
-  def test_sensitive(self, name, maple_name):
     self._test_impl(name, maple_name, 0, rho1, mo1)
     self._test_impl(name, maple_name, 1, rho3, mo3)
 
