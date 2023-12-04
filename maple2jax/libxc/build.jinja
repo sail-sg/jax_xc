@@ -59,6 +59,10 @@ genrule(
 cc_library(
     name = "{{ src }}c.obj",
     srcs = ["src_cc/{{ src }}c"],
+    features = select({
+        "@platforms//os:windows": ["windows_export_all_symbols"],
+        "//conditions:default": [],
+    }),
     deps = [
         ":xc_inc",
         ":register",
@@ -83,6 +87,10 @@ pybind_extension(
     copts = select({
         "@platforms//os:windows": [],
         "//conditions:default": ["-std=c++14"],
+    }),
+    features = select({
+        "@platforms//os:windows": ["windows_export_all_symbols"],
+        "//conditions:default": [],
     }),
     deps = [
         ":xc_inc",
