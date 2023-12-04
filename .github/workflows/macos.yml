@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   release:
-    runs-on: macos-latest
+    runs-on: macos-11
     steps:
     - name: Cancel previous run
       uses: styfle/cancel-workflow-action@0.9.1
@@ -14,4 +14,4 @@ jobs:
     - name: Setup and Build
       run: |
         pip install -r requirements.txt
-        bazel build --config=macos_x86_64 @maple2jax//:jax_xc_wheel
+        bazel build --config=macos_x86_64 --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @maple2jax//:jax_xc_wheel
