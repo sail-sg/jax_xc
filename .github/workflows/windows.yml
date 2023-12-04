@@ -21,8 +21,7 @@ jobs:
     - name: Build
       run: |
         pip install -r requirements.txt
-        bazel build --config=windows_x86_64 --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @maple2jax//:jax_xc_wheel
-        cat bazel-out/x64_windows-opt-exec-2B5CBBC6/bin/external/maple2jax/jax_xc/libxc.so-2.params
+        bazel build --verbose_failures -s --config=windows_x86_64 --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @maple2jax//:jax_xc_wheel
       shell: pwsh
     - name: Upload artifact
       uses: actions/upload-artifact@main
