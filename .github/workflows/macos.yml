@@ -1,5 +1,7 @@
 name: Release for Macos
 
+on: [push]
+
 jobs:
   release:
     runs-on: macos-latest
