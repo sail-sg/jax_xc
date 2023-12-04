@@ -80,18 +80,15 @@ cc_library(
 
 cc_binary(
     name = "libxc.so",
-    copts = ["-std=c++14", "-fexceptions"],
+    copts = select({
+        "@platforms//os:windows": [],
+        "//conditions:default": ["-std=c++14", "-fexceptions"],
+    }),
     features = [
         "-use_header_modules",  # Required for pybind11.
         "-parse_headers",
     ],
     linkshared = 1,
-    local_defines = [
-        "XC_DONT_COMPILE_VXC",
-        "XC_DONT_COMPILE_FXC",
-        "XC_DONT_COMPILE_KXC",
-        "XC_DONT_COMPILE_LXC",
-    ],
     deps = [
         ":xc_inc",
         "@visit_struct",
