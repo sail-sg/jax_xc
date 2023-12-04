@@ -35,6 +35,18 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+cc_library(
+    name = "register",
+    hdrs = [
+        "src_cc/register.h",
+    ],
+    deps = [
+        ":xc_inc",
+        "@visit_struct",
+        "@pybind11",
+    ],
+)
+
 {% for src in c_file_basenames %}
 genrule(
     name = "gen_{{ src }}c",
@@ -42,6 +54,26 @@ genrule(
     outs = ["src_cc/{{ src }}c"],
     cmd = "$(execpath :wrap) --path $< --out $@ --template $(execpath :wrap.cc.jinja)",
     tools = [":wrap", ":wrap.cc.jinja"],
+)
+
+cc_library(
+    name = "{{ src }}c.obj",
+    srcs = ["src_cc/{{ src }}c"],
+    deps = [
+        ":xc_inc",
+        ":register",
+    ],
+    includes = [
+        ".",
+        "src",
+    ],
+    local_defines = [
+        "XC_DONT_COMPILE_VXC",
+        "XC_DONT_COMPILE_FXC",
+        "XC_DONT_COMPILE_KXC",
+        "XC_DONT_COMPILE_LXC",
+    ],
+    alwayslink = True,
 )
 
 {% endfor %}
@@ -54,10 +86,6 @@ cc_binary(
         "-parse_headers",
     ],
     linkshared = 1,
-    includes = [
-        ".",
-        "src",
-    ],
     local_defines = [
         "XC_DONT_COMPILE_VXC",
         "XC_DONT_COMPILE_FXC",
@@ -69,14 +97,14 @@ cc_binary(
         "@visit_struct",
         "@pybind11",
         "@local_config_python//:python_headers",
+        ":register",
+{% for basename in c_file_basenames %}
+        ":{{ basename }}c.obj",
+{% endfor %}
     ],
     srcs = [
-        "src_cc/register.h",
         "src_cc/register.cc",
         "src_cc/libxc.cc",
-{% for basename in c_file_basenames %}
-        "src_cc/{{ basename }}c",
-{% endfor %}
     ],
     visibility = ["//visibility:public"],
 )
