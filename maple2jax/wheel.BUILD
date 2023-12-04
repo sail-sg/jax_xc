@@ -1,5 +1,30 @@
 load("@python_abi//:abi.bzl", "abi_tag", "python_tag")
 load("@rules_python//python:packaging.bzl", "py_wheel")
+load("@bazel_skylib//lib:selects.bzl", "selects")
+
+selects.config_setting_group(
+    name = "macos_arm64",
+    match_all = [
+        "@platforms//os:macos",
+        "@platforms//cpu:arm64",
+    ],
+)
+
+selects.config_setting_group(
+    name = "macos_x86_64",
+    match_all = [
+        "@platforms//os:macos",
+        "@platforms//cpu:x86_64",
+    ],
+)
+
+selects.config_setting_group(
+    name = "linux_x86_64",
+    match_all = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+)
 
 py_wheel(
     name = "jax_xc_wheel",
@@ -12,7 +37,12 @@ py_wheel(
     ],
     description_file = "@jax_xc//:README.rst",
     distribution = "jax_xc",
-    platform = "manylinux_2_17_x86_64",
+    platform = select({
+        ":macos_arm64": "macosx_11_0_arm64",
+        ":macos_x86_64": "macosx_11_0_x86_64",
+        ":linux_x86_64": "manylinux_2_17_x86_64",
+        "//conditions:default": "manylinux_2_17_x86_64",
+    }),
     python_requires = ">=3.9",
     python_tag = python_tag(),
     requires = [

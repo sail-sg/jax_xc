@@ -1,3 +1,3 @@
 build --copt=-g0 --copt=-O3 --copt=-DNDEBUG
-build --action_env=BAZEL_LINKLIBS=-l%:libstdc++.a:-lm
-build --action_env=BAZEL_LINKOPTS=-static-libgcc
+build:linux --action_env=BAZEL_LINKLIBS=-l%:libstdc++.a:-lm
+build:linux --action_env=BAZEL_LINKOPTS=-static-libgcc

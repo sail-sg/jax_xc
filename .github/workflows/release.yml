@@ -24,7 +24,7 @@ jobs:
       run: |
         eval "$(pyenv init -)" && pyenv global ${{ matrix.python-version }}-dev
         pip install -r requirements.txt
-        bazel build --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @maple2jax//:jax_xc_wheel
+        bazel build --config=linux --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @maple2jax//:jax_xc_wheel
     - name: Upload artifact
       uses: actions/upload-artifact@main
       with:
