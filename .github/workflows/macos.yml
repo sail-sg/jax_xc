@@ -13,6 +13,5 @@ jobs:
     - uses: actions/checkout@v2
     - name: Setup and Build
       run: |
-        brew install bazel
         pip install -r requirements.txt
-        bazel build @maple2jax//:jax_xc_wheel
+        bazel build --cpu=x86_64 --os=macos @maple2jax//:jax_xc_wheel
