@@ -60,6 +60,10 @@ cc_library(
     name = "{{ src }}c.obj",
     srcs = ["src_cc/{{ src }}c"],
     features = ["windows_export_all_symbols"],
+    copts = select({
+        "@platforms//os:windows": [],
+        "//conditions:default": ["-std=c++14"],
+    }),
     deps = [
         ":xc_inc",
         ":register",
