@@ -1,6 +1,6 @@
+load("@bazel_skylib//lib:selects.bzl", "selects")
 load("@python_abi//:abi.bzl", "abi_tag", "python_tag")
 load("@rules_python//python:packaging.bzl", "py_wheel")
-load("@bazel_skylib//lib:selects.bzl", "selects")
 
 selects.config_setting_group(
     name = "macos_arm64",
