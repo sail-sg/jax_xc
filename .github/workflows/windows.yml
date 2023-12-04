@@ -21,8 +21,8 @@ jobs:
     - name: Build
       run: |
         python -c "import platform; import sys; print(platform.python_version_tuple()); print(sys.abiflags)"
-        pip install -r requirements.txt
-        bazel build --config=windows_x86_64 --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @maple2jax//:jax_xc_wheel
+        # pip install -r requirements.txt
+        # bazel build --config=windows_x86_64 --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @maple2jax//:jax_xc_wheel
       shell: pwsh
     - name: Upload artifact
       uses: actions/upload-artifact@main
