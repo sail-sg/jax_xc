@@ -1,6 +1,9 @@
 name: Release for Macos
 
-on: [push]
+on:
+  push:
+    tags:
+      - 'v[0-9]+\.[0-9]+\.[0-9]+'
 
 jobs:
   release:
@@ -22,3 +25,21 @@ jobs:
       run: |
         pip install -r requirements.txt
         bazel build --config=macos_x86_64 --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @maple2jax//:jax_xc_wheel
+    - name: Upload artifact
+      uses: actions/upload-artifact@main
+      with:
+        name: macos_wheel
+        path: bazel-bin/external/maple2jax/*.whl
+  publish:
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@main
+      with:
+        name: macos_wheel
+        path: dist
+    - name: Publish package to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        password: ${{ secrets.PYPI_API_TOKEN }}

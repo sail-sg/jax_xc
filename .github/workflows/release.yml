@@ -1,5 +1,5 @@
 # Action name
-name: Release Wheel
+name: Release for Linux
 
 on:
   push:
@@ -11,24 +11,25 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.9', '3.10', '3.11']
-    container:
-      image: ghcr.io/sail-sg/jax-xc-image:latest
+        python-version: ['3.9', '3.10', '3.11', '3.12']
     steps:
     - name: Cancel previous run
       uses: styfle/cancel-workflow-action@0.9.1
       with:
         access_token: ${{ github.token }}
     - uses: actions/checkout@v2
-    - name: Setup Python-${{ matrix.python-version }} and Build
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Build
       run: |
-        eval "$(pyenv init -)" && pyenv global ${{ matrix.python-version }}-dev
         pip install -r requirements.txt
         bazel build --config=linux --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @maple2jax//:jax_xc_wheel
     - name: Upload artifact
       uses: actions/upload-artifact@main
       with:
-        name: wheel
+        name: linux_wheel
         path: bazel-bin/external/maple2jax/*.whl
   publish:
     runs-on: ubuntu-latest
@@ -37,7 +38,7 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@main
       with:
-        name: wheel
+        name: linux_wheel
         path: dist
     - name: Publish package to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
