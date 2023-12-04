@@ -14,4 +14,4 @@ jobs:
     - name: Setup and Build
       run: |
         pip install -r requirements.txt
-        bazel build --cpu=x86_64 --os=macos @maple2jax//:jax_xc_wheel
+        bazel build --config=macos_x86_64 @maple2jax//:jax_xc_wheel
