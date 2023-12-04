@@ -6,3 +6,6 @@ build:linux --define os=linux --define cpu=x86_64
 
 build:macos_x86_64 --define os=macos --define cpu=x86_64
 build:macos_arm64 --define os=macos --define cpu=arm64
+
+build:windows_x86_64 --define os=windows --define cpu=x86_64
+build:windows_arm64 --define os=windows --define cpu=arm64

@@ -26,6 +26,14 @@ selects.config_setting_group(
     ],
 )
 
+selects.config_setting_group(
+    name = "windows_x86_64",
+    match_all = [
+        "@platforms//os:windows",
+        "@platforms//cpu:x86_64",
+    ],
+)
+
 py_wheel(
     name = "jax_xc_wheel",
     abi = abi_tag(),
@@ -41,6 +49,7 @@ py_wheel(
         ":macos_arm64": "macosx_11_0_arm64",
         ":macos_x86_64": "macosx_11_0_x86_64",
         ":linux_x86_64": "manylinux_2_17_x86_64",
+        ":windows_x86_64": "win_amd64",
         "//conditions:default": "manylinux_2_17_x86_64",
     }),
     python_requires = ">=3.9",

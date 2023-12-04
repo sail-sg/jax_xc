@@ -1,0 +1,29 @@
+name: Release for Macos
+
+on: [push]
+
+jobs:
+  release:
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+    steps:
+    - name: Cancel previous run
+      uses: styfle/cancel-workflow-action@0.9.1
+      with:
+        access_token: ${{ github.token }}
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Build
+      run: |
+        pip install -r requirements.txt
+        bazel build --config=windows_x86_64 --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @maple2jax//:jax_xc_wheel
+    - name: Upload artifact
+      uses: actions/upload-artifact@main
+      with:
+        name: macos_wheel
+        path: bazel-bin/external/maple2jax/*.whl
