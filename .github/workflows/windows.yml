@@ -1,6 +1,7 @@
 name: Release for Windows
 
-on: [push]
+# Don't run yet, it fails at linking, very difficult to debug with only a remote runner.
+# on: [push]
 
 jobs:
   release:
@@ -20,10 +21,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Build
       run: |
-        cat @bazel-out/x64_windows-opt-exec-2B5CBBC6/bin/external/maple2jax/jax_xc/libxc/libxc.so-2.params
         pip install -r requirements.txt
         bazel build --config=windows_x86_64 --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @maple2jax//:jax_xc_wheel
-        cat @bazel-out/x64_windows-opt-exec-2B5CBBC6/bin/external/maple2jax/jax_xc/libxc/libxc.so-2.params
       shell: pwsh
     - name: Upload artifact
       uses: actions/upload-artifact@main
