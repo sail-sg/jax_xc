@@ -40,8 +40,6 @@ def _get_python_tag(rctx, python_bin):
         "version = platform.python_version_tuple();" +
         "print(f'cp{version[0]}{version[1]}')",
     ])
-    print(result.stdout)
-    print(result.stderr)
     return result.stdout.splitlines()[0]
 
 def _get_abi_tag(rctx, python_bin):
@@ -54,9 +52,11 @@ def _get_abi_tag(rctx, python_bin):
         "version = platform.python_version_tuple();" +
         "print(f'cp{version[0]}{version[1]}{sys.abiflags}')",
     ])
-    print(result.stdout)
-    print(result.stderr)
-    return result.stdout.splitlines()[0]
+    lines = result.stdout.splitlines()
+    if len(lines) == 0:
+      return ""
+    else:
+      return lines[0]
 
 def _declare_python_abi_impl(rctx):
     python_bin = _get_python_bin(rctx)
