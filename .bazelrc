@@ -1,7 +1,7 @@
 build:linux --copt=-g0 --copt=-O3 --copt=-DNDEBUG
 build:macos_x86_64 --copt=-g0 --copt=-O3 --copt=-DNDEBUG
 build:macos_arm64 --copt=-g0 --copt=-O3 --copt=-DNDEBUG
-build:windows_x86_64 -c opt
+build:windows_x86_64 -c opt --compiler=clang-cl
 
 build:linux --action_env=BAZEL_LINKLIBS=-l%:libstdc++.a:-lm
 build:linux --action_env=BAZEL_LINKOPTS=-static-libgcc
