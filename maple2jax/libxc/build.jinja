@@ -78,22 +78,15 @@ cc_library(
 
 {% endfor %}
 
-cc_binary(
-    name = "libxc.so",
+pybind_extension(
+    name = "libxc",
     copts = select({
         "@platforms//os:windows": [],
-        "//conditions:default": ["-std=c++14", "-fexceptions"],
+        "//conditions:default": ["-std=c++14"],
     }),
-    features = [
-        "-use_header_modules",  # Required for pybind11.
-        "-parse_headers",
-    ],
-    linkshared = 1,
     deps = [
         ":xc_inc",
         "@visit_struct",
-        "@pybind11",
-        "@local_config_python//:python_headers",
         ":register",
 {% for basename in c_file_basenames %}
         ":{{ basename }}c.obj",
