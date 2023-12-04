@@ -4,7 +4,6 @@ tensorflow-probability
 jinja2
 absl-py
 numpy
-pyscf
 regex
 jaxtyping
 autofd
