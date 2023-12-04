@@ -1,0 +1,16 @@
+name: Release for Macos
+
+jobs:
+  release:
+    runs-on: macos-latest
+    steps:
+    - name: Cancel previous run
+      uses: styfle/cancel-workflow-action@0.9.1
+      with:
+        access_token: ${{ github.token }}
+    - uses: actions/checkout@v2
+    - name: Setup and Build
+      run: |
+        brew install bazel
+        pip install -r requirements.txt
+        bazel build @maple2jax//:jax_xc_wheel
