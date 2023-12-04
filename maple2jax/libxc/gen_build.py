@@ -25,10 +25,10 @@ def main(_):
     else:
       c_file_basenames.append(basename)
 
-  with open(FLAGS.template, "r") as f:
+  with open(FLAGS.template, "r", encoding="utf8") as f:
     template = Template(f.read(), trim_blocks=True, lstrip_blocks=True)
     build = template.render(c_file_basenames=c_file_basenames)
-    with open(FLAGS.build, "w") as out:
+    with open(FLAGS.build, "w", encoding="utf8") as out:
       out.write(build)
 
 

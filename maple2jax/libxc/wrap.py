@@ -18,7 +18,7 @@ flags.DEFINE_string("out", None, "out path")
 
 
 def wrap_file(filename, out):
-  with open(filename, "r") as f:
+  with open(filename, "r", encoding="utf8") as f:
     content = f.read()
     # find all init function and the corresponding param struct name
     results = re.findall(
@@ -74,14 +74,14 @@ def wrap_file(filename, out):
         fields.extend(members)
       register_struct.append((s, fields, struct_to_init[s]))
 
-    with open(FLAGS.template, "r") as f:
+    with open(FLAGS.template, "r", encoding="utf8") as f:
       t = Template(f.read(), trim_blocks=True, lstrip_blocks=True)
       content = t.render(
         filename=os.path.basename(filename),
         register_struct=register_struct,
         register_maple=register_maple,
       )
-      with open(FLAGS.out, "wt") as fout:
+      with open(FLAGS.out, "wt", encoding="utf8") as fout:
         fout.write(content)
 
 
