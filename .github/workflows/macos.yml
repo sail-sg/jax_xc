@@ -24,7 +24,7 @@ jobs:
     - name: Build
       run: |
         pip install -r requirements.txt
-        bazel build --config=macos_x86_64 --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @jax_xc_repo//:jax_xc_wheel
+        bazel build --config=macos --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @jax_xc_repo//:jax_xc_wheel
     - name: Upload artifact
       uses: actions/upload-artifact@main
       with:

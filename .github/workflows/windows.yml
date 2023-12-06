@@ -7,7 +7,7 @@ jobs:
     runs-on: windows-2019
     strategy:
       matrix:
-        python-version: ['3.9']
+        python-version: ['3.9', '3.10', '3.11', '3.12']
     steps:
     - name: Cancel previous run
       uses: styfle/cancel-workflow-action@0.9.1
@@ -21,7 +21,7 @@ jobs:
     - name: Build
       run: |
         pip install -r requirements.txt
-        bazel build --config=windows_x86_64 --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @jax_xc_repo//:jax_xc_wheel
+        bazel build --config=windows --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @jax_xc_repo//:jax_xc_wheel
       shell: pwsh
     - name: Upload artifact
       uses: actions/upload-artifact@main
