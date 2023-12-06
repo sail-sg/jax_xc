@@ -105,30 +105,12 @@ pybind_extension(
     visibility = ["//visibility:public"],
 )
 
-genrule(
-    name = "gen_libxc_dll",
-    srcs = [":libxc.so"],
-    outs = ["libxc.dll"],
-    cmd = "cp $< $@",
-)
-
-genrule(
-    name = "gen_libxc_dylib",
-    srcs = [":libxc.so"],
-    outs = ["libxc.dylib"],
-    cmd = "cp $< $@",
-)
-
 py_library(
     name = "libxc",
     srcs = glob(
         ["*.py"],
         exclude=["gen_build.py", "wrap.py"],
     ),
-    data = select({
-        "@platforms//os:windows": [":gen_libxc_dll"],
-        "@platforms//os:macos": [":gen_libxc_dylib"],
-        "//conditions:default": [":libxc.so"],
-    }),
+    data = [":libxc.so"],
     visibility = ["//visibility:public"],
 )
