@@ -60,7 +60,7 @@ py_wheel(
         "tensorflow-probability",
         "autofd",
     ],
-    version = "0.0.10",
+    version = "0.0.11",
     deps = [
         "@jax_xc_repo//jax_xc",
         "@jax_xc_repo//jax_xc:experimental",
