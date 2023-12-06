@@ -105,12 +105,19 @@ pybind_extension(
     visibility = ["//visibility:public"],
 )
 
+genrule(
+    name = "gen_pyd",
+    srcs = [":libxc.so"],
+    outs = ["libxc.pyd"],
+    cmd = "cp $< $@",
+)
+
 py_library(
     name = "libxc",
     srcs = glob(
         ["*.py"],
         exclude=["gen_build.py", "wrap.py"],
     ),
-    data = [":libxc.so"],
+    data = [":libxc.so", ":gen_pyd"],
     visibility = ["//visibility:public"],
 )
