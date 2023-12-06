@@ -18,6 +18,7 @@ py_test(
     name = "test_against_libxc",
     timeout = "eternal",
     srcs = ["test_against_libxc.py"],
+    shard_count = 8,
     deps = [
         "@jax_xc_repo//jax_xc",
     ],
