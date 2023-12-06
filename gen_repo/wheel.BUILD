@@ -43,7 +43,7 @@ py_wheel(
         "Topic :: Scientific/Engineering :: Chemistry",
         "Programming Language :: Python :: 3",
     ],
-    description_file = "@jax_xc//:README.rst",
+    description_file = "@build_jax_xc//:README.rst",
     distribution = "jax_xc",
     platform = select({
         ":macos_arm64": "macosx_11_0_arm64",
@@ -62,12 +62,12 @@ py_wheel(
     ],
     version = "0.0.10",
     deps = [
-        "@maple2jax//jax_xc",
-        "@maple2jax//jax_xc:experimental",
-        "@maple2jax//jax_xc:functionals",
-        "@maple2jax//jax_xc:utils",
-        "@maple2jax//jax_xc/impl",
-        "@maple2jax//jax_xc/libxc",
-        "@maple2jax//jax_xc/libxc:libxc.so",
+        "@jax_xc_repo//jax_xc",
+        "@jax_xc_repo//jax_xc:experimental",
+        "@jax_xc_repo//jax_xc:functionals",
+        "@jax_xc_repo//jax_xc:utils",
+        "@jax_xc_repo//jax_xc/impl",
+        "@jax_xc_repo//jax_xc/libxc",
+        "@jax_xc_repo//jax_xc/libxc:libxc.so",
     ],
 )

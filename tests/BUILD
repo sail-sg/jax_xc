@@ -10,7 +10,7 @@ py_test(
     name = "test_get_param",
     srcs = ["test_get_param.py"],
     deps = [
-        "@maple2jax//jax_xc",
+        "@jax_xc_repo//jax_xc",
     ],
 )
 
@@ -19,7 +19,7 @@ py_test(
     timeout = "eternal",
     srcs = ["test_against_libxc.py"],
     deps = [
-        "@maple2jax//jax_xc",
+        "@jax_xc_repo//jax_xc",
     ],
 )
 
@@ -27,6 +27,6 @@ py_test(
     name = "test_grad",
     srcs = ["test_grad.py"],
     deps = [
-        "@maple2jax//jax_xc",
+        "@jax_xc_repo//jax_xc",
     ],
 )

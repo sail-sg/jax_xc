@@ -32,6 +32,12 @@ cc_library(
         "src/*.h",
         "*.h",
     ]),
+    defines = [
+        "XC_DONT_COMPILE_VXC",
+        "XC_DONT_COMPILE_FXC",
+        "XC_DONT_COMPILE_KXC",
+        "XC_DONT_COMPILE_LXC",
+    ],
     visibility = ["//visibility:public"],
 )
 
@@ -71,12 +77,6 @@ cc_library(
     includes = [
         ".",
         "src",
-    ],
-    local_defines = [
-        "XC_DONT_COMPILE_VXC",
-        "XC_DONT_COMPILE_FXC",
-        "XC_DONT_COMPILE_KXC",
-        "XC_DONT_COMPILE_LXC",
     ],
     alwayslink = True,
 )

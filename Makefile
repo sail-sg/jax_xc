@@ -1,14 +1,14 @@
 SHELL          = /bin/bash
 PROJECT_NAME   = jax_xc
-PROJECT_FOLDER = maple2jax tests third_party
-PYTHON_FILES   = $(shell find . -type f -name "*.py" -not -path "./maple2jax/impl/prebuilt/**/*")
-CPP_FILES      = $(shell find maple2jax -type f -name "*.h" -o -name "*.cc")
+PROJECT_FOLDER = gen_repo tests third_party
+PYTHON_FILES   = $(shell find . -type f -name "*.py" -not -path "./gen_repo/impl/prebuilt/**/*")
+CPP_FILES      = $(shell find gen_repo -type f -name "*.h" -o -name "*.cc")
 BAZEL_FILES    = $(shell find . -type f -name "*BUILD" -o -name "*.bzl")
 COMMIT_HASH    = $(shell git log -1 --format=%h)
 COPYRIGHT      = "Garena Online Private Limited"
 BAZELOPT       =
 PATH           := $(HOME)/go/bin:$(PATH)
-ADDLICENSE_IGNORE = -ignore "maple2jax/impl/prebuilt/**/*" -ignore maple2jax/python.bzl
+ADDLICENSE_IGNORE = -ignore "gen_repo/impl/prebuilt/**/*" -ignore gen_repo/python.bzl
 
 # installation
 

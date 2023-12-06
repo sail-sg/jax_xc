@@ -1,4 +1,4 @@
-workspace(name = "jax_xc")
+workspace(name = "build_jax_xc")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
@@ -55,13 +55,13 @@ python_configure(
     python_version = "3",
 )
 
-load("//maple2jax:python.bzl", "declare_python_abi")
+load("//gen_repo:python.bzl", "declare_python_abi")
 
 declare_python_abi(
     name = "python_abi",
     python_version = "3",
 )
 
-load("//maple2jax:maple2jax.bzl", "maple2jax_repo")
+load("//gen_repo:gen_repo.bzl", "gen_repo")
 
-maple2jax_repo(name = "maple2jax")
+gen_repo(name = "jax_xc_repo")
