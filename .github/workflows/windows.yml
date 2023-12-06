@@ -23,8 +23,13 @@ jobs:
         pip install -r requirements.txt
         bazel build --config=windows --remote_cache=http://${{ secrets.BAZEL_CACHE }}:8080 @jax_xc_repo//:jax_xc_wheel
       shell: pwsh
+    - name: Test the wheel
+      run: |
+        pip install $(ls bazel-bin/external/jax_xc_repo/*.whl)
+        python3 tests/test_wheel.py
+      shell: bash
     - name: Upload artifact
       uses: actions/upload-artifact@main
       with:
-        name: macos_wheel
+        name: windows_wheel
         path: bazel-bin/external/jax_xc_repo/*.whl
