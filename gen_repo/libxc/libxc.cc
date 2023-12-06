@@ -15,7 +15,7 @@
 #include "register.h"  // NOLINT
 
 extern "C" {
-#include "util.h"      // NOLINT
+#include "util.h"  // NOLINT
 }
 
 REGISTER_MAPLE(xc_deorbitalize_func, std::string("DEORBITALIZE"));
