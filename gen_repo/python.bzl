@@ -54,7 +54,7 @@ def _get_abi_tag(rctx, python_bin):
     ])
     lines = result.stdout.splitlines()
     if len(lines) == 0:
-        return ""
+        return _get_python_tag(rctx, python_bin)
     else:
         return lines[0]
 
