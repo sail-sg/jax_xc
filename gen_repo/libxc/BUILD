@@ -8,6 +8,7 @@ exports_files([
     "wrap.py",
     "wrap.cc.jinja",
     "so_naming.patch",
+    "windows.patch",
     "register.cc",
     "register.h",
     "libxc.cc",

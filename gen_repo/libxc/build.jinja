@@ -32,6 +32,12 @@ cc_library(
         "src/*.h",
         "*.h",
     ]),
+    defines = [
+        "XC_DONT_COMPILE_VXC",
+        "XC_DONT_COMPILE_FXC",
+        "XC_DONT_COMPILE_KXC",
+        "XC_DONT_COMPILE_LXC",
+    ],
     visibility = ["//visibility:public"],
 )
 
@@ -72,12 +78,6 @@ cc_library(
         ".",
         "src",
     ],
-    local_defines = [
-        "XC_DONT_COMPILE_VXC",
-        "XC_DONT_COMPILE_FXC",
-        "XC_DONT_COMPILE_KXC",
-        "XC_DONT_COMPILE_LXC",
-    ],
     alwayslink = True,
 )
 
@@ -105,12 +105,23 @@ pybind_extension(
     visibility = ["//visibility:public"],
 )
 
+genrule(
+    name = "gen_pyd",
+    srcs = [":libxc.so"],
+    outs = ["libxc.pyd"],
+    cmd = "cp $< $@",
+    visibility = ["//visibility:public"],
+)
+
 py_library(
     name = "libxc",
     srcs = glob(
         ["*.py"],
         exclude=["gen_build.py", "wrap.py"],
     ),
-    data = [":libxc.so"],
+    data = select({
+        "@platforms//os:windows": [":gen_pyd"],
+        "//conditions:default": [":libxc.so"],
+    }),
     visibility = ["//visibility:public"],
 )

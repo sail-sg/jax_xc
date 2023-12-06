@@ -63,14 +63,14 @@ genrule(
 
 genrule(
     name = "{{ name }}_pol",
-    srcs = ["@jax_xc//maple2jax/impl/prebuilt/pol:{{ name }}.py"],
+    srcs = ["@build_jax_xc//gen_repo/impl/prebuilt/pol:{{ name }}.py"],
     outs = ["pol/{{ name }}.py"],
     cmd = "cp $< $@",
 )
 
 genrule(
     name = "{{ name }}_unpol",
-    srcs = ["@jax_xc//maple2jax/impl/prebuilt/unpol:{{ name }}.py"],
+    srcs = ["@build_jax_xc//gen_repo/impl/prebuilt/unpol:{{ name }}.py"],
     outs = ["unpol/{{ name }}.py"],
     cmd = "cp $< $@",
 )

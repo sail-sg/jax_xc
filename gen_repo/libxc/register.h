@@ -6,8 +6,8 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#ifndef MAPLE2JAX_LIBXC_REGISTER_H_
-#define MAPLE2JAX_LIBXC_REGISTER_H_
+#ifndef GEN_REPO_LIBXC_REGISTER_H_
+#define GEN_REPO_LIBXC_REGISTER_H_
 
 #include <array>
 #include <iostream>
@@ -76,4 +76,4 @@ decltype(auto) ToNumpy(const T (&a)[N][M]) {
   static bool WORK##_registered = RegisterMaple( \
       const_cast<void*>(reinterpret_cast<const void*>(&WORK)), MAPLENAME);
 
-#endif  // MAPLE2JAX_LIBXC_REGISTER_H_
+#endif  // GEN_REPO_LIBXC_REGISTER_H_

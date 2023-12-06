@@ -344,9 +344,9 @@ How to build python wheel.
 
 .. code:: sh
 
-   bazel --output_user_root=$OUTPUT_USER_ROOT build --action_env=PATH=$PATH:$MAPLE_PATH @maple2jax//:jax_xc_wheel
+   bazel --output_user_root=$OUTPUT_USER_ROOT build --action_env=PATH=$PATH:$MAPLE_PATH @jax_xc_repo//:jax_xc_wheel
 
-Once the build finished, the python wheel could be found under ``bazel-bin/external/maple2jax``. For example, the
+Once the build finished, the python wheel could be found under ``bazel-bin/external/jax_xc_repo``. For example, the
 name for version 0.0.7 is ``jax_xc-0.0.7-cp310-cp310-manylinux_2_17_x86_64.whl``.
 
 Install the python wheel. If needed, specify the install path by

@@ -87,10 +87,10 @@ def main(_):
 
     functionals.append((p, ext_params, ext_params_descriptions, info))
 
-  with open(FLAGS.template, "rt") as f:
+  with open(FLAGS.template, "rt", encoding="utf8") as f:
     py_template = Template(f.read(), trim_blocks=True, lstrip_blocks=True)
     py_code = py_template.render(functionals=functionals, zip=zip)
-    with open(FLAGS.output, "wt") as out:
+    with open(FLAGS.output, "wt", encoding="utf8") as out:
       out.write(py_code)
 
 
