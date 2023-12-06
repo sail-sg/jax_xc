@@ -8,6 +8,7 @@
 
 def _impl(rctx):
     rctx.path(Label("//gen_repo/libxc:so_naming.patch"))
+    rctx.path(Label("//gen_repo/libxc:windows.patch"))
     rctx.path(Label("//gen_repo/libxc:wrap.py"))
     rctx.path(Label("//gen_repo/libxc:wrap.cc.jinja"))
     rctx.path(Label("//gen_repo/libxc:register.cc"))
@@ -44,7 +45,10 @@ def _impl(rctx):
     rctx.delete("src/xc-threshold.c")
     rctx.delete("src/test.c")
     rctx.delete("src/genwiki.c")
-    rctx.patch(Label("//gen_repo/libxc:so_naming.patch"))
+    if "win" in rctx.os.name:
+        rctx.patch(Label("//gen_repo/libxc:windows.patch"))
+    else:
+        rctx.patch(Label("//gen_repo/libxc:so_naming.patch"))
     rctx.execute(["mkdir", "jax_xc"])
     rctx.execute(["mv", "pylibxc", "jax_xc/libxc"])
     rctx.execute(["mv", "src", "jax_xc/libxc/"])

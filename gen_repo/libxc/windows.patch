@@ -1,0 +1,11 @@
+--- pylibxc/core.py	2022-11-16 13:44:53.000000000 +0800
++++ pylibxc/core.py	2022-11-16 13:44:47.000000000 +0800
+@@ -14,7 +14,7 @@
+ # First check the local folder
+ try:
+     __libxc_path = os.path.abspath(os.path.dirname(__file__))
+-    core = np.ctypeslib.load_library("libxc", __libxc_path)
++    core = np.ctypeslib.load_library("libxc.pyd", __libxc_path)
+ except OSError:
+     # If no libxc is local, check LD_LIBRARY_PATHS's
+     __libxc_path = ctypes.util.find_library("xc")

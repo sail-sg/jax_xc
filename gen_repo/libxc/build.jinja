@@ -118,6 +118,9 @@ py_library(
         ["*.py"],
         exclude=["gen_build.py", "wrap.py"],
     ),
-    data = [":libxc.so", ":gen_pyd"],
+    data = select({
+        "@platforms//os:windows": [":gen_pyd"],
+        "//conditions:default": [":libxc.so"],
+    }),
     visibility = ["//visibility:public"],
 )
