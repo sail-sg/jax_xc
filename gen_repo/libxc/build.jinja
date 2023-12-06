@@ -110,6 +110,7 @@ genrule(
     srcs = [":libxc.so"],
     outs = ["libxc.pyd"],
     cmd = "cp $< $@",
+    visibility = ["//visibility:public"],
 )
 
 py_library(

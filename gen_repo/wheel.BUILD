@@ -68,6 +68,8 @@ py_wheel(
         "@jax_xc_repo//jax_xc:utils",
         "@jax_xc_repo//jax_xc/impl",
         "@jax_xc_repo//jax_xc/libxc",
-        "@jax_xc_repo//jax_xc/libxc:libxc.so",
-    ],
+    ] + select({
+        "@platforms//os:windows": ["@jax_xc_repo//jax_xc/libxc:gen_pyd"],
+        "//conditions:default": ["@jax_xc_repo//jax_xc/libxc:libxc.so"],
+    }),
 )
