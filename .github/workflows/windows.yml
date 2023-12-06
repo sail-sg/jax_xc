@@ -1,7 +1,6 @@
 name: Release for Windows
 
-# Don't run yet
-# on: [push]
+on: [push]
 
 jobs:
   release:
