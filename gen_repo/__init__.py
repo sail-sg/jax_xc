@@ -7,4 +7,4 @@
 from .functionals import *  # noqa
 from . import experimental  # noqa
 
-__version__ = "0.0.11"
+__version__ = "0.0.12"
