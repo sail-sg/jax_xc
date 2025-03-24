@@ -6,7 +6,6 @@
 
 import jax
 import jax.numpy as jnp
-from jax.config import config
 from absl.testing import absltest, parameterized
 from absl import logging
 import numpy as np
@@ -18,8 +17,8 @@ from functools import partial
 from jaxtyping import Array, Float64, Complex128
 from autofd import function
 
-config.update("jax_enable_x64", True)
-config.update("jax_debug_nans", True)
+jax.config.update("jax_enable_x64", True)
+jax.config.update("jax_debug_nans", True)
 
 THRESHOLD = {
   "mgga_x_br89_explicit": 1e-9,
