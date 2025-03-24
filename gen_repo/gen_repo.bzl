@@ -35,7 +35,7 @@ def _impl(rctx):
     rctx.download_and_extract(
         url = "https://gitlab.com/libxc/libxc/-/archive/6.0.0/libxc-6.0.0.tar.gz",
         stripPrefix = "libxc-6.0.0",
-        sha256 = "0c774e8e195dd92800b9adf3df5f5721e29acfe9af4b191a9937c7de4f9aa9f6",
+        sha256 = "48a5393984d95bf0dd05c5ffc94e77da938b7f321058fe250c3448c7a9392c88",
     )
     rctx.file("WORKSPACE", "")
 
